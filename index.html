@@ -128,11 +128,40 @@
     color:var(--ink-soft); font-weight:500; font-size:11px; text-transform:lowercase;
     padding:6px 8px; text-align:left; border-bottom:1px solid var(--line);
   }
-  .wow-table th:not(:first-child), .wow-table td.num{text-align:right;}
-  .wow-table td{padding:9px 8px; border-bottom:1px solid var(--line);}
+  .wow-table th:not(:first-child){text-align:right;}
+  .wow-table td{padding:11px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
   .wow-table tr:last-child td{border-bottom:none;}
-  .wow-table td.num{font-family:'IBM Plex Mono', monospace; white-space:nowrap;}
-  .wow-table .delta{font-size:11px; color:var(--sage); margin-left:5px; font-weight:600;}
+  .wow-table td.metric{font-weight:500; color:var(--ink);}
+  .wow-table td.num{
+    font-family:'IBM Plex Mono', monospace;
+    white-space:nowrap; text-align:right;
+  }
+  .wow-delta{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:11px;
+    margin-left:8px;
+    letter-spacing:0.02em;
+    white-space:nowrap;
+    line-height:1.4;
+  }
+  .wow-delta.good{
+    background:#A8CCA9;
+    color:#1B3F22;
+    box-shadow:inset 0 0 0 1px #7FA582;
+  }
+  .wow-delta.bad{
+    background:#E6B0A4;
+    color:#7A2418;
+    box-shadow:inset 0 0 0 1px #C9877A;
+  }
+  .wow-delta.neutral{
+    background:#DDD3B6;
+    color:#5C6B63;
+    box-shadow:inset 0 0 0 1px #C5BC9F;
+  }
+  .wow-delta-icon{font-size:12px; line-height:1; font-weight:700;}
 
   /* ---------- Site verdict cards ---------- */
   .verdict-card{
@@ -228,7 +257,9 @@
     canvas{max-height:220px;}
 
     .wow-table{font-size:12px;}
-    .wow-table th, .wow-table td{padding:7px 5px;}
+    .wow-table th, .wow-table td{padding:9px 5px;}
+    .wow-table td.num{display:flex; flex-direction:column; align-items:flex-end; gap:5px;}
+    .wow-delta{margin-left:0; font-size:10px; padding:3px 8px;}
 
     .verdict-signal{grid-template-columns: 1fr auto; font-size:11px;}
     .verdict-signal .vs-compare{display:none;}
@@ -384,7 +415,7 @@ const API_URL   = 'https://script.google.com/macros/s/AKfycbxuDDR1AuI0AYvR9CzSW7
 const API_TOKEN = '';
 const PROTEIN_GOAL = 100;
 
-/* Symptom list — Fatigue was dropped as duplicative of Energy. */
+/* Symptom list — Fatigue dropped as duplicative of Energy. */
 const SYMPTOMS = ["Nausea","Constipation","Diarrhea","Headache","Reflux","Dizziness"];
 
 if (typeof Chart === 'undefined') {
@@ -608,29 +639,50 @@ function renderWeekOverWeek(){
   const thisStats = windowStats(thisStart, thisEnd);
   const lastStats = windowStats(lastStart, lastEnd);
 
-  const row = (label, thisVal, lastVal, opts = {}) => {
-    const { format = v => v == null ? '—' : v.toFixed(1), lowerIsBetter } = opts;
-    const thisStr = format(thisVal);
-    const lastStr = format(lastVal);
+  function deltaPill(thisVal, lastVal, opts){
+    const { lowerIsBetter, deltaFormat = v => v.toFixed(1) } = opts || {};
 
-    let arrow = '', tick = '';
-    if(thisVal != null && lastVal != null && thisVal !== lastVal){
-      const diff = thisVal - lastVal;
-      if(diff > 0)      arrow = '↑';
-      else if(diff < 0) arrow = '↓';
+    if(thisVal == null || lastVal == null){
+      return '<span class="wow-delta neutral">— no data</span>';
+    }
 
-      if(lowerIsBetter != null){
-        const wentRight = (diff < 0) === lowerIsBetter;
-        if(wentRight) tick = '✓';
+    const diff = thisVal - lastVal;
+
+    if(Math.abs(diff) < 0.005){
+      return '<span class="wow-delta neutral">· no change</span>';
+    }
+
+    const sign   = diff > 0 ? '+' : '−';
+    const absStr = deltaFormat(Math.abs(diff));
+
+    let kind = 'neutral';
+    let iconHtml = '';
+    if(lowerIsBetter != null){
+      const wentRight = (diff < 0) === lowerIsBetter;
+      if(wentRight){
+        kind = 'good';
+        iconHtml = '<span class="wow-delta-icon">✓</span>';
+      } else {
+        kind = 'bad';
+        iconHtml = '<span class="wow-delta-icon">⚠</span>';
       }
     }
 
+    return `<span class="wow-delta ${kind}">${iconHtml}${sign}${absStr}</span>`;
+  }
+
+  function row(label, thisVal, lastVal, opts = {}){
+    const { format = v => v == null ? '—' : v.toFixed(1), lowerIsBetter, deltaFormat } = opts;
+    const thisStr = format(thisVal);
+    const lastStr = format(lastVal);
+    const pill = deltaPill(thisVal, lastVal, { lowerIsBetter, deltaFormat });
+
     return `<tr>
-      <td>${label}</td>
+      <td class="metric">${label}</td>
       <td class="num">${lastStr}</td>
-      <td class="num">${thisStr}<span class="delta">${arrow}${tick}</span></td>
+      <td class="num">${thisStr}${pill}</td>
     </tr>`;
-  };
+  }
 
   const html = `
     <table class="wow-table">
@@ -640,28 +692,33 @@ function renderWeekOverWeek(){
       <tbody>
         ${row('Weight', latest.weight, previous.weight, {
           format: v => v == null ? '—' : v.toFixed(1),
-          lowerIsBetter: true
+          lowerIsBetter: true,
+          deltaFormat: v => v.toFixed(1)
         })}
         ${row('Dose (mg)', latest.dose, previous.dose, {
-          format: v => v == null ? '—' : v.toFixed(2)
+          format: v => v == null ? '—' : v.toFixed(2),
+          lowerIsBetter: null,
+          deltaFormat: v => v.toFixed(2)
         })}
         ${row('Energy',     thisStats.energy,    lastStats.energy,    { lowerIsBetter: false })}
         ${row('Appetite',   thisStats.appetite,  lastStats.appetite,  { lowerIsBetter: true  })}
         ${row('Food noise', thisStats.foodNoise, lastStats.foodNoise, { lowerIsBetter: true  })}
         ${row('Symptom burden', thisStats.burden, lastStats.burden, {
           format: v => v == null ? '—' : v.toFixed(0),
-          lowerIsBetter: true
+          lowerIsBetter: true,
+          deltaFormat: v => v.toFixed(0)
         })}
         ${row('Days logged', thisStats.daysLogged, lastStats.daysLogged, {
           format: v => String(v),
-          lowerIsBetter: false
+          lowerIsBetter: false,
+          deltaFormat: v => v.toFixed(0)
         })}
       </tbody>
     </table>
     <div class="sub" style="margin-top:10px;font-size:12px;">
       This week = ${fmtDate(thisStart)} – ${fmtDate(addDaysISO(thisEnd, -1))}.
       Last week = ${fmtDate(lastStart)} – ${fmtDate(addDaysISO(lastEnd, -1))}.
-      A green ✓ marks a change in the direction you want.
+      A green pill means the change went the way you want.
     </div>
   `;
   wrap.innerHTML = html;
@@ -675,7 +732,6 @@ function renderSiteVerdicts(){
     return;
   }
 
-  /* User overall averages — the benchmark each site is judged against */
   const allWeightDeltas = [];
   for(let i = 1; i < weeklyEntries.length; i++){
     const a = weeklyEntries[i-1].weight, b = weeklyEntries[i].weight;
@@ -687,7 +743,6 @@ function renderSiteVerdicts(){
     ? avg(dailyEntries.map(d => symptomBurden_(d)))
     : null;
 
-  /* Aggregate per site */
   const sites = {};
   weeklyEntries.forEach((w, i) => {
     if(!w.site) return;
@@ -699,7 +754,6 @@ function renderSiteVerdicts(){
     s.injections++;
     if(!s.lastDate || w.date > s.lastDate) s.lastDate = w.date;
 
-    /* Weight delta = change from this injection to the next one (effects of THIS injection) */
     if(i + 1 < weeklyEntries.length){
       const next = weeklyEntries[i+1];
       if(w.weight != null && next.weight != null){
@@ -707,7 +761,6 @@ function renderSiteVerdicts(){
       }
     }
 
-    /* Daily averages for the 7 days after this injection */
     const start = w.date;
     const end = addDaysISO(start, 7);
     dailyEntries.forEach(d => {
@@ -812,7 +865,6 @@ function renderFlags(){
   const wrap = document.getElementById('flagsWrap');
   const flags = [];
 
-  /* Rapid loss (last weekly pair) */
   if(weeklyEntries.length >= 2){
     const last = weeklyEntries[weeklyEntries.length-1];
     const prev = weeklyEntries[weeklyEntries.length-2];
@@ -828,7 +880,6 @@ function renderFlags(){
     }
   }
 
-  /* Weight plateau */
   if(weeklyEntries.length >= 4){
     const recent = weeklyEntries.slice(-4);
     const change = recent[recent.length-1].weight - recent[0].weight;
@@ -841,7 +892,6 @@ function renderFlags(){
     }
   }
 
-  /* Symptom trend (last 14 days vs prior 14 days) */
   const today = todayISO();
   const recent14 = avgBurdenInRange(addDaysISO(today, -14), addDaysISO(today, 1));
   const prior14  = avgBurdenInRange(addDaysISO(today, -28), addDaysISO(today, -14));
@@ -862,7 +912,6 @@ function renderFlags(){
     }
   }
 
-  /* Streak broken */
   if(dailyEntries.length > 0){
     const lastDate = dailyEntries[dailyEntries.length-1].date;
     const days = Math.round((new Date(today + 'T00:00:00') - new Date(lastDate + 'T00:00:00')) / 86400000);
