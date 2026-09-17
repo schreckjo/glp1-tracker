@@ -1,0 +1,1353 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<style>
+  :root{
+    --paper:#F6F3EA;
+    --ink:#26332E;
+    --ink-soft:#5C6B63;
+    --line:#DDD6C4;
+    --card:#FFFDF8;
+    --sage:#6B8F71;
+    --sage-soft:#DCE7DC;
+    --amber:#C79A46;
+    --amber-soft:#F1E3C4;
+    --rose:#B5675A;
+    --rose-soft:#F0DAD5;
+    --radius:4px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--paper),var(--paper)),
+      repeating-linear-gradient(0deg, rgba(38,51,46,0.05) 0, rgba(38,51,46,0.05) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(90deg, rgba(38,51,46,0.05) 0, rgba(38,51,46,0.05) 1px, transparent 1px, transparent 28px);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    padding:28px 20px 60px;
+  }
+  .wrap{max-width:900px;margin:0 auto;}
+  h1,h2,h3{font-family:'Roboto Slab', serif; margin:0; font-weight:700;}
+  h1{font-size:26px; letter-spacing:-0.01em;}
+  h2{font-size:16px; margin-bottom:14px;}
+  .tag{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.02em;
+    padding:2px 7px; border-radius:10px; margin-left:8px; vertical-align:middle; position:relative; top:-2px;
+  }
+  .tag.daily{background:var(--sage-soft); color:#3E5445;}
+  .tag.weekly{background:var(--amber-soft); color:#7A5C24;}
+  .sub{color:var(--ink-soft); font-size:14px; margin-top:4px;}
+  header{
+    border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:20px;
+  }
+  .stats{display:flex; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--card); margin-top:14px; width:fit-content;}
+  .stat{padding:10px 18px; text-align:center; border-right:1px solid var(--line); min-width:88px;}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:'IBM Plex Mono', monospace; font-size:20px; font-weight:600; display:block;}
+  .stat .label{font-size:11px; color:var(--ink-soft); text-transform:lowercase;}
+
+  .menu{display:flex; gap:10px; margin-bottom:26px;}
+  .menu-btn{
+    flex:1; padding:14px 10px; border:1px solid var(--line); background:var(--card); border-radius:var(--radius);
+    font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px; cursor:pointer; color:var(--ink-soft);
+    transition:background 0.15s, color 0.15s, border-color 0.15s, transform 0.08s;
+  }
+  .menu-btn:hover{border-color:var(--ink-soft);}
+  .menu-btn.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+  .card + .card{margin-top:20px;}
+  .card.narrow{max-width:460px; margin:0 auto;}
+
+  label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:4px; margin-top:14px;}
+  label:first-of-type{margin-top:0;}
+  input[type=date], input[type=number], select, textarea{
+    width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:var(--radius);
+    background:#fff; font-family:'IBM Plex Sans', sans-serif; font-size:14px; color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:50px;}
+  .sym-row{display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px dashed var(--line);}
+  .sym-row:last-child{border-bottom:none;}
+  .sym-name{font-size:13px;}
+  .sev-btns{display:flex; gap:4px;}
+  .sev-btn{
+    width:26px; height:26px; border-radius:50%; border:1px solid var(--line); background:#fff;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; cursor:pointer; color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform 0.08s;
+  }
+  .sev-btn.active[data-sev="0"]{background:var(--sage-soft); border-color:var(--sage); color:var(--ink);}
+  .sev-btn.active[data-sev="1"]{background:var(--amber-soft); border-color:var(--amber); color:var(--ink);}
+  .sev-btn.active[data-sev="2"]{background:#EBC58B; border-color:var(--amber); color:var(--ink);}
+  .sev-btn.active[data-sev="3"]{background:var(--rose-soft); border-color:var(--rose); color:var(--ink);}
+  .save-btn{
+    margin-top:18px; width:100%; padding:11px; background:var(--ink); color:var(--paper); border:none;
+    border-radius:var(--radius); font-family:'IBM Plex Sans', sans-serif; font-weight:600; font-size:14px; cursor:pointer;
+    transition:opacity 0.1s, transform 0.08s;
+  }
+  .save-btn:hover{opacity:0.9;}
+  .save-btn:disabled{opacity:0.55; cursor:default;}
+  .save-btn.weekly-btn{background:#7A5C24;}
+  .msg{font-size:12px; margin-top:8px; min-height:16px;}
+  .msg.ok{color:var(--sage);}
+  .msg.err{color:var(--rose);}
+  canvas{max-height:260px;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th,td{text-align:left; padding:8px 6px; border-bottom:1px solid var(--line);}
+  th{color:var(--ink-soft); font-weight:500; font-size:11px; text-transform:lowercase;}
+  td.num{font-family:'IBM Plex Mono', monospace;}
+  .del{cursor:pointer; border:1px solid var(--rose); background:#fff; border-radius:3px; font-size:11px; padding:2px 6px; color:var(--rose);}
+  .empty{color:var(--ink-soft); font-size:13px; padding:20px 0; text-align:center;}
+  .divider{border:none; border-top:1px solid var(--line); margin:22px 0;}
+  .tablewrap{overflow-x:auto;}
+  .check-row{display:flex; gap:18px; margin-top:16px; flex-wrap:wrap;}
+  .check-label{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink); margin:0; cursor:pointer;}
+  .check-label input[type=checkbox]{width:16px; height:16px; accent-color:var(--sage); cursor:pointer;}
+
+  .obs-list{margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);}
+  .obs-list h3{font-size:14px; margin-bottom:12px;}
+  .obs-item{padding:10px 0; border-bottom:1px dashed var(--line);}
+  .obs-item:last-child{border-bottom:none;}
+  .obs-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:3px;}
+  .obs-text{font-size:13px; line-height:1.5; white-space:pre-wrap; color:var(--ink); overflow-wrap:break-word;}
+
+  .chart-caption{font-size:11px; color:var(--ink-soft); margin-top:8px; min-height:14px; line-height:1.4;}
+  .chart-caption.warn{color:var(--rose);}
+
+  /* ---------- Week over week ---------- */
+  .wow-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .wow-table th{
+    color:var(--ink-soft); font-weight:500; font-size:11px; text-transform:lowercase;
+    padding:6px 8px; text-align:left; border-bottom:1px solid var(--line);
+  }
+  .wow-table th:not(:first-child), .wow-table td.num{text-align:right;}
+  .wow-table td{padding:9px 8px; border-bottom:1px solid var(--line);}
+  .wow-table tr:last-child td{border-bottom:none;}
+  .wow-table td.num{font-family:'IBM Plex Mono', monospace; white-space:nowrap;}
+  .wow-table .delta{font-size:11px; color:var(--sage); margin-left:5px; font-weight:600;}
+
+  /* ---------- Site verdict cards ---------- */
+  .verdict-card{
+    background:#FBF9F2; border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:10px;
+  }
+  .verdict-card.verdict-working{border-left:3px solid var(--sage);}
+  .verdict-card.verdict-mixed{border-left:3px solid var(--amber);}
+  .verdict-card.verdict-lagging{border-left:3px solid var(--rose);}
+  .verdict-card.verdict-none{border-left:3px solid var(--line); opacity:0.85;}
+
+  .verdict-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
+  .verdict-site{font-weight:600; font-size:14px;}
+  .verdict-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:11px;
+    padding:3px 9px; border-radius:10px; white-space:nowrap;
+  }
+  .verdict-working .verdict-badge{background:var(--sage-soft); color:#3E5445;}
+  .verdict-mixed   .verdict-badge{background:var(--amber-soft); color:#7A5C24;}
+  .verdict-lagging .verdict-badge{background:var(--rose-soft); color:#7B3A2E;}
+  .verdict-none    .verdict-badge{background:var(--line); color:var(--ink-soft);}
+
+  .verdict-signals{display:flex; flex-direction:column; gap:5px; margin-bottom:4px;}
+  .verdict-signal{
+    display:grid; grid-template-columns: 1fr auto auto; gap:10px; align-items:baseline;
+    font-size:12px;
+  }
+  .verdict-signal .vs-label{color:var(--ink-soft);}
+  .verdict-signal .vs-value{font-family:'IBM Plex Mono', monospace; font-weight:600;}
+  .verdict-signal .vs-compare{color:var(--ink-soft); font-size:11px; min-width:110px; text-align:right;}
+  .verdict-signal.better .vs-value{color:var(--sage);}
+  .verdict-signal.worse .vs-value{color:var(--ink);}
+
+  .verdict-meta{font-size:11px; color:var(--ink-soft); margin-top:8px;}
+
+  .verdict-note{
+    font-size:11px; color:var(--ink-soft); line-height:1.5; margin-top:14px;
+    padding-top:12px; border-top:1px dashed var(--line);
+  }
+
+  /* ---------- Flags ---------- */
+  .flag{
+    display:flex; gap:10px; padding:12px 14px; border-radius:var(--radius);
+    margin-bottom:8px; font-size:13px; line-height:1.5;
+  }
+  .flag:last-child{margin-bottom:0;}
+  .flag-icon{font-size:15px; flex-shrink:0; line-height:1.3;}
+  .flag-text{flex:1;}
+  .flag-warn{background:var(--rose-soft); color:#5A2D24;}
+  .flag-good{background:var(--sage-soft); color:#2F4237;}
+  .flag-info{background:var(--amber-soft); color:#6B4E1E;}
+
+  @media (max-width: 600px){
+    body{padding:16px 14px 48px;}
+
+    h1{font-size:22px;}
+    h2{font-size:15px;}
+    .sub{font-size:13px; line-height:1.4;}
+    header{padding-bottom:14px; margin-bottom:18px;}
+
+    .stats{width:100%; margin-top:12px;}
+    .stat{flex:1 1 0; min-width:0; padding:10px 6px;}
+    .stat .num{font-size:17px;}
+    .stat .label{font-size:10px;}
+
+    .menu{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px;}
+    .menu-btn{padding:12px 8px; font-size:13px; touch-action:manipulation;}
+
+    .card{padding:16px;}
+    .card + .card{margin-top:14px;}
+
+    input[type=date], input[type=number], select, textarea{
+      font-size:16px;
+      padding:10px 12px;
+    }
+
+    .sym-row{padding:9px 0;}
+    .sym-name{font-size:14px;}
+    .sev-btn{width:36px; height:36px; font-size:13px; touch-action:manipulation;}
+
+    .save-btn{padding:14px; font-size:15px; touch-action:manipulation;}
+
+    .check-row{gap:14px;}
+    .check-label{font-size:14px;}
+    .check-label input[type=checkbox]{width:18px; height:18px;}
+
+    .tablewrap{-webkit-overflow-scrolling:touch;}
+    #dailyTableWrap table{min-width:720px;}
+    #weeklyTableWrap table{min-width:460px;}
+
+    .del{padding:5px 9px; font-size:12px; touch-action:manipulation;}
+
+    canvas{max-height:220px;}
+
+    .wow-table{font-size:12px;}
+    .wow-table th, .wow-table td{padding:7px 5px;}
+
+    .verdict-signal{grid-template-columns: 1fr auto; font-size:11px;}
+    .verdict-signal .vs-compare{display:none;}
+
+    .menu-btn:active{transform:scale(0.98);}
+    .save-btn:active{transform:scale(0.99);}
+    .sev-btn:active{transform:scale(0.94);}
+    .del:active{background:var(--rose-soft);}
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>GLP-1 Log</h1>
+    <div class="sub">Daily check-ins for symptoms, energy &amp; food noise — weekly check-ins for weight &amp; dosage</div>
+    <div class="stats" id="statsBar"></div>
+  </header>
+
+  <nav class="menu">
+    <button class="menu-btn active" data-view="daily">Log Today</button>
+    <button class="menu-btn" data-view="weekly">Log This Week</button>
+    <button class="menu-btn" data-view="reports">View Reports</button>
+    <button class="menu-btn" data-view="history">Log History</button>
+  </nav>
+
+  <section id="view-daily" class="view active">
+    <div class="card narrow">
+      <h2>Daily check-in <span class="tag daily">every day</span></h2>
+      <label>Date</label>
+      <input type="date" id="d-date">
+
+      <label>Energy (1 low – 5 high)</label>
+      <input type="number" inputmode="numeric" min="1" max="5" id="d-energy" placeholder="1–5">
+
+      <label>Appetite (1 no appetite – 5 very hungry)</label>
+      <input type="number" inputmode="numeric" min="1" max="5" id="d-appetite" placeholder="1–5">
+
+      <label>Food noise (1 none – 5 constant thoughts about food)</label>
+      <input type="number" inputmode="numeric" min="1" max="5" id="d-foodnoise" placeholder="1–5">
+
+      <label>Protein (grams)</label>
+      <input type="number" inputmode="numeric" min="0" id="d-protein" placeholder="e.g. 96">
+
+      <div class="check-row">
+        <label class="check-label"><input type="checkbox" id="d-period"> Had period today</label>
+        <label class="check-label"><input type="checkbox" id="d-movement"> Movement (walk, light activity)</label>
+        <label class="check-label"><input type="checkbox" id="d-strength"> Strength training</label>
+      </div>
+
+      <label style="margin-top:18px;">Symptoms today</label>
+      <div id="symList"></div>
+
+      <label>Notes</label>
+      <textarea id="d-notes" placeholder="Cravings, sleep, anything else worth remembering..."></textarea>
+
+      <button class="save-btn" id="saveDailyBtn">Save daily check-in</button>
+      <div class="msg" id="dailyMsg"></div>
+    </div>
+  </section>
+
+  <section id="view-weekly" class="view">
+    <div class="card narrow">
+      <h2>Weekly check-in <span class="tag weekly">injection day</span></h2>
+      <label>Date</label>
+      <input type="date" id="w-date">
+
+      <label>Dosage this week (mg)</label>
+      <input type="number" inputmode="decimal" step="0.05" min="0" id="w-dose" value="2.5">
+
+      <label>Weight</label>
+      <input type="number" inputmode="decimal" step="0.1" id="w-weight" placeholder="e.g. 182.4">
+
+      <label>Injection site</label>
+      <select id="w-site">
+        <option value="">—</option>
+        <option>Abdomen — upper left</option>
+        <option>Abdomen — upper right</option>
+        <option>Abdomen — lower left</option>
+        <option>Abdomen — lower right</option>
+        <option>Thigh — left</option>
+        <option>Thigh — right</option>
+        <option>Upper arm — left</option>
+        <option>Upper arm — right</option>
+      </select>
+
+      <label>Observations from the previous week</label>
+      <textarea id="w-observations" placeholder="Anything worth noting about the week that just passed — side effects, appetite changes, energy, sleep, cravings..."></textarea>
+
+      <button class="save-btn weekly-btn" id="saveWeeklyBtn">Save weekly check-in</button>
+      <div class="msg" id="weeklyMsg"></div>
+    </div>
+  </section>
+
+  <section id="view-reports" class="view">
+    <div class="card">
+      <h2>This week vs last week <span class="tag weekly">weekly</span></h2>
+      <div class="tablewrap" id="wowWrap"></div>
+    </div>
+
+    <div class="card">
+      <h2>Injection site effectiveness <span class="tag weekly">weekly</span></h2>
+      <div class="sub" style="margin-bottom:14px;">Each site is judged on the three things that matter: are you losing weight, are symptoms low, is your energy good.</div>
+      <div id="siteVerdictsWrap"></div>
+      <div class="verdict-note">
+        <strong>How this works.</strong> For each site, average the weight change, symptom burden, and energy across the days that followed each injection.
+        Each value is compared against your own overall average. Two or three signals better than your average → <strong>Working well</strong>.
+        One signal better → <strong>Mixed</strong>. None better → <strong>Lagging</strong>. Sites need at least 2 injections before a verdict is shown.
+        <br><br>
+        <em>Caveat:</em> a good week makes whatever site you used look good. Trust the ranking after 4–6 weeks of rotating between sites.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Worth attention <span class="tag daily">as needed</span></h2>
+      <div id="flagsWrap"></div>
+    </div>
+
+    <div class="card">
+      <h2>Weight, dosage &amp; trend <span class="tag weekly">weekly</span></h2>
+      <canvas id="weightChart"></canvas>
+      <div class="chart-caption" id="weightChartCaption"></div>
+    </div>
+
+    <div class="card">
+      <h2>Import data</h2>
+      <div class="sub" style="margin-bottom:14px;">Upload a filled-in CSV template to add entries in bulk. New rows are added to your existing log — nothing gets overwritten.</div>
+      <label>Daily check-ins CSV</label>
+      <input type="file" id="importDailyFile" accept=".csv">
+      <div class="msg" id="importDailyMsg"></div>
+      <label style="margin-top:20px;">Weekly check-ins CSV</label>
+      <input type="file" id="importWeeklyFile" accept=".csv">
+      <div class="msg" id="importWeeklyMsg"></div>
+    </div>
+  </section>
+
+  <section id="view-history" class="view">
+    <div class="card">
+      <h2>Weekly log</h2>
+      <div class="tablewrap" id="weeklyTableWrap"></div>
+    </div>
+    <div class="card">
+      <h2>Daily log</h2>
+      <div class="tablewrap" id="dailyTableWrap"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const API_URL   = 'https://script.google.com/macros/s/AKfycbxuDDR1AuI0AYvR9CzSW7hig09Jd6J1JenXfPzA4DSS1QW5Jl4ftlgdwpPKP3bjKOeYOw/exec';
+const API_TOKEN = '';
+const PROTEIN_GOAL = 100;
+
+/* Symptom list — Fatigue was dropped as duplicative of Energy. */
+const SYMPTOMS = ["Nausea","Constipation","Diarrhea","Headache","Reflux","Dizziness"];
+
+if (typeof Chart === 'undefined') {
+  window.Chart = function(){ return { destroy: function(){} }; };
+  console.warn('Chart.js did not load — charts will be blank, but data still saves.');
+}
+
+/* ============================================================
+   API
+   ============================================================ */
+async function unwrap_(res){
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); }
+  catch(err){
+    throw new Error('Unexpected response (HTTP ' + res.status + '). Make sure the Web App is deployed with access set to "Anyone".');
+  }
+  if(!json.ok) throw new Error(json.error || 'Unknown Apps Script error');
+  return json.data;
+}
+
+async function apiGet_(params){
+  const url = new URL(API_URL);
+  Object.keys(params || {}).forEach(k => url.searchParams.set(k, params[k]));
+  if(API_TOKEN) url.searchParams.set('token', API_TOKEN);
+  url.searchParams.set('_', Date.now());
+  const res = await fetch(url.toString(), { method:'GET', redirect:'follow' });
+  return unwrap_(res);
+}
+
+async function apiPost_(payload){
+  const body = Object.assign({}, payload);
+  if(API_TOKEN) body.token = API_TOKEN;
+  const res = await fetch(API_URL, {
+    method:'POST',
+    redirect:'follow',
+    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  });
+  return unwrap_(res);
+}
+
+const getAllData        = ()        => apiGet_({ action:'getAll' });
+const saveDailyEntry    = (entry)   => apiPost_({ action:'saveDaily',  entry: entry });
+const saveWeeklyEntry   = (entry)   => apiPost_({ action:'saveWeekly', entry: entry });
+const deleteDailyEntry  = (id)      => apiPost_({ action:'deleteDaily',  id: id });
+const deleteWeeklyEntry = (id)      => apiPost_({ action:'deleteWeekly', id: id });
+const bulkSaveDaily     = (entries) => apiPost_({ action:'bulkDaily',  entries: entries, dedupe: true });
+const bulkSaveWeekly    = (entries) => apiPost_({ action:'bulkWeekly', entries: entries, dedupe: true });
+
+
+/* ============================================================
+   State + constants
+   ============================================================ */
+const SEV_LABELS = ["None","Mild","Mod","Severe"];
+
+let dailyEntries = [];
+let weeklyEntries = [];
+let currentSymptoms = {};
+
+document.querySelectorAll('.menu-btn').forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-' + btn.dataset.view).classList.add('active');
+  };
+});
+
+function buildSymList(){
+  const wrap = document.getElementById('symList');
+  wrap.innerHTML = '';
+  SYMPTOMS.forEach(name=>{
+    currentSymptoms[name] = 0;
+    const row = document.createElement('div');
+    row.className = 'sym-row';
+    row.innerHTML = `<span class="sym-name">${name}</span><div class="sev-btns" data-sym="${name}"></div>`;
+    const btnsWrap = row.querySelector('.sev-btns');
+    SEV_LABELS.forEach((lbl, i)=>{
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sev-btn' + (i===0 ? ' active':'');
+      b.dataset.sev = i;
+      b.textContent = i;
+      b.title = lbl;
+      b.onclick = ()=>{
+        currentSymptoms[name] = i;
+        [...btnsWrap.children].forEach(c=>c.classList.remove('active'));
+        b.classList.add('active');
+      };
+      btnsWrap.appendChild(b);
+    });
+    wrap.appendChild(row);
+  });
+}
+
+function escapeHtml_(s){
+  return String(s).replace(/[&<>"']/g, c => (
+    { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+  ));
+}
+
+function showBanner_(text, isErr){
+  const bar = document.getElementById('statsBar');
+  bar.innerHTML = `<div class="stat" style="min-width:auto;text-align:left;padding:10px 14px;font-size:12px;color:${isErr ? 'var(--rose)' : 'var(--ink-soft)'}">${text}</div>`;
+}
+
+async function loadAll(){
+  if(!API_URL || API_URL.indexOf('PASTE_') === 0){
+    showBanner_('Add your Apps Script Web App URL to the API_URL constant at the top of the script.', true);
+    return;
+  }
+  try{
+    const data = await getAllData();
+    dailyEntries  = data.daily  || [];
+    weeklyEntries = data.weekly || [];
+    dailyEntries.sort((a,b)=> new Date(a.date) - new Date(b.date));
+    weeklyEntries.sort((a,b)=> new Date(a.date) - new Date(b.date));
+    renderAll();
+  }catch(err){
+    showBanner_('Could not load data: ' + err.message, true);
+    console.error(err);
+  }
+}
+
+function todayISO(){
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+}
+
+function addDaysISO(iso, days){
+  const d = new Date(iso + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function fmtDate(d){
+  if(!d) return '—';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString(undefined, {month:'short', day:'numeric'});
+}
+
+function avg(arr){
+  if(!arr || arr.length === 0) return null;
+  return arr.reduce((a,b)=>a+b,0) / arr.length;
+}
+
+function symptomBurden_(e){
+  if(!e || !e.symptoms) return 0;
+  return SYMPTOMS.reduce((sum, name) => sum + (Number(e.symptoms[name]) || 0), 0);
+}
+
+/* ============================================================
+   Render orchestration
+   ============================================================ */
+function renderAll(){
+  renderStats();
+  renderWeekOverWeek();
+  renderSiteVerdicts();
+  renderFlags();
+  renderWeightChart();
+  renderWeeklyTable();
+  renderDailyTable();
+}
+
+function renderStats(){
+  const bar = document.getElementById('statsBar');
+  if(weeklyEntries.length === 0 && dailyEntries.length === 0){
+    bar.innerHTML = `<div class="stat"><span class="num">—</span><span class="label">no entries yet</span></div>`;
+    return;
+  }
+  let changeStr = '—';
+  if(weeklyEntries.length >= 1){
+    const first = weeklyEntries[0];
+    const last = weeklyEntries[weeklyEntries.length-1];
+    const change = last.weight - first.weight;
+    if(isFinite(change)) changeStr = (change > 0 ? '+' : '') + change.toFixed(1);
+  }
+  const lastDose = [...weeklyEntries].reverse().find(e=>e.dose != null)?.dose ?? '—';
+  bar.innerHTML = `
+    <div class="stat"><span class="num">${weeklyEntries.length}</span><span class="label">weeks logged</span></div>
+    <div class="stat"><span class="num">${changeStr}</span><span class="label">weight change</span></div>
+    <div class="stat"><span class="num">${lastDose}</span><span class="label">current mg</span></div>
+  `;
+}
+
+/* ---------- Card 1: This week vs last week ---------- */
+function windowStats(startISO, endISO){
+  const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
+  const energyVals   = inRange.map(d => d.energy).filter(v => v != null);
+  const appetiteVals = inRange.map(d => d.appetite).filter(v => v != null);
+  const fnVals       = inRange.map(d => d.foodNoise).filter(v => v != null);
+  const burdenSum    = inRange.reduce((s, d) => s + symptomBurden_(d), 0);
+  return {
+    daysLogged: inRange.length,
+    energy:    avg(energyVals),
+    appetite:  avg(appetiteVals),
+    foodNoise: avg(fnVals),
+    burden:    inRange.length > 0 ? burdenSum : null
+  };
+}
+
+function renderWeekOverWeek(){
+  const wrap = document.getElementById('wowWrap');
+  if(weeklyEntries.length < 2){
+    wrap.innerHTML = '<div class="empty">Need at least 2 weekly check-ins to compare weeks.</div>';
+    return;
+  }
+
+  const latest   = weeklyEntries[weeklyEntries.length-1];
+  const previous = weeklyEntries[weeklyEntries.length-2];
+
+  const thisStart = addDaysISO(latest.date, -7);
+  const thisEnd   = latest.date;
+  const lastStart = addDaysISO(latest.date, -14);
+  const lastEnd   = addDaysISO(latest.date, -7);
+
+  const thisStats = windowStats(thisStart, thisEnd);
+  const lastStats = windowStats(lastStart, lastEnd);
+
+  const row = (label, thisVal, lastVal, opts = {}) => {
+    const { format = v => v == null ? '—' : v.toFixed(1), lowerIsBetter } = opts;
+    const thisStr = format(thisVal);
+    const lastStr = format(lastVal);
+
+    let arrow = '', tick = '';
+    if(thisVal != null && lastVal != null && thisVal !== lastVal){
+      const diff = thisVal - lastVal;
+      if(diff > 0)      arrow = '↑';
+      else if(diff < 0) arrow = '↓';
+
+      if(lowerIsBetter != null){
+        const wentRight = (diff < 0) === lowerIsBetter;
+        if(wentRight) tick = '✓';
+      }
+    }
+
+    return `<tr>
+      <td>${label}</td>
+      <td class="num">${lastStr}</td>
+      <td class="num">${thisStr}<span class="delta">${arrow}${tick}</span></td>
+    </tr>`;
+  };
+
+  const html = `
+    <table class="wow-table">
+      <thead>
+        <tr><th></th><th>Last week</th><th>This week</th></tr>
+      </thead>
+      <tbody>
+        ${row('Weight', latest.weight, previous.weight, {
+          format: v => v == null ? '—' : v.toFixed(1),
+          lowerIsBetter: true
+        })}
+        ${row('Dose (mg)', latest.dose, previous.dose, {
+          format: v => v == null ? '—' : v.toFixed(2)
+        })}
+        ${row('Energy',     thisStats.energy,    lastStats.energy,    { lowerIsBetter: false })}
+        ${row('Appetite',   thisStats.appetite,  lastStats.appetite,  { lowerIsBetter: true  })}
+        ${row('Food noise', thisStats.foodNoise, lastStats.foodNoise, { lowerIsBetter: true  })}
+        ${row('Symptom burden', thisStats.burden, lastStats.burden, {
+          format: v => v == null ? '—' : v.toFixed(0),
+          lowerIsBetter: true
+        })}
+        ${row('Days logged', thisStats.daysLogged, lastStats.daysLogged, {
+          format: v => String(v),
+          lowerIsBetter: false
+        })}
+      </tbody>
+    </table>
+    <div class="sub" style="margin-top:10px;font-size:12px;">
+      This week = ${fmtDate(thisStart)} – ${fmtDate(addDaysISO(thisEnd, -1))}.
+      Last week = ${fmtDate(lastStart)} – ${fmtDate(addDaysISO(lastEnd, -1))}.
+      A green ✓ marks a change in the direction you want.
+    </div>
+  `;
+  wrap.innerHTML = html;
+}
+
+/* ---------- Card 2: Site verdicts ---------- */
+function renderSiteVerdicts(){
+  const wrap = document.getElementById('siteVerdictsWrap');
+  if(weeklyEntries.length < 2){
+    wrap.innerHTML = '<div class="empty">Log 2+ weekly entries to compare injection sites.</div>';
+    return;
+  }
+
+  /* User overall averages — the benchmark each site is judged against */
+  const allWeightDeltas = [];
+  for(let i = 1; i < weeklyEntries.length; i++){
+    const a = weeklyEntries[i-1].weight, b = weeklyEntries[i].weight;
+    if(a != null && b != null && isFinite(a) && isFinite(b)) allWeightDeltas.push(b - a);
+  }
+  const userAvgWeightDelta = avg(allWeightDeltas);
+  const userAvgEnergy = avg(dailyEntries.map(d => d.energy).filter(v => v != null));
+  const userAvgBurden = dailyEntries.length > 0
+    ? avg(dailyEntries.map(d => symptomBurden_(d)))
+    : null;
+
+  /* Aggregate per site */
+  const sites = {};
+  weeklyEntries.forEach((w, i) => {
+    if(!w.site) return;
+    if(!sites[w.site]) sites[w.site] = {
+      injections: 0, lastDate: null,
+      weightDeltas: [], energies: [], burdens: []
+    };
+    const s = sites[w.site];
+    s.injections++;
+    if(!s.lastDate || w.date > s.lastDate) s.lastDate = w.date;
+
+    /* Weight delta = change from this injection to the next one (effects of THIS injection) */
+    if(i + 1 < weeklyEntries.length){
+      const next = weeklyEntries[i+1];
+      if(w.weight != null && next.weight != null){
+        s.weightDeltas.push(next.weight - w.weight);
+      }
+    }
+
+    /* Daily averages for the 7 days after this injection */
+    const start = w.date;
+    const end = addDaysISO(start, 7);
+    dailyEntries.forEach(d => {
+      if(d.date < start || d.date >= end) return;
+      if(d.energy != null) s.energies.push(d.energy);
+      s.burdens.push(symptomBurden_(d));
+    });
+  });
+
+  const sitesArr = Object.entries(sites).map(([site, s]) => {
+    const avgWD = avg(s.weightDeltas);
+    const avgE  = avg(s.energies);
+    const avgB  = avg(s.burdens);
+
+    const signals = [];
+    let better = 0, total = 0;
+
+    if(avgWD != null && userAvgWeightDelta != null){
+      const isBetter = avgWD < userAvgWeightDelta;
+      if(isBetter) better++;
+      total++;
+      signals.push({ label:'Weight change', value:avgWD, userAvg:userAvgWeightDelta, better:isBetter, unit:'lb', lowerIsBetter:true });
+    }
+    if(avgE != null && userAvgEnergy != null){
+      const isBetter = avgE > userAvgEnergy;
+      if(isBetter) better++;
+      total++;
+      signals.push({ label:'Energy', value:avgE, userAvg:userAvgEnergy, better:isBetter, unit:'', lowerIsBetter:false });
+    }
+    if(avgB != null && userAvgBurden != null){
+      const isBetter = avgB < userAvgBurden;
+      if(isBetter) better++;
+      total++;
+      signals.push({ label:'Symptom burden', value:avgB, userAvg:userAvgBurden, better:isBetter, unit:'', lowerIsBetter:true });
+    }
+
+    let verdict;
+    if(s.injections < 2 || total < 2) verdict = 'none';
+    else if(better >= 2)             verdict = 'working';
+    else if(better === 1)            verdict = 'mixed';
+    else                             verdict = 'lagging';
+
+    return { site, injections: s.injections, lastDate: s.lastDate, signals, verdict };
+  });
+
+  const order = { working:0, mixed:1, lagging:2, none:3 };
+  sitesArr.sort((a,b) => {
+    const d = order[a.verdict] - order[b.verdict];
+    return d !== 0 ? d : b.injections - a.injections;
+  });
+
+  const verdictLabel = {
+    working: '✓ Working well',
+    mixed:   '~ Mixed',
+    lagging: '⚠ Lagging',
+    none:    '· Not enough data'
+  };
+  const verdictClass = {
+    working: 'verdict-working',
+    mixed:   'verdict-mixed',
+    lagging: 'verdict-lagging',
+    none:    'verdict-none'
+  };
+
+  const cards = sitesArr.map(v => {
+    const sigsHtml = v.signals.map(sig => {
+      const vStr = (sig.value >= 0 ? '+' : '') + sig.value.toFixed(2) + (sig.unit ? ' ' + sig.unit : '');
+      const uStr = (sig.userAvg >= 0 ? '+' : '') + sig.userAvg.toFixed(2) + (sig.unit ? ' ' + sig.unit : '');
+      return `<div class="verdict-signal ${sig.better ? 'better' : 'worse'}">
+        <span class="vs-label">${sig.label}</span>
+        <span class="vs-value">${vStr}</span>
+        <span class="vs-compare">your avg: ${uStr}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="verdict-card ${verdictClass[v.verdict]}">
+      <div class="verdict-head">
+        <div class="verdict-site">${escapeHtml_(v.site)}</div>
+        <div class="verdict-badge">${verdictLabel[v.verdict]}</div>
+      </div>
+      ${v.signals.length ? `<div class="verdict-signals">${sigsHtml}</div>` : ''}
+      <div class="verdict-meta">${v.injections} injection${v.injections === 1 ? '' : 's'} · last used ${fmtDate(v.lastDate)}</div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML = cards;
+}
+
+/* ---------- Card 3: Worth attention ---------- */
+function avgBurdenInRange(startISO, endISO){
+  let sum = 0, n = 0;
+  dailyEntries.forEach(d => {
+    if(d.date >= startISO && d.date < endISO){
+      sum += symptomBurden_(d);
+      n++;
+    }
+  });
+  return n > 0 ? sum / n : null;
+}
+
+function renderFlags(){
+  const wrap = document.getElementById('flagsWrap');
+  const flags = [];
+
+  /* Rapid loss (last weekly pair) */
+  if(weeklyEntries.length >= 2){
+    const last = weeklyEntries[weeklyEntries.length-1];
+    const prev = weeklyEntries[weeklyEntries.length-2];
+    if(last.weight != null && prev.weight != null && prev.weight > 0){
+      const pct = (prev.weight - last.weight) / prev.weight;
+      if(pct > 0.01){
+        flags.push({
+          icon: '⚠',
+          type: 'warn',
+          text: `You lost <strong>${(prev.weight - last.weight).toFixed(1)} lb</strong> this week — ${(pct*100).toFixed(1)}% of body weight. Fast loss can eat into muscle. Keep protein up and consider strength training.`
+        });
+      }
+    }
+  }
+
+  /* Weight plateau */
+  if(weeklyEntries.length >= 4){
+    const recent = weeklyEntries.slice(-4);
+    const change = recent[recent.length-1].weight - recent[0].weight;
+    if(change > -0.5){
+      flags.push({
+        icon: '·',
+        type: 'info',
+        text: `Weight has been essentially flat for 3 weeks. Plateauing is normal — worth a look if it persists past 4 weeks.`
+      });
+    }
+  }
+
+  /* Symptom trend (last 14 days vs prior 14 days) */
+  const today = todayISO();
+  const recent14 = avgBurdenInRange(addDaysISO(today, -14), addDaysISO(today, 1));
+  const prior14  = avgBurdenInRange(addDaysISO(today, -28), addDaysISO(today, -14));
+  if(recent14 != null && prior14 != null && prior14 > 0){
+    const change = (recent14 - prior14) / prior14;
+    if(change <= -0.2){
+      flags.push({
+        icon: '✓',
+        type: 'good',
+        text: `Symptom burden has been trending down over the last two weeks. Whatever you're doing seems to be working.`
+      });
+    } else if(change >= 0.2){
+      flags.push({
+        icon: '⚠',
+        type: 'warn',
+        text: `Symptom burden has been trending up over the last two weeks. Might be worth a closer look — dose change, food, cycle?`
+      });
+    }
+  }
+
+  /* Streak broken */
+  if(dailyEntries.length > 0){
+    const lastDate = dailyEntries[dailyEntries.length-1].date;
+    const days = Math.round((new Date(today + 'T00:00:00') - new Date(lastDate + 'T00:00:00')) / 86400000);
+    if(days >= 3){
+      flags.push({
+        icon: '📝',
+        type: 'info',
+        text: `Last daily check-in was ${days} days ago. A quick log keeps the data useful.`
+      });
+    }
+  }
+
+  if(flags.length === 0){
+    wrap.innerHTML = '<div class="empty" style="padding:14px 0;">Nothing needs your attention right now. Keep logging.</div>';
+    return;
+  }
+
+  wrap.innerHTML = flags.map(f =>
+    `<div class="flag flag-${f.type}">
+      <span class="flag-icon">${f.icon}</span>
+      <div class="flag-text">${f.text}</div>
+    </div>`
+  ).join('');
+}
+
+/* ---------- Card 4: Weight chart ---------- */
+let weightChartInstance = null;
+function renderWeightChart(){
+  const canvas = document.getElementById('weightChart');
+  const ctx = canvas.getContext('2d');
+  const capEl = document.getElementById('weightChartCaption');
+  canvas.parentElement.querySelector('.empty')?.remove();
+  if(weightChartInstance) weightChartInstance.destroy();
+  capEl.textContent = '';
+  capEl.className = 'chart-caption';
+
+  if(weeklyEntries.length === 0){
+    canvas.style.display = 'none';
+    const div = document.createElement('div');
+    div.className = 'empty';
+    div.textContent = 'Log your first weekly check-in to see the trend.';
+    canvas.parentElement.appendChild(div);
+    return;
+  }
+  canvas.style.display = 'block';
+  const labels = weeklyEntries.map(e=>fmtDate(e.date));
+  const weights = weeklyEntries.map(e=>e.weight);
+
+  const rolling = weights.map((_, i) => {
+    const slice = weights.slice(Math.max(0, i - 3), i + 1).filter(v => v != null && isFinite(v));
+    if(slice.length < 2) return null;
+    return slice.reduce((a,b)=>a+b,0) / slice.length;
+  });
+
+  const fastLossIdx = new Set();
+  for(let i = 1; i < weights.length; i++){
+    const prev = weights[i-1], curr = weights[i];
+    if(prev != null && curr != null && prev > 0 && (prev - curr) / prev > 0.01) fastLossIdx.add(i);
+  }
+
+  const doseChanges = [];
+  for(let i = 1; i < weeklyEntries.length; i++){
+    const a = weeklyEntries[i-1].dose, b = weeklyEntries[i].dose;
+    if(a != null && b != null && a !== b) doseChanges.push({ index: i, dose: b });
+  }
+
+  const pointColors = weights.map((_, i) => fastLossIdx.has(i) ? '#B5675A' : '#6B8F71');
+  const pointRadii  = weights.map((_, i) => fastLossIdx.has(i) ? 5 : 3);
+
+  weightChartInstance = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        { type:'line', label:'Weight', data: weights, borderColor:'#6B8F71', backgroundColor:'#6B8F71',
+          yAxisID:'y', tension:0.25, pointRadius: pointRadii, pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors, borderWidth:2 },
+        { type:'line', label:'4-week average', data: rolling, borderColor:'#6B8F71', backgroundColor:'transparent',
+          yAxisID:'y', tension:0.3, pointRadius:0, borderWidth:1.5, borderDash:[5,3], spanGaps:true },
+        { type:'line', label:'Dosage (mg)', data: weeklyEntries.map(e=>e.dose), borderColor:'#C79A46', backgroundColor:'#C79A46',
+          yAxisID:'y1', stepped:true, pointRadius:3, borderWidth:2, borderDash:[4,3] }
+      ]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:true,
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{position:'bottom', labels:{font:{family:'IBM Plex Sans', size:11}, boxWidth:12}},
+        tooltip:{
+          callbacks:{
+            afterBody: (items) => {
+              const i = items[0].dataIndex;
+              const out = [];
+              if(fastLossIdx.has(i)) out.push('⚠ >1% loss this week');
+              return out;
+            }
+          }
+        }
+      },
+      scales:{
+        y:{ position:'left', title:{display:true, text:'Weight', font:{family:'IBM Plex Sans', size:11}}, grid:{color:'#EEE8D8'} },
+        y1:{ position:'right', title:{display:true, text:'mg', font:{family:'IBM Plex Sans', size:11}}, grid:{display:false} },
+        x:{ grid:{color:'#EEE8D8'}, ticks:{autoSkip:true, maxTicksLimit:7, maxRotation:0} }
+      }
+    },
+    plugins: [{
+      id: 'doseMarkers',
+      afterDatasetsDraw(chart){
+        const { ctx, chartArea, scales: { x } } = chart;
+        if(!x || !chartArea) return;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(199, 154, 70, 0.45)';
+        ctx.setLineDash([4, 3]);
+        ctx.lineWidth = 1;
+        doseChanges.forEach(dc => {
+          const xPos = x.getPixelForValue(dc.index);
+          if(xPos < chartArea.left || xPos > chartArea.right) return;
+          ctx.beginPath();
+          ctx.moveTo(xPos, chartArea.top);
+          ctx.lineTo(xPos, chartArea.bottom);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+    }]
+  });
+
+  if(fastLossIdx.size > 0){
+    capEl.className = 'chart-caption warn';
+    capEl.textContent = `⚠ ${fastLossIdx.size} week${fastLossIdx.size === 1 ? '' : 's'} exceeded 1% weight loss.`;
+  } else if(weeklyEntries.length >= 2){
+    capEl.textContent = 'No weeks flagged for rapid loss.';
+  }
+}
+
+/* ---------- Log tables ---------- */
+function renderWeeklyTable(){
+  const wrap = document.getElementById('weeklyTableWrap');
+  if(weeklyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No weekly check-ins yet.</div>'; return; }
+  const reversed = [...weeklyEntries].reverse();
+
+  const rows = reversed.map(e=>`
+    <tr>
+      <td>${fmtDate(e.date)}</td>
+      <td class="num">${e.dose ?? '—'}</td>
+      <td class="num">${e.weight ?? '—'}</td>
+      <td>${e.site ?? '—'}</td>
+      <td><span class="del" data-id="${e.id}">remove</span></td>
+    </tr>`).join('');
+
+  const withObs = reversed.filter(e => e.observations && String(e.observations).trim());
+  const obsBlock = withObs.length
+    ? `<div class="obs-list">
+        <h3>Observations</h3>
+        ${withObs.map(e => `
+          <div class="obs-item">
+            <div class="obs-date">${fmtDate(e.date)}</div>
+            <div class="obs-text">${escapeHtml_(e.observations)}</div>
+          </div>`).join('')}
+      </div>`
+    : '';
+
+  wrap.innerHTML = `<table>
+    <tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th></th></tr>
+    ${rows}
+  </table>${obsBlock}`;
+
+  wrap.querySelectorAll('.del').forEach(el=>{
+    el.onclick = async ()=>{
+      const id = el.dataset.id;
+      el.textContent = '…';
+      try{
+        await deleteWeeklyEntry(id);
+        weeklyEntries = weeklyEntries.filter(e=>e.id !== id);
+        renderAll();
+      }catch(err){
+        alert('Could not delete: ' + err.message);
+        el.textContent = 'remove';
+      }
+    };
+  });
+}
+
+function renderDailyTable(){
+  const wrap = document.getElementById('dailyTableWrap');
+  if(dailyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No daily check-ins yet.</div>'; return; }
+  const reversed = [...dailyEntries].reverse();
+
+  const rows = reversed.map(e=>{
+    const topSym = Object.entries(e.symptoms||{})
+      .filter(([k,v]) => v > 0 && SYMPTOMS.includes(k))
+      .sort((a,b)=>b[1]-a[1])[0];
+    const proteinTxt = e.protein != null ? Math.round(e.protein) + ' g' : '—';
+    return `<tr>
+      <td>${fmtDate(e.date)}</td>
+      <td class="num">${e.energy ?? '—'}</td>
+      <td class="num">${e.appetite ?? '—'}</td>
+      <td class="num">${e.foodNoise ?? '—'}</td>
+      <td class="num">${proteinTxt}</td>
+      <td>${e.period ? 'Yes' : '—'}</td>
+      <td>${e.movement ? 'Yes' : '—'}</td>
+      <td>${e.strength ? 'Yes' : '—'}</td>
+      <td>${topSym ? topSym[0] + ' (' + SEV_LABELS[topSym[1]] + ')' : '—'}</td>
+      <td><span class="del" data-id="${e.id}">remove</span></td>
+    </tr>`;
+  }).join('');
+
+  const withNotes = reversed.filter(e => e.notes && String(e.notes).trim());
+  const notesBlock = withNotes.length
+    ? `<div class="obs-list">
+        <h3>Daily notes</h3>
+        ${withNotes.map(e => `
+          <div class="obs-item">
+            <div class="obs-date">${fmtDate(e.date)}</div>
+            <div class="obs-text">${escapeHtml_(e.notes)}</div>
+          </div>`).join('')}
+      </div>`
+    : '';
+
+  wrap.innerHTML = `<table>
+    <tr><th>Date</th><th>Energy</th><th>Appetite</th><th>Food noise</th><th>Protein</th><th>Period</th><th>Movement</th><th>Strength</th><th>Top symptom</th><th></th></tr>
+    ${rows}
+  </table>${notesBlock}`;
+
+  wrap.querySelectorAll('.del').forEach(el=>{
+    el.onclick = async ()=>{
+      const id = el.dataset.id;
+      el.textContent = '…';
+      try{
+        await deleteDailyEntry(id);
+        dailyEntries = dailyEntries.filter(e=>e.id !== id);
+        renderAll();
+      }catch(err){
+        alert('Could not delete: ' + err.message);
+        el.textContent = 'remove';
+      }
+    };
+  });
+}
+
+/* ============================================================
+   Save handlers
+   ============================================================ */
+document.getElementById('saveDailyBtn').onclick = async ()=>{
+  const date      = document.getElementById('d-date').value;
+  const energy    = parseInt(document.getElementById('d-energy').value, 10);
+  const appetite  = parseInt(document.getElementById('d-appetite').value, 10);
+  const foodNoise = parseInt(document.getElementById('d-foodnoise').value, 10);
+  const protein   = parseInt(document.getElementById('d-protein').value, 10);
+  const period    = document.getElementById('d-period').checked;
+  const movement  = document.getElementById('d-movement').checked;
+  const strength  = document.getElementById('d-strength').checked;
+  const notes     = document.getElementById('d-notes').value.trim();
+  const msg = document.getElementById('dailyMsg');
+  const btn = document.getElementById('saveDailyBtn');
+
+  if(!date){
+    msg.textContent = 'Date is required.';
+    msg.className = 'msg err';
+    return;
+  }
+
+  const entry = {
+    id: 'd' + Date.now().toString(),
+    date,
+    mood: null,
+    energy:    isNaN(energy)    ? null : energy,
+    appetite:  isNaN(appetite)  ? null : appetite,
+    foodNoise: isNaN(foodNoise) ? null : foodNoise,
+    protein:   isNaN(protein)   ? null : protein,
+    period, movement, strength,
+    notes: notes || null,
+    symptoms: {...currentSymptoms}
+  };
+
+  btn.disabled = true;
+  msg.textContent = 'Saving…';
+  msg.className = 'msg';
+
+  try{
+    await saveDailyEntry(entry);
+    dailyEntries.push(entry);
+    dailyEntries.sort((a,b)=> new Date(a.date) - new Date(b.date));
+    renderAll();
+
+    msg.textContent = 'Saved to your sheet.';
+    msg.className = 'msg ok';
+
+    ['d-energy','d-appetite','d-foodnoise','d-protein','d-notes'].forEach(id => document.getElementById(id).value = '');
+    ['d-period','d-movement','d-strength'].forEach(id => document.getElementById(id).checked = false);
+    buildSymList();
+  }catch(e){
+    msg.textContent = 'Could not save: ' + e.message;
+    msg.className = 'msg err';
+  }finally{
+    btn.disabled = false;
+  }
+};
+
+document.getElementById('saveWeeklyBtn').onclick = async ()=>{
+  const date = document.getElementById('w-date').value;
+  const dose = parseFloat(document.getElementById('w-dose').value);
+  const weight = parseFloat(document.getElementById('w-weight').value);
+  const site = document.getElementById('w-site').value;
+  const observations = document.getElementById('w-observations').value.trim();
+  const msg = document.getElementById('weeklyMsg');
+  const btn = document.getElementById('saveWeeklyBtn');
+
+  if(!date || isNaN(weight)){
+    msg.textContent = 'Date and weight are required.';
+    msg.className = 'msg err';
+    return;
+  }
+
+  const entry = {
+    id: 'w' + Date.now().toString(),
+    date,
+    dose: isNaN(dose) ? null : dose,
+    weight,
+    site: site || null,
+    observations: observations || null
+  };
+
+  btn.disabled = true;
+  msg.textContent = 'Saving…';
+  msg.className = 'msg';
+
+  try{
+    await saveWeeklyEntry(entry);
+    weeklyEntries.push(entry);
+    weeklyEntries.sort((a,b)=> new Date(a.date) - new Date(b.date));
+    renderAll();
+
+    msg.textContent = 'Saved to your sheet.';
+    msg.className = 'msg ok';
+
+    document.getElementById('w-dose').value = '2.5';
+    document.getElementById('w-weight').value = '';
+    document.getElementById('w-site').value = '';
+    document.getElementById('w-observations').value = '';
+  }catch(e){
+    msg.textContent = 'Could not save: ' + e.message;
+    msg.className = 'msg err';
+  }finally{
+    btn.disabled = false;
+  }
+};
+
+/* ============================================================
+   CSV import
+   ============================================================ */
+function parseCSV(text){
+  const lines = text.replace(/\r/g,'').split('\n').filter(l=>l.trim().length>0);
+  if(lines.length < 2) return [];
+  const splitLine = (line)=>{
+    const out = []; let cur=''; let inQuotes=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch === '"'){ inQuotes = !inQuotes; }
+      else if(ch === ',' && !inQuotes){ out.push(cur); cur=''; }
+      else{ cur += ch; }
+    }
+    out.push(cur);
+    return out.map(s=>s.trim());
+  };
+  const headers = splitLine(lines[0]).map(h=>h.toLowerCase());
+  return lines.slice(1).map(line=>{
+    const vals = splitLine(line);
+    const row = {};
+    headers.forEach((h,i)=>{ row[h] = vals[i] !== undefined ? vals[i] : ''; });
+    return row;
+  });
+}
+
+function toYesBool(v){ return ['yes','y','true','1'].includes((v||'').toLowerCase()); }
+function toNumOrNull(v){ const n = parseFloat(v); return isNaN(n) ? null : n; }
+function pickKey(row, names){
+  const targets = names.map(n => n.replace(/[^a-z]/g,''));
+  return Object.keys(row).find(k => targets.indexOf(k.replace(/[^a-z]/g,'')) !== -1);
+}
+
+document.getElementById('importDailyFile').addEventListener('change', async (ev)=>{
+  const file = ev.target.files[0];
+  const msg = document.getElementById('importDailyMsg');
+  if(!file) return;
+  msg.textContent = 'Reading…';
+  msg.className = 'msg';
+
+  try{
+    const text = await file.text();
+    const rows = parseCSV(text);
+    const entries = [];
+
+    rows.forEach(row=>{
+      if(!row.date) return;
+      const symptoms = {};
+      SYMPTOMS.forEach(name=>{
+        const key = name.toLowerCase().replace(/[^a-z]+/g,'');
+        const rawKey = Object.keys(row).find(k=> k.replace(/[^a-z]+/g,'') === key);
+        symptoms[name] = rawKey ? (parseInt(row[rawKey],10) || 0) : 0;
+      });
+      const fnKey = pickKey(row, ['foodnoise','food noise']);
+      entries.push({
+        id: 'd' + Date.now().toString() + Math.random().toString(36).slice(2,7),
+        date: row.date,
+        mood: null,
+        energy:    toNumOrNull(row.energy),
+        appetite:  toNumOrNull(row.appetite),
+        foodNoise: fnKey ? toNumOrNull(row[fnKey]) : null,
+        protein:   toNumOrNull(row.protein),
+        period:    toYesBool(row.period),
+        movement:  toYesBool(row.movement),
+        strength:  toYesBool(row.strength),
+        notes: row.notes || null,
+        symptoms
+      });
+    });
+
+    if(entries.length === 0){
+      msg.textContent = 'No usable rows found — check that your CSV has a "date" column.';
+      msg.className = 'msg err';
+      ev.target.value = '';
+      return;
+    }
+
+    const result = await bulkSaveDaily(entries);
+    await loadAll();
+    msg.textContent = `Added ${result.added} daily ${result.added === 1 ? 'entry' : 'entries'}` +
+                      (result.skipped ? ` (skipped ${result.skipped} already in the sheet).` : '.');
+    msg.className = 'msg ok';
+  }catch(e){
+    msg.textContent = 'Could not import: ' + e.message;
+    msg.className = 'msg err';
+  }
+  ev.target.value = '';
+});
+
+document.getElementById('importWeeklyFile').addEventListener('change', async (ev)=>{
+  const file = ev.target.files[0];
+  const msg = document.getElementById('importWeeklyMsg');
+  if(!file) return;
+  msg.textContent = 'Reading…';
+  msg.className = 'msg';
+
+  try{
+    const text = await file.text();
+    const rows = parseCSV(text);
+    const entries = [];
+
+    rows.forEach(row=>{
+      if(!row.date || row.weight === undefined || row.weight === '') return;
+      entries.push({
+        id: 'w' + Date.now().toString() + Math.random().toString(36).slice(2,7),
+        date: row.date,
+        dose: toNumOrNull(row.dose),
+        weight: parseFloat(row.weight),
+        site: row.site || null,
+        observations: row.observations || null
+      });
+    });
+
+    if(entries.length === 0){
+      msg.textContent = 'No usable rows found — check that your CSV has "date" and "weight" columns.';
+      msg.className = 'msg err';
+      ev.target.value = '';
+      return;
+    }
+
+    const result = await bulkSaveWeekly(entries);
+    await loadAll();
+    msg.textContent = `Added ${result.added} weekly ${result.added === 1 ? 'entry' : 'entries'}` +
+                      (result.skipped ? ` (skipped ${result.skipped} already in the sheet).` : '.');
+    msg.className = 'msg ok';
+  }catch(e){
+    msg.textContent = 'Could not import: ' + e.message;
+    msg.className = 'msg err';
+  }
+  ev.target.value = '';
+});
+
+/* ============================================================
+   Boot
+   ============================================================ */
+document.getElementById('d-date').value = todayISO();
+document.getElementById('w-date').value = todayISO();
+buildSymList();
+loadAll();
+</script>
