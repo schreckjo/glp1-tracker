@@ -769,7 +769,7 @@ function renderWeekOverWeek(){
     const isSame = Math.abs(diff) < 0.005;
 
     if(isSame){
-      if(direction === 'neutral') return '<span class="wow-delta neutral">· no change</span>';
+            if(direction === 'neutral') return '<span class="wow-delta neutral">no change</span>';
       if(sameIsGood)             return '<span class="wow-delta good"><span class="wow-delta-icon">✓</span>same</span>';
       return '<span class="wow-delta neutral">· no change</span>';
     }
