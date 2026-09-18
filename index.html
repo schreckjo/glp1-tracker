@@ -122,13 +122,14 @@
   .chart-caption{font-size:11px; color:var(--ink-soft); margin-top:8px; min-height:14px; line-height:1.4;}
   .chart-caption.warn{color:var(--rose);}
 
-  /* ---------- Week over week ---------- */
-  .wow-table{width:100%; border-collapse:collapse; font-size:13px;}
+  /* ---------- Week over week (4 columns) ---------- */
+  .wow-table{width:100%; border-collapse:collapse; font-size:13px; table-layout:auto;}
   .wow-table th{
     color:var(--ink-soft); font-weight:500; font-size:11px; text-transform:lowercase;
     padding:6px 8px; text-align:left; border-bottom:1px solid var(--line);
+    white-space:nowrap;
   }
-  .wow-table th:not(:first-child){text-align:right;}
+  .wow-table th.col-num, .wow-table th.col-change{text-align:right;}
   .wow-table td{padding:11px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
   .wow-table tr:last-child td{border-bottom:none;}
   .wow-table td.metric{font-weight:500; color:var(--ink);}
@@ -136,12 +137,15 @@
     font-family:'IBM Plex Mono', monospace;
     white-space:nowrap; text-align:right;
   }
+  .wow-table td.change{
+    text-align:right; white-space:nowrap;
+    width:1%;   /* shrink to fit content */
+  }
   .wow-delta{
     display:inline-flex; align-items:center; gap:5px;
     font-family:'IBM Plex Mono', monospace;
     font-size:11px; font-weight:700;
     padding:3px 10px; border-radius:11px;
-    margin-left:8px;
     letter-spacing:0.02em;
     white-space:nowrap;
     line-height:1.4;
@@ -293,10 +297,12 @@
 
     canvas{max-height:220px;}
 
+    /* Week-over-week: Option A — keep 4 columns, shrink */
     .wow-table{font-size:12px;}
     .wow-table th, .wow-table td{padding:9px 5px;}
-    .wow-table td.num{display:flex; flex-direction:column; align-items:flex-end; gap:5px;}
-    .wow-delta{margin-left:0; font-size:10px; padding:3px 8px;}
+    .wow-table td.metric{font-size:12px;}
+    .wow-delta{font-size:10px; padding:3px 8px; gap:3px;}
+    .wow-delta-icon{font-size:11px;}
 
     .muscle-row{
       grid-template-columns: minmax(0,1fr) auto auto;
@@ -590,8 +596,8 @@ async function loadAll(){
     const data = await getAllData();
     dailyEntries  = data.daily  || [];
     weeklyEntries = data.weekly || [];
-    dailyEntries.sort((a,b)=> new Date(a.date) - new Date(b.date));
-    weeklyEntries.sort((a,b)=> new Date(a.date) - new Date(b.date));
+    dailyEntries.sort((a,b)=> (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
+    weeklyEntries.sort((a,b)=> (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
     renderAll();
   }catch(err){
     showBanner_('Could not load data: ' + err.message, true);
@@ -631,7 +637,7 @@ function parseDateAny(d){
     }
   }
 
-  // Fallback: let JS try
+  // Fallback
   const dt = new Date(s);
   return isNaN(dt.getTime()) ? null : dt;
 }
@@ -653,10 +659,7 @@ function addDaysISO(iso, days){
 function fmtDate(d){
   if(d == null || d === '') return '—';
   const dt = parseDateAny(d);
-  if(!dt){
-    console.warn('Unparseable date value:', d);
-    return '—';
-  }
+  if(!dt) return '—';
   return dt.toLocaleDateString(undefined, {month:'short', day:'numeric'});
 }
 
@@ -708,3 +711,1023 @@ function renderStats(){
   }
   let changeStr = '—';
   if(weeklyEntries.length >= 1){
+    const first = weeklyEntries[0];
+    const last = weeklyEntries[weeklyEntries.length-1];
+    const change = last.weight - first.weight;
+    if(isFinite(change)) changeStr = (change > 0 ? '+' : '') + change.toFixed(1);
+  }
+  const lastDose = [...weeklyEntries].reverse().find(e=>e.dose != null)?.dose ?? '—';
+  bar.innerHTML = `
+    <div class="stat"><span class="num">${weeklyEntries.length}</span><span class="label">weeks logged</span></div>
+    <div class="stat"><span class="num">${changeStr}</span><span class="label">weight change</span></div>
+    <div class="stat"><span class="num">${lastDose}</span><span class="label">current mg</span></div>
+  `;
+}
+
+/* ---------- Card 1: This week vs last week (4 columns) ---------- */
+function windowStats(startISO, endISO){
+  const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
+  const energyVals   = inRange.map(d => d.energy).filter(v => v != null);
+  const appetiteVals = inRange.map(d => d.appetite).filter(v => v != null);
+  const fnVals       = inRange.map(d => d.foodNoise).filter(v => v != null);
+  const burdenSum    = inRange.reduce((s, d) => s + symptomBurden_(d), 0);
+  return {
+    energy:    avg(energyVals),
+    appetite:  avg(appetiteVals),
+    foodNoise: avg(fnVals),
+    burden:    inRange.length > 0 ? burdenSum : null
+  };
+}
+
+function renderWeekOverWeek(){
+  const wrap = document.getElementById('wowWrap');
+  if(weeklyEntries.length < 2){
+    wrap.innerHTML = '<div class="empty">Need at least 2 weekly check-ins to compare weeks.</div>';
+    return;
+  }
+
+  const latest   = weeklyEntries[weeklyEntries.length-1];
+  const previous = weeklyEntries[weeklyEntries.length-2];
+
+  const thisStart = addDaysISO(latest.date, -7);
+  const thisEnd   = latest.date;
+  const lastStart = addDaysISO(latest.date, -14);
+  const lastEnd   = addDaysISO(latest.date, -7);
+
+  const thisStats = windowStats(thisStart, thisEnd);
+  const lastStats = windowStats(lastStart, lastEnd);
+
+  /* Renders the pill in its own cell.
+     direction: 'up-good' | 'down-good' | 'neutral'
+     sameIsGood: true means "no change" renders as a green ✓ same pill */
+  function deltaPill(thisVal, lastVal, opts){
+    const { direction = 'neutral', deltaFormat = v => v.toFixed(1), sameIsGood = false } = opts;
+
+    if(thisVal == null || lastVal == null) return '';   // leave cell empty
+
+    const diff = thisVal - lastVal;
+    const isSame = Math.abs(diff) < 0.005;
+
+    if(isSame){
+      if(direction === 'neutral') return '<span class="wow-delta neutral">· no change</span>';
+      if(sameIsGood)             return '<span class="wow-delta good"><span class="wow-delta-icon">✓</span>same</span>';
+      return '<span class="wow-delta neutral">· no change</span>';
+    }
+
+    const sign = diff > 0 ? '+' : '−';
+    const absStr = deltaFormat(Math.abs(diff));
+
+    let kind = 'neutral';
+    let iconHtml = '';
+
+    if(direction !== 'neutral'){
+      const wentRight = direction === 'up-good' ? diff > 0 : diff < 0;
+      if(wentRight){
+        kind = 'good'; iconHtml = '<span class="wow-delta-icon">✓</span>';
+      } else {
+        kind = 'bad';  iconHtml = '<span class="wow-delta-icon">⚠</span>';
+      }
+    }
+
+    return `<span class="wow-delta ${kind}">${iconHtml}${sign}${absStr}</span>`;
+  }
+
+  function row(label, thisVal, lastVal, opts = {}){
+    const { format = v => v == null ? '—' : v.toFixed(1), direction, deltaFormat, sameIsGood } = opts;
+    const thisStr = format(thisVal);
+    const lastStr = format(lastVal);
+    const pill = deltaPill(thisVal, lastVal, { direction, deltaFormat, sameIsGood });
+
+    return `<tr>
+      <td class="metric">${label}</td>
+      <td class="num">${lastStr}</td>
+      <td class="num">${thisStr}</td>
+      <td class="change">${pill}</td>
+    </tr>`;
+  }
+
+  const html = `
+    <table class="wow-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-num">Last week</th>
+          <th class="col-num">This week</th>
+          <th class="col-change">Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${row('Weight', latest.weight, previous.weight, {
+          format: v => v == null ? '—' : v.toFixed(1),
+          direction: 'down-good',
+          deltaFormat: v => v.toFixed(1)
+        })}
+        ${row('Dose (mg)', latest.dose, previous.dose, {
+          format: v => v == null ? '—' : v.toFixed(2),
+          direction: 'neutral',
+          deltaFormat: v => v.toFixed(2)
+        })}
+        ${row('Energy',     thisStats.energy,    lastStats.energy,    {
+          direction: 'up-good', sameIsGood: true
+        })}
+        ${row('Appetite',   thisStats.appetite,  lastStats.appetite,  {
+          direction: 'down-good', sameIsGood: true
+        })}
+        ${row('Food noise', thisStats.foodNoise, lastStats.foodNoise, {
+          direction: 'down-good', sameIsGood: true
+        })}
+        ${row('Symptom burden', thisStats.burden, lastStats.burden, {
+          format: v => v == null ? '—' : v.toFixed(0),
+          direction: 'down-good',
+          deltaFormat: v => v.toFixed(0)
+        })}
+      </tbody>
+    </table>
+    <div class="sub" style="margin-top:10px;font-size:12px;">
+      This week = ${fmtDate(thisStart)} – ${fmtDate(addDaysISO(thisEnd, -1))}.
+      Last week = ${fmtDate(lastStart)} – ${fmtDate(addDaysISO(lastEnd, -1))}.
+      A green pill means the change went the way you want.
+    </div>
+  `;
+  wrap.innerHTML = html;
+}
+
+/* ---------- Card 2: Muscle protection ---------- */
+function muscleStatsInRange(startISO, endISO){
+  const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
+  const n = inRange.length;
+  if(n === 0) return { days:0, strengthPerWeek:null, proteinPerWeek:null, movementPerWeek:null };
+  return {
+    days: n,
+    strengthPerWeek: (inRange.filter(d => d.strength).length / n) * 7,
+    proteinPerWeek:  (inRange.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length / n) * 7,
+    movementPerWeek: (inRange.filter(d => d.movement).length / n) * 7
+  };
+}
+
+function dotClass(value, target, opts){
+  const { minTarget, warnAbove } = opts || {};
+  if(value == null) return 'none';
+
+  if(warnAbove != null){
+    if(value <= warnAbove) return 'good';
+    if(value <= warnAbove * 1.5) return 'warn';
+    return 'bad';
+  }
+
+  if(minTarget != null){
+    if(value >= minTarget) return 'good';
+    if(value >= minTarget - 1) return 'warn';
+    return 'bad';
+  }
+  return 'none';
+}
+
+function renderMuscleProtection(){
+  const wrap = document.getElementById('muscleWrap');
+  if(weeklyEntries.length < 2){
+    wrap.innerHTML = '<div class="empty">Log at least 2 weekly entries to see this view.</div>';
+    return;
+  }
+
+  const latest   = weeklyEntries[weeklyEntries.length-1];
+  const previous = weeklyEntries[weeklyEntries.length-2];
+
+  const thisWeekStart = addDaysISO(latest.date, -7);
+  const thisWeekEnd   = latest.date;
+  const thisWeekStats = muscleStatsInRange(thisWeekStart, thisWeekEnd);
+
+  const thisLossPct = (previous.weight != null && latest.weight != null && previous.weight > 0)
+    ? ((previous.weight - latest.weight) / previous.weight) * 100
+    : null;
+
+  const fourWeeksAgo = addDaysISO(latest.date, -28);
+  const recentStats  = muscleStatsInRange(fourWeeksAgo, latest.date);
+
+  let avgLossPct = null;
+  const recentWeeklies = weeklyEntries.slice(-5);
+  if(recentWeeklies.length >= 2 && recentWeeklies[0].weight > 0 && recentWeeklies[recentWeeklies.length-1].weight != null){
+    const totalChange = recentWeeklies[0].weight - recentWeeklies[recentWeeklies.length-1].weight;
+    avgLossPct = (totalChange / recentWeeklies[0].weight) * 100 / (recentWeeklies.length - 1);
+  }
+
+  const lossDot   = dotClass(thisLossPct, null, { warnAbove: 1.0 });
+  const strDot    = dotClass(thisWeekStats.strengthPerWeek, STRENGTH_GOAL);
+  const proteinDot= dotClass(thisWeekStats.proteinPerWeek, PROTEIN_DAYS_GOAL);
+  const movDot    = dotClass(thisWeekStats.movementPerWeek, 3);
+
+  const fmtPct = v => v == null ? '—' : v.toFixed(1) + '%';
+  const fmtDays = v => v == null ? '—' : v.toFixed(1) + '/wk';
+
+  const rows = `
+    <div class="muscle-row">
+      <div class="muscle-label"><span class="mp-dot ${lossDot}"></span>Loss rate</div>
+      <div class="muscle-value">${fmtPct(thisLossPct)}</div>
+      <div class="muscle-avg">4-wk ${fmtPct(avgLossPct)}</div>
+      <div class="muscle-target">under 1%</div>
+    </div>
+    <div class="muscle-row">
+      <div class="muscle-label"><span class="mp-dot ${strDot}"></span>Strength sessions</div>
+      <div class="muscle-value">${fmtDays(thisWeekStats.strengthPerWeek)}</div>
+      <div class="muscle-avg">4-wk ${fmtDays(recentStats.strengthPerWeek)}</div>
+      <div class="muscle-target">${STRENGTH_GOAL}+ /week</div>
+    </div>
+    <div class="muscle-row">
+      <div class="muscle-label"><span class="mp-dot ${proteinDot}"></span>Protein-goal days</div>
+      <div class="muscle-value">${fmtDays(thisWeekStats.proteinPerWeek)}</div>
+      <div class="muscle-avg">4-wk ${fmtDays(recentStats.proteinPerWeek)}</div>
+      <div class="muscle-target">${PROTEIN_DAYS_GOAL}+ /week</div>
+    </div>
+    <div class="muscle-row">
+      <div class="muscle-label"><span class="mp-dot ${movDot}"></span>Movement days</div>
+      <div class="muscle-value">${fmtDays(thisWeekStats.movementPerWeek)}</div>
+      <div class="muscle-avg">4-wk ${fmtDays(recentStats.movementPerWeek)}</div>
+      <div class="muscle-target">3+ /week</div>
+    </div>
+  `;
+
+  const weekBuckets = { good: [], other: [] };
+  weeklyEntries.forEach((w, i) => {
+    if(i + 1 >= weeklyEntries.length) return;
+    const next = weeklyEntries[i+1];
+    if(w.weight == null || next.weight == null || w.weight <= 0) return;
+
+    const s = muscleStatsInRange(w.date, addDaysISO(w.date, 7));
+    if(s.days === 0) return;
+
+    const lossPct = ((w.weight - next.weight) / w.weight) * 100;
+    const burdenSum = dailyEntries
+      .filter(d => d.date >= w.date && d.date < addDaysISO(w.date, 7))
+      .reduce((sum, d) => sum + symptomBurden_(d), 0);
+
+    const hitBoth = s.strengthPerWeek >= STRENGTH_GOAL && s.proteinPerWeek >= PROTEIN_DAYS_GOAL;
+    weekBuckets[hitBoth ? 'good' : 'other'].push({ lossPct, burdenSum });
+  });
+
+  let insightHtml = '';
+  if(weekBuckets.good.length >= 1 && weekBuckets.other.length >= 1){
+    const gLoss = avg(weekBuckets.good.map(w => w.lossPct));
+    const gBurden = avg(weekBuckets.good.map(w => w.burdenSum));
+    const oLoss = avg(weekBuckets.other.map(w => w.lossPct));
+    const oBurden = avg(weekBuckets.other.map(w => w.burdenSum));
+
+    insightHtml = `<div class="muscle-insight">
+      On weeks you hit <strong>${STRENGTH_GOAL}+ strength sessions</strong> and <strong>${PROTEIN_DAYS_GOAL}+ protein-goal days</strong>,
+      your loss rate averaged <strong>${gLoss.toFixed(1)}%</strong> with symptom burden <strong>${gBurden.toFixed(0)}</strong>.
+      On other weeks: <strong>${oLoss.toFixed(1)}%</strong> and <strong>${oBurden.toFixed(0)}</strong>.
+    </div>`;
+  } else {
+    insightHtml = `<div class="muscle-insight" style="background:var(--amber-soft);color:#6B4E1E;">
+      Not enough contrast yet. Once you have a few weeks where you hit both targets and a few where you didn't, this will compare the two.
+    </div>`;
+  }
+
+  wrap.innerHTML = rows + insightHtml;
+}
+
+/* ---------- Card 3: Site verdicts ---------- */
+function renderSiteVerdicts(){
+  const wrap = document.getElementById('siteVerdictsWrap');
+  if(weeklyEntries.length < 2){
+    wrap.innerHTML = '<div class="empty">Log 2+ weekly entries to compare injection sites.</div>';
+    return;
+  }
+
+  const allWeightDeltas = [];
+  for(let i = 1; i < weeklyEntries.length; i++){
+    const a = weeklyEntries[i-1].weight, b = weeklyEntries[i].weight;
+    if(a != null && b != null && isFinite(a) && isFinite(b)) allWeightDeltas.push(b - a);
+  }
+  const userAvgWeightDelta = avg(allWeightDeltas);
+  const userAvgEnergy = avg(dailyEntries.map(d => d.energy).filter(v => v != null));
+  const userAvgBurden = dailyEntries.length > 0
+    ? avg(dailyEntries.map(d => symptomBurden_(d)))
+    : null;
+
+  const sites = {};
+  weeklyEntries.forEach((w, i) => {
+    if(!w.site) return;
+    if(!sites[w.site]) sites[w.site] = {
+      injections: 0, lastDate: null,
+      weightDeltas: [], energies: [], burdens: []
+    };
+    const s = sites[w.site];
+    s.injections++;
+    if(!s.lastDate || w.date > s.lastDate) s.lastDate = w.date;
+
+    if(i + 1 < weeklyEntries.length){
+      const next = weeklyEntries[i+1];
+      if(w.weight != null && next.weight != null){
+        s.weightDeltas.push(next.weight - w.weight);
+      }
+    }
+
+    const start = w.date;
+    const end = addDaysISO(start, 7);
+    dailyEntries.forEach(d => {
+      if(d.date < start || d.date >= end) return;
+      if(d.energy != null) s.energies.push(d.energy);
+      s.burdens.push(symptomBurden_(d));
+    });
+  });
+
+  const sitesArr = Object.entries(sites).map(([site, s]) => {
+    const avgWD = avg(s.weightDeltas);
+    const avgE  = avg(s.energies);
+    const avgB  = avg(s.burdens);
+
+    const signals = [];
+    let better = 0, total = 0;
+
+    if(avgWD != null && userAvgWeightDelta != null){
+      const isBetter = avgWD < userAvgWeightDelta;
+      if(isBetter) better++;
+      total++;
+      signals.push({ label:'Weight change', value:avgWD, userAvg:userAvgWeightDelta, better:isBetter, unit:'lb' });
+    }
+    if(avgE != null && userAvgEnergy != null){
+      const isBetter = avgE > userAvgEnergy;
+      if(isBetter) better++;
+      total++;
+      signals.push({ label:'Energy', value:avgE, userAvg:userAvgEnergy, better:isBetter, unit:'' });
+    }
+    if(avgB != null && userAvgBurden != null){
+      const isBetter = avgB < userAvgBurden;
+      if(isBetter) better++;
+      total++;
+      signals.push({ label:'Symptom burden', value:avgB, userAvg:userAvgBurden, better:isBetter, unit:'' });
+    }
+
+    let verdict;
+    if(s.injections < 2 || total < 2) verdict = 'none';
+    else if(better >= 2)             verdict = 'working';
+    else if(better === 1)            verdict = 'mixed';
+    else                             verdict = 'lagging';
+
+    return { site, injections: s.injections, lastDate: s.lastDate, signals, verdict };
+  });
+
+  const order = { working:0, mixed:1, lagging:2, none:3 };
+  sitesArr.sort((a,b) => {
+    const d = order[a.verdict] - order[b.verdict];
+    return d !== 0 ? d : b.injections - a.injections;
+  });
+
+  const verdictLabel = {
+    working: '✓ Working well',
+    mixed:   '~ Mixed',
+    lagging: '⚠ Lagging',
+    none:    '· Not enough data'
+  };
+  const verdictClass = {
+    working: 'verdict-working',
+    mixed:   'verdict-mixed',
+    lagging: 'verdict-lagging',
+    none:    'verdict-none'
+  };
+
+  const cards = sitesArr.map(v => {
+    const sigsHtml = v.signals.map(sig => {
+      const vStr = (sig.value >= 0 ? '+' : '') + sig.value.toFixed(2) + (sig.unit ? ' ' + sig.unit : '');
+      const uStr = (sig.userAvg >= 0 ? '+' : '') + sig.userAvg.toFixed(2) + (sig.unit ? ' ' + sig.unit : '');
+      return `<div class="verdict-signal ${sig.better ? 'better' : 'worse'}">
+        <span class="vs-label">${sig.label}</span>
+        <span class="vs-value">${vStr}</span>
+        <span class="vs-compare">your avg: ${uStr}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="verdict-card ${verdictClass[v.verdict]}">
+      <div class="verdict-head">
+        <div class="verdict-site">${escapeHtml_(v.site)}</div>
+        <div class="verdict-badge">${verdictLabel[v.verdict]}</div>
+      </div>
+      ${v.signals.length ? `<div class="verdict-signals">${sigsHtml}</div>` : ''}
+      <div class="verdict-meta">${v.injections} injection${v.injections === 1 ? '' : 's'} · last used ${fmtDate(v.lastDate)}</div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML = cards;
+}
+
+/* ---------- Card 4: Worth attention ---------- */
+function avgBurdenInRange(startISO, endISO){
+  let sum = 0, n = 0;
+  dailyEntries.forEach(d => {
+    if(d.date >= startISO && d.date < endISO){
+      sum += symptomBurden_(d);
+      n++;
+    }
+  });
+  return n > 0 ? sum / n : null;
+}
+
+function renderFlags(){
+  const wrap = document.getElementById('flagsWrap');
+  const flags = [];
+
+  if(weeklyEntries.length >= 2){
+    const last = weeklyEntries[weeklyEntries.length-1];
+    const prev = weeklyEntries[weeklyEntries.length-2];
+    if(last.weight != null && prev.weight != null && prev.weight > 0){
+      const pct = (prev.weight - last.weight) / prev.weight;
+      if(pct > 0.01){
+        flags.push({
+          icon: '⚠',
+          type: 'warn',
+          text: `You lost <strong>${(prev.weight - last.weight).toFixed(1)} lb</strong> this week — ${(pct*100).toFixed(1)}% of body weight. Fast loss can eat into muscle. Keep protein up and consider strength training.`
+        });
+      }
+    }
+  }
+
+  if(weeklyEntries.length >= 4){
+    const recent = weeklyEntries.slice(-4);
+    const change = recent[recent.length-1].weight - recent[0].weight;
+    if(change > -0.5){
+      flags.push({
+        icon: '·',
+        type: 'info',
+        text: `Weight has been essentially flat for 3 weeks. Plateauing is normal — worth a look if it persists past 4 weeks.`
+      });
+    }
+  }
+
+  const today = todayISO();
+  const recent14 = avgBurdenInRange(addDaysISO(today, -14), addDaysISO(today, 1));
+  const prior14  = avgBurdenInRange(addDaysISO(today, -28), addDaysISO(today, -14));
+  if(recent14 != null && prior14 != null && prior14 > 0){
+    const change = (recent14 - prior14) / prior14;
+    if(change <= -0.2){
+      flags.push({
+        icon: '✓',
+        type: 'good',
+        text: `Symptom burden has been trending down over the last two weeks. Whatever you're doing seems to be working.`
+      });
+    } else if(change >= 0.2){
+      flags.push({
+        icon: '⚠',
+        type: 'warn',
+        text: `Symptom burden has been trending up over the last two weeks. Might be worth a closer look — dose change, food, cycle?`
+      });
+    }
+  }
+
+  if(dailyEntries.length > 0){
+    const lastDate = dailyEntries[dailyEntries.length-1].date;
+    const lastParsed = parseDateAny(lastDate);
+    const todayParsed = parseDateAny(today);
+    if(lastParsed && todayParsed){
+      const days = Math.round((todayParsed - lastParsed) / 86400000);
+      if(days >= 3){
+        flags.push({
+          icon: '📝',
+          type: 'info',
+          text: `Last daily check-in was ${days} days ago. A quick log keeps the data useful.`
+        });
+      }
+    }
+  }
+
+  if(flags.length === 0){
+    wrap.innerHTML = '<div class="empty" style="padding:14px 0;">Nothing needs your attention right now. Keep logging.</div>';
+    return;
+  }
+
+  wrap.innerHTML = flags.map(f =>
+    `<div class="flag flag-${f.type}">
+      <span class="flag-icon">${f.icon}</span>
+      <div class="flag-text">${f.text}</div>
+    </div>`
+  ).join('');
+}
+
+/* ---------- Card 5: Weight chart ---------- */
+let weightChartInstance = null;
+function renderWeightChart(){
+  const canvas = document.getElementById('weightChart');
+  const ctx = canvas.getContext('2d');
+  const capEl = document.getElementById('weightChartCaption');
+  canvas.parentElement.querySelector('.empty')?.remove();
+  if(weightChartInstance) weightChartInstance.destroy();
+  capEl.textContent = '';
+  capEl.className = 'chart-caption';
+
+  if(weeklyEntries.length === 0){
+    canvas.style.display = 'none';
+    const div = document.createElement('div');
+    div.className = 'empty';
+    div.textContent = 'Log your first weekly check-in to see the trend.';
+    canvas.parentElement.appendChild(div);
+    return;
+  }
+  canvas.style.display = 'block';
+  const labels = weeklyEntries.map(e=>fmtDate(e.date));
+  const weights = weeklyEntries.map(e=>e.weight);
+
+  const rolling = weights.map((_, i) => {
+    const slice = weights.slice(Math.max(0, i - 3), i + 1).filter(v => v != null && isFinite(v));
+    if(slice.length < 2) return null;
+    return slice.reduce((a,b)=>a+b,0) / slice.length;
+  });
+
+  const fastLossIdx = new Set();
+  for(let i = 1; i < weights.length; i++){
+    const prev = weights[i-1], curr = weights[i];
+    if(prev != null && curr != null && prev > 0 && (prev - curr) / prev > 0.01) fastLossIdx.add(i);
+  }
+
+  const doseChanges = [];
+  for(let i = 1; i < weeklyEntries.length; i++){
+    const a = weeklyEntries[i-1].dose, b = weeklyEntries[i].dose;
+    if(a != null && b != null && a !== b) doseChanges.push({ index: i, dose: b });
+  }
+
+  const pointColors = weights.map((_, i) => fastLossIdx.has(i) ? '#B5675A' : '#6B8F71');
+  const pointRadii  = weights.map((_, i) => fastLossIdx.has(i) ? 5 : 3);
+
+  weightChartInstance = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        { type:'line', label:'Weight', data: weights, borderColor:'#6B8F71', backgroundColor:'#6B8F71',
+          yAxisID:'y', tension:0.25, pointRadius: pointRadii, pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors, borderWidth:2 },
+        { type:'line', label:'4-week average', data: rolling, borderColor:'#6B8F71', backgroundColor:'transparent',
+          yAxisID:'y', tension:0.3, pointRadius:0, borderWidth:1.5, borderDash:[5,3], spanGaps:true },
+        { type:'line', label:'Dosage (mg)', data: weeklyEntries.map(e=>e.dose), borderColor:'#C79A46', backgroundColor:'#C79A46',
+          yAxisID:'y1', stepped:true, pointRadius:3, borderWidth:2, borderDash:[4,3] }
+      ]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:true,
+      interaction:{mode:'index', intersect:false},
+      plugins:{
+        legend:{position:'bottom', labels:{font:{family:'IBM Plex Sans', size:11}, boxWidth:12}},
+        tooltip:{
+          callbacks:{
+            afterBody: (items) => {
+              const i = items[0].dataIndex;
+              const out = [];
+              if(fastLossIdx.has(i)) out.push('⚠ >1% loss this week');
+              return out;
+            }
+          }
+        }
+      },
+      scales:{
+        y:{ position:'left', title:{display:true, text:'Weight', font:{family:'IBM Plex Sans', size:11}}, grid:{color:'#EEE8D8'} },
+        y1:{ position:'right', title:{display:true, text:'mg', font:{family:'IBM Plex Sans', size:11}}, grid:{display:false} },
+        x:{ grid:{color:'#EEE8D8'}, ticks:{autoSkip:true, maxTicksLimit:7, maxRotation:0} }
+      }
+    },
+    plugins: [{
+      id: 'doseMarkers',
+      afterDatasetsDraw(chart){
+        const { ctx, chartArea, scales: { x } } = chart;
+        if(!x || !chartArea) return;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(199, 154, 70, 0.45)';
+        ctx.setLineDash([4, 3]);
+        ctx.lineWidth = 1;
+        doseChanges.forEach(dc => {
+          const xPos = x.getPixelForValue(dc.index);
+          if(xPos < chartArea.left || xPos > chartArea.right) return;
+          ctx.beginPath();
+          ctx.moveTo(xPos, chartArea.top);
+          ctx.lineTo(xPos, chartArea.bottom);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+    }]
+  });
+
+  if(fastLossIdx.size > 0){
+    capEl.className = 'chart-caption warn';
+    capEl.textContent = `⚠ ${fastLossIdx.size} week${fastLossIdx.size === 1 ? '' : 's'} exceeded 1% weight loss.`;
+  } else if(weeklyEntries.length >= 2){
+    capEl.textContent = 'No weeks flagged for rapid loss.';
+  }
+}
+
+/* ---------- Card 6: Strength & movement by cycle day ---------- */
+let cycleActivityInstance = null;
+function renderCycleActivityChart(){
+  const canvas = document.getElementById('cycleActivityChart');
+  const ctx = canvas.getContext('2d');
+  canvas.parentElement.querySelector('.empty')?.remove();
+  if(cycleActivityInstance) cycleActivityInstance.destroy();
+
+  if(weeklyEntries.length === 0 || dailyEntries.length === 0){
+    canvas.style.display = 'none';
+    const div = document.createElement('div');
+    div.className = 'empty';
+    div.textContent = 'Need weekly and daily entries to compute this view.';
+    canvas.parentElement.appendChild(div);
+    return;
+  }
+  canvas.style.display = 'block';
+
+  const buckets = {};
+  for(let d = 1; d <= 7; d++) buckets[d] = { total: 0, strength: 0, movement: 0 };
+
+  dailyEntries.forEach(de => {
+    const cd = cycleDayFor(de.date);
+    if(cd == null || cd < 1 || cd > 7) return;
+    buckets[cd].total++;
+    if(de.strength) buckets[cd].strength++;
+    if(de.movement) buckets[cd].movement++;
+  });
+
+  const labels = [];
+  const strengthPct = [];
+  const movementPct = [];
+  for(let d = 1; d <= 7; d++){
+    labels.push('Day ' + d);
+    const b = buckets[d];
+    strengthPct.push(b.total > 0 ? Math.round((b.strength / b.total) * 100) : null);
+    movementPct.push(b.total > 0 ? Math.round((b.movement / b.total) * 100) : null);
+  }
+
+  cycleActivityInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Strength %', data: strengthPct, backgroundColor: '#6B8F71', borderRadius: 3 },
+        { label: 'Movement %', data: movementPct, backgroundColor: '#C79A46', borderRadius: 3 }
+      ]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:true,
+      plugins:{
+        legend:{position:'bottom', labels:{font:{family:'IBM Plex Sans', size:11}, boxWidth:12}},
+        tooltip:{
+          callbacks:{
+            label: (c) => `${c.dataset.label}: ${c.parsed.y == null ? 'no data' : c.parsed.y + '%'}`
+          }
+        }
+      },
+      scales:{
+        y:{ beginAtZero:true, max:100, ticks:{callback: v => v + '%', stepSize:25},
+            title:{display:true, text:'% of days', font:{family:'IBM Plex Sans', size:11}}, grid:{color:'#EEE8D8'} },
+        x:{ grid:{display:false} }
+      }
+    }
+  });
+}
+
+/* ---------- Log tables ---------- */
+function renderWeeklyTable(){
+  const wrap = document.getElementById('weeklyTableWrap');
+  if(weeklyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No weekly check-ins yet.</div>'; return; }
+  const reversed = [...weeklyEntries].reverse();
+
+  const rows = reversed.map(e=>`
+    <tr>
+      <td>${fmtDate(e.date)}</td>
+      <td class="num">${e.dose ?? '—'}</td>
+      <td class="num">${e.weight ?? '—'}</td>
+      <td>${e.site ?? '—'}</td>
+      <td><span class="del" data-id="${e.id}">remove</span></td>
+    </tr>`).join('');
+
+  const withObs = reversed.filter(e => e.observations && String(e.observations).trim());
+  const obsBlock = withObs.length
+    ? `<div class="obs-list">
+        <h3>Observations</h3>
+        ${withObs.map(e => `
+          <div class="obs-item">
+            <div class="obs-date">${fmtDate(e.date)}</div>
+            <div class="obs-text">${escapeHtml_(e.observations)}</div>
+          </div>`).join('')}
+      </div>`
+    : '';
+
+  wrap.innerHTML = `<table>
+    <tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th></th></tr>
+    ${rows}
+  </table>${obsBlock}`;
+
+  wrap.querySelectorAll('.del').forEach(el=>{
+    el.onclick = async ()=>{
+      const id = el.dataset.id;
+      el.textContent = '…';
+      try{
+        await deleteWeeklyEntry(id);
+        weeklyEntries = weeklyEntries.filter(e=>e.id !== id);
+        renderAll();
+      }catch(err){
+        alert('Could not delete: ' + err.message);
+        el.textContent = 'remove';
+      }
+    };
+  });
+}
+
+function renderDailyTable(){
+  const wrap = document.getElementById('dailyTableWrap');
+  if(dailyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No daily check-ins yet.</div>'; return; }
+  const reversed = [...dailyEntries].reverse();
+
+  const rows = reversed.map(e=>{
+    const topSym = Object.entries(e.symptoms||{})
+      .filter(([k,v]) => v > 0 && SYMPTOMS.includes(k))
+      .sort((a,b)=>b[1]-a[1])[0];
+    const proteinTxt = e.protein != null ? Math.round(e.protein) + ' g' : '—';
+    return `<tr>
+      <td>${fmtDate(e.date)}</td>
+      <td class="num">${e.energy ?? '—'}</td>
+      <td class="num">${e.appetite ?? '—'}</td>
+      <td class="num">${e.foodNoise ?? '—'}</td>
+      <td class="num">${proteinTxt}</td>
+      <td>${e.period ? 'Yes' : '—'}</td>
+      <td>${e.movement ? 'Yes' : '—'}</td>
+      <td>${e.strength ? 'Yes' : '—'}</td>
+      <td>${topSym ? topSym[0] + ' (' + SEV_LABELS[topSym[1]] + ')' : '—'}</td>
+      <td><span class="del" data-id="${e.id}">remove</span></td>
+    </tr>`;
+  }).join('');
+
+  const withNotes = reversed.filter(e => e.notes && String(e.notes).trim());
+  const notesBlock = withNotes.length
+    ? `<div class="obs-list">
+        <h3>Daily notes</h3>
+        ${withNotes.map(e => `
+          <div class="obs-item">
+            <div class="obs-date">${fmtDate(e.date)}</div>
+            <div class="obs-text">${escapeHtml_(e.notes)}</div>
+          </div>`).join('')}
+      </div>`
+    : '';
+
+  wrap.innerHTML = `<table>
+    <tr><th>Date</th><th>Energy</th><th>Appetite</th><th>Food noise</th><th>Protein</th><th>Period</th><th>Movement</th><th>Strength</th><th>Top symptom</th><th></th></tr>
+    ${rows}
+  </table>${notesBlock}`;
+
+  wrap.querySelectorAll('.del').forEach(el=>{
+    el.onclick = async ()=>{
+      const id = el.dataset.id;
+      el.textContent = '…';
+      try{
+        await deleteDailyEntry(id);
+        dailyEntries = dailyEntries.filter(e=>e.id !== id);
+        renderAll();
+      }catch(err){
+        alert('Could not delete: ' + err.message);
+        el.textContent = 'remove';
+      }
+    };
+  });
+}
+
+/* ============================================================
+   Save handlers
+   ============================================================ */
+document.getElementById('saveDailyBtn').onclick = async ()=>{
+  const date      = document.getElementById('d-date').value;
+  const energy    = parseInt(document.getElementById('d-energy').value, 10);
+  const appetite  = parseInt(document.getElementById('d-appetite').value, 10);
+  const foodNoise = parseInt(document.getElementById('d-foodnoise').value, 10);
+  const protein   = parseInt(document.getElementById('d-protein').value, 10);
+  const period    = document.getElementById('d-period').checked;
+  const movement  = document.getElementById('d-movement').checked;
+  const strength  = document.getElementById('d-strength').checked;
+  const notes     = document.getElementById('d-notes').value.trim();
+  const msg = document.getElementById('dailyMsg');
+  const btn = document.getElementById('saveDailyBtn');
+
+  if(!date){
+    msg.textContent = 'Date is required.';
+    msg.className = 'msg err';
+    return;
+  }
+
+  const entry = {
+    id: 'd' + Date.now().toString(),
+    date,
+    energy:    isNaN(energy)    ? null : energy,
+    appetite:  isNaN(appetite)  ? null : appetite,
+    foodNoise: isNaN(foodNoise) ? null : foodNoise,
+    protein:   isNaN(protein)   ? null : protein,
+    period, movement, strength,
+    notes: notes || null,
+    symptoms: {...currentSymptoms}
+  };
+
+  btn.disabled = true;
+  msg.textContent = 'Saving…';
+  msg.className = 'msg';
+
+  try{
+    await saveDailyEntry(entry);
+    dailyEntries.push(entry);
+    dailyEntries.sort((a,b)=> (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
+    renderAll();
+
+    msg.textContent = 'Saved to your sheet.';
+    msg.className = 'msg ok';
+
+    ['d-energy','d-appetite','d-foodnoise','d-protein','d-notes'].forEach(id => document.getElementById(id).value = '');
+    ['d-period','d-movement','d-strength'].forEach(id => document.getElementById(id).checked = false);
+    buildSymList();
+  }catch(e){
+    msg.textContent = 'Could not save: ' + e.message;
+    msg.className = 'msg err';
+  }finally{
+    btn.disabled = false;
+  }
+};
+
+document.getElementById('saveWeeklyBtn').onclick = async ()=>{
+  const date = document.getElementById('w-date').value;
+  const dose = parseFloat(document.getElementById('w-dose').value);
+  const weight = parseFloat(document.getElementById('w-weight').value);
+  const site = document.getElementById('w-site').value;
+  const observations = document.getElementById('w-observations').value.trim();
+  const msg = document.getElementById('weeklyMsg');
+  const btn = document.getElementById('saveWeeklyBtn');
+
+  if(!date || isNaN(weight)){
+    msg.textContent = 'Date and weight are required.';
+    msg.className = 'msg err';
+    return;
+  }
+
+  const entry = {
+    id: 'w' + Date.now().toString(),
+    date,
+    dose: isNaN(dose) ? null : dose,
+    weight,
+    site: site || null,
+    observations: observations || null
+  };
+
+  btn.disabled = true;
+  msg.textContent = 'Saving…';
+  msg.className = 'msg';
+
+  try{
+    await saveWeeklyEntry(entry);
+    weeklyEntries.push(entry);
+    weeklyEntries.sort((a,b)=> (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
+    renderAll();
+
+    msg.textContent = 'Saved to your sheet.';
+    msg.className = 'msg ok';
+
+    document.getElementById('w-dose').value = '2.5';
+    document.getElementById('w-weight').value = '';
+    document.getElementById('w-site').value = '';
+    document.getElementById('w-observations').value = '';
+  }catch(e){
+    msg.textContent = 'Could not save: ' + e.message;
+    msg.className = 'msg err';
+  }finally{
+    btn.disabled = false;
+  }
+};
+
+/* ============================================================
+   CSV import
+   ============================================================ */
+function parseCSV(text){
+  const lines = text.replace(/\r/g,'').split('\n').filter(l=>l.trim().length>0);
+  if(lines.length < 2) return [];
+  const splitLine = (line)=>{
+    const out = []; let cur=''; let inQuotes=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch === '"'){ inQuotes = !inQuotes; }
+      else if(ch === ',' && !inQuotes){ out.push(cur); cur=''; }
+      else{ cur += ch; }
+    }
+    out.push(cur);
+    return out.map(s=>s.trim());
+  };
+  const headers = splitLine(lines[0]).map(h=>h.toLowerCase());
+  return lines.slice(1).map(line=>{
+    const vals = splitLine(line);
+    const row = {};
+    headers.forEach((h,i)=>{ row[h] = vals[i] !== undefined ? vals[i] : ''; });
+    return row;
+  });
+}
+
+function toYesBool(v){ return ['yes','y','true','1'].includes((v||'').toLowerCase()); }
+function toNumOrNull(v){ const n = parseFloat(v); return isNaN(n) ? null : n; }
+function pickKey(row, names){
+  const targets = names.map(n => n.replace(/[^a-z]/g,''));
+  return Object.keys(row).find(k => targets.indexOf(k.replace(/[^a-z]/g,'')) !== -1);
+}
+
+document.getElementById('importDailyFile').addEventListener('change', async (ev)=>{
+  const file = ev.target.files[0];
+  const msg = document.getElementById('importDailyMsg');
+  if(!file) return;
+  msg.textContent = 'Reading…';
+  msg.className = 'msg';
+
+  try{
+    const text = await file.text();
+    const rows = parseCSV(text);
+    const entries = [];
+
+    rows.forEach(row=>{
+      if(!row.date) return;
+      const symptoms = {};
+      SYMPTOMS.forEach(name=>{
+        const key = name.toLowerCase().replace(/[^a-z]+/g,'');
+        const rawKey = Object.keys(row).find(k=> k.replace(/[^a-z]+/g,'') === key);
+        symptoms[name] = rawKey ? (parseInt(row[rawKey],10) || 0) : 0;
+      });
+      const fnKey = pickKey(row, ['foodnoise','food noise']);
+      entries.push({
+        id: 'd' + Date.now().toString() + Math.random().toString(36).slice(2,7),
+        date: row.date,
+        energy:    toNumOrNull(row.energy),
+        appetite:  toNumOrNull(row.appetite),
+        foodNoise: fnKey ? toNumOrNull(row[fnKey]) : null,
+        protein:   toNumOrNull(row.protein),
+        period:    toYesBool(row.period),
+        movement:  toYesBool(row.movement),
+        strength:  toYesBool(row.strength),
+        notes: row.notes || null,
+        symptoms
+      });
+    });
+
+    if(entries.length === 0){
+      msg.textContent = 'No usable rows found — check that your CSV has a "date" column.';
+      msg.className = 'msg err';
+      ev.target.value = '';
+      return;
+    }
+
+    const result = await bulkSaveDaily(entries);
+    await loadAll();
+    msg.textContent = `Added ${result.added} daily ${result.added === 1 ? 'entry' : 'entries'}` +
+                      (result.skipped ? ` (skipped ${result.skipped} already in the sheet).` : '.');
+    msg.className = 'msg ok';
+  }catch(e){
+    msg.textContent = 'Could not import: ' + e.message;
+    msg.className = 'msg err';
+  }
+  ev.target.value = '';
+});
+
+document.getElementById('importWeeklyFile').addEventListener('change', async (ev)=>{
+  const file = ev.target.files[0];
+  const msg = document.getElementById('importWeeklyMsg');
+  if(!file) return;
+  msg.textContent = 'Reading…';
+  msg.className = 'msg';
+
+  try{
+    const text = await file.text();
+    const rows = parseCSV(text);
+    const entries = [];
+
+    rows.forEach(row=>{
+      if(!row.date || row.weight === undefined || row.weight === '') return;
+      entries.push({
+        id: 'w' + Date.now().toString() + Math.random().toString(36).slice(2,7),
+        date: row.date,
+        dose: toNumOrNull(row.dose),
+        weight: parseFloat(row.weight),
+        site: row.site || null,
+        observations: row.observations || null
+      });
+    });
+
+    if(entries.length === 0){
+      msg.textContent = 'No usable rows found — check that your CSV has "date" and "weight" columns.';
+      msg.className = 'msg err';
+      ev.target.value = '';
+      return;
+    }
+
+    const result = await bulkSaveWeekly(entries);
+    await loadAll();
+    msg.textContent = `Added ${result.added} weekly ${result.added === 1 ? 'entry' : 'entries'}` +
+                      (result.skipped ? ` (skipped ${result.skipped} already in the sheet).` : '.');
+    msg.className = 'msg ok';
+  }catch(e){
+    msg.textContent = 'Could not import: ' + e.message;
+    msg.className = 'msg err';
+  }
+  ev.target.value = '';
+});
+
+/* ============================================================
+   Boot
+   ============================================================ */
+document.getElementById('d-date').value = todayISO();
+document.getElementById('w-date').value = todayISO();
+buildSymList();
+loadAll();
+</script>
