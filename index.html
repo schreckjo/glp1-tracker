@@ -1166,13 +1166,24 @@ function renderFlags(){
     }
   }
 
+  /* Missed-logging check.
+     daysSinceLastLog = today - most recent entry date.
+     0 = logged today, 1 = logged yesterday → no flag.
+     2 = missed yesterday → gentle nudge.
+     3+ = been away a while → stronger nudge. */
   if(dailyEntries.length > 0){
     const lastDate = dailyEntries[dailyEntries.length-1].date;
-    const lastParsed = parseDateAny(lastDate);
+    const lastParsed  = parseDateAny(lastDate);
     const todayParsed = parseDateAny(today);
     if(lastParsed && todayParsed){
       const days = Math.round((todayParsed - lastParsed) / 86400000);
-      if(days >= 3){
+      if(days === 2){
+        flags.push({
+          icon: '📝',
+          type: 'info',
+          text: `You didn't log yesterday. One missed day is fine — a quick catch-up keeps the trend lines honest.`
+        });
+      } else if(days >= 3){
         flags.push({
           icon: '📝',
           type: 'info',
@@ -1194,7 +1205,6 @@ function renderFlags(){
     </div>`
   ).join('');
 }
-
 /* ---------- Card: Weight chart ---------- */
 let weightChartInstance = null;
 function renderWeightChart(){
