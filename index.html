@@ -139,7 +139,7 @@
   }
   .wow-table td.change{
     text-align:right; white-space:nowrap;
-    width:1%;   /* shrink to fit content */
+    width:1%;
   }
   .wow-delta{
     display:inline-flex; align-items:center; gap:5px;
@@ -297,7 +297,6 @@
 
     canvas{max-height:220px;}
 
-    /* Week-over-week: Option A — keep 4 columns, shrink */
     .wow-table{font-size:12px;}
     .wow-table th, .wow-table td{padding:9px 5px;}
     .wow-table td.metric{font-size:12px;}
@@ -406,14 +405,19 @@
 
   <section id="view-reports" class="view">
     <div class="card">
-      <h2>This week vs last week <span class="tag weekly">weekly</span></h2>
-      <div class="tablewrap" id="wowWrap"></div>
+      <h2>Worth attention <span class="tag daily">as needed</span></h2>
+      <div id="flagsWrap"></div>
     </div>
 
     <div class="card">
-      <h2>Muscle protection <span class="tag weekly">weekly</span></h2>
-      <div class="sub" style="margin-bottom:14px;">The three things that defend your lean mass during weight loss: not too fast, enough protein, and strength training.</div>
-      <div id="muscleWrap"></div>
+      <h2>Weight, dosage &amp; trend <span class="tag weekly">weekly</span></h2>
+      <canvas id="weightChart"></canvas>
+      <div class="chart-caption" id="weightChartCaption"></div>
+    </div>
+
+    <div class="card">
+      <h2>Weekly comparison <span class="tag weekly">weekly</span></h2>
+      <div class="tablewrap" id="wowWrap"></div>
     </div>
 
     <div class="card">
@@ -430,14 +434,9 @@
     </div>
 
     <div class="card">
-      <h2>Worth attention <span class="tag daily">as needed</span></h2>
-      <div id="flagsWrap"></div>
-    </div>
-
-    <div class="card">
-      <h2>Weight, dosage &amp; trend <span class="tag weekly">weekly</span></h2>
-      <canvas id="weightChart"></canvas>
-      <div class="chart-caption" id="weightChartCaption"></div>
+      <h2>Muscle protection <span class="tag weekly">weekly</span></h2>
+      <div class="sub" style="margin-bottom:14px;">The three things that defend your lean mass during weight loss: not too fast, enough protein, and strength training.</div>
+      <div id="muscleWrap"></div>
     </div>
 
     <div class="card">
@@ -619,7 +618,6 @@ function parseDateAny(d){
   const s = String(d).trim();
   if(!s) return null;
 
-  // ISO: "2026-09-18" or "2026-09-18T..."
   let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if(m){
     const y = Number(m[1]), mo = Number(m[2]), da = Number(m[3]);
@@ -628,7 +626,6 @@ function parseDateAny(d){
     }
   }
 
-  // US: "9/18/2026" or "09/18/2026"
   m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if(m){
     const mo = Number(m[1]), da = Number(m[2]), y = Number(m[3]);
@@ -637,7 +634,6 @@ function parseDateAny(d){
     }
   }
 
-  // Fallback
   const dt = new Date(s);
   return isNaN(dt.getTime()) ? null : dt;
 }
@@ -718,13 +714,13 @@ function renderStats(){
   }
   const lastDose = [...weeklyEntries].reverse().find(e=>e.dose != null)?.dose ?? '—';
   bar.innerHTML = `
-    <div class="stat"><span class="num">${weeklyEntries.length}</span><span class="label">weeks logged</span></div>
+    <div class="stat"><span class="num">${weeklyEntries.length}</span><span class="label">current week</span></div>
     <div class="stat"><span class="num">${changeStr}</span><span class="label">weight change</span></div>
     <div class="stat"><span class="num">${lastDose}</span><span class="label">current mg</span></div>
   `;
 }
 
-/* ---------- Card 1: This week vs last week (4 columns) ---------- */
+/* ---------- Card: Weekly comparison (4 columns) ---------- */
 function windowStats(startISO, endISO){
   const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
   const energyVals   = inRange.map(d => d.energy).filter(v => v != null);
@@ -757,21 +753,18 @@ function renderWeekOverWeek(){
   const thisStats = windowStats(thisStart, thisEnd);
   const lastStats = windowStats(lastStart, lastEnd);
 
-  /* Renders the pill in its own cell.
-     direction: 'up-good' | 'down-good' | 'neutral'
-     sameIsGood: true means "no change" renders as a green ✓ same pill */
   function deltaPill(thisVal, lastVal, opts){
     const { direction = 'neutral', deltaFormat = v => v.toFixed(1), sameIsGood = false } = opts;
 
-    if(thisVal == null || lastVal == null) return '';   // leave cell empty
+    if(thisVal == null || lastVal == null) return '';
 
     const diff = thisVal - lastVal;
     const isSame = Math.abs(diff) < 0.005;
 
     if(isSame){
-            if(direction === 'neutral') return '<span class="wow-delta neutral">no change</span>';
+      if(direction === 'neutral') return '<span class="wow-delta neutral">no change</span>';
       if(sameIsGood)             return '<span class="wow-delta good"><span class="wow-delta-icon">✓</span>same</span>';
-      return '<span class="wow-delta neutral">· no change</span>';
+      return '<span class="wow-delta neutral">no change</span>';
     }
 
     const sign = diff > 0 ? '+' : '−';
@@ -852,7 +845,7 @@ function renderWeekOverWeek(){
   wrap.innerHTML = html;
 }
 
-/* ---------- Card 2: Muscle protection ---------- */
+/* ---------- Card: Muscle protection ---------- */
 function muscleStatsInRange(startISO, endISO){
   const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
   const n = inRange.length;
@@ -985,7 +978,7 @@ function renderMuscleProtection(){
   wrap.innerHTML = rows + insightHtml;
 }
 
-/* ---------- Card 3: Site verdicts ---------- */
+/* ---------- Card: Site verdicts ---------- */
 function renderSiteVerdicts(){
   const wrap = document.getElementById('siteVerdictsWrap');
   if(weeklyEntries.length < 2){
@@ -1077,7 +1070,7 @@ function renderSiteVerdicts(){
     working: '✓ Working well',
     mixed:   '~ Mixed',
     lagging: '⚠ Lagging',
-    none:    '· Not enough data'
+    none:    'Not enough data'
   };
   const verdictClass = {
     working: 'verdict-working',
@@ -1093,7 +1086,7 @@ function renderSiteVerdicts(){
       return `<div class="verdict-signal ${sig.better ? 'better' : 'worse'}">
         <span class="vs-label">${sig.label}</span>
         <span class="vs-value">${vStr}</span>
-        <span class="vs-compare">your avg: ${uStr}</span>
+        <span class="vs-compare">avg: ${uStr}</span>
       </div>`;
     }).join('');
 
@@ -1110,7 +1103,7 @@ function renderSiteVerdicts(){
   wrap.innerHTML = cards;
 }
 
-/* ---------- Card 4: Worth attention ---------- */
+/* ---------- Card: Worth attention ---------- */
 function avgBurdenInRange(startISO, endISO){
   let sum = 0, n = 0;
   dailyEntries.forEach(d => {
@@ -1202,7 +1195,7 @@ function renderFlags(){
   ).join('');
 }
 
-/* ---------- Card 5: Weight chart ---------- */
+/* ---------- Card: Weight chart ---------- */
 let weightChartInstance = null;
 function renderWeightChart(){
   const canvas = document.getElementById('weightChart');
@@ -1312,7 +1305,7 @@ function renderWeightChart(){
   }
 }
 
-/* ---------- Card 6: Strength & movement by cycle day ---------- */
+/* ---------- Card: Strength & movement by cycle day ---------- */
 let cycleActivityInstance = null;
 function renderCycleActivityChart(){
   const canvas = document.getElementById('cycleActivityChart');
