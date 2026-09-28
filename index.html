@@ -261,7 +261,7 @@
 
   /* ---------- Doctor summary ---------- */
   .doctor-output{
-    margin-top:18px; padding:14px 16px;
+    margin-top:0; padding:14px 16px;
     background:#FBF9F2; border:1px solid var(--line); border-radius:var(--radius);
     font-family:'IBM Plex Mono', monospace; font-size:12.5px; line-height:1.6;
     white-space:pre-wrap; overflow-wrap:break-word; color:var(--ink);
@@ -419,7 +419,6 @@
   <section id="view-reports" class="view">
     <div class="card">
       <h2>Non-scale victories</h2>
-      <div class="sub" style="margin-bottom:14px;">Every NSV you've logged. Newest first — a reminder on the hard days.</div>
       <div id="nsvWrap"></div>
     </div>
 
@@ -441,6 +440,16 @@
     </div>
 
     <div class="card">
+      <h2>Doctor visit summary <span class="tag daily">last 30 days</span></h2>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+        <button class="save-btn" id="copySummaryBtn" style="margin-top:0; width:auto; padding:10px 20px;">Copy summary</button>
+        <span class="msg" id="copySummaryMsg" style="margin-top:0;"></span>
+      </div>
+
+      <pre class="doctor-output" id="doctorSummaryText"></pre>
+    </div>
+
+    <div class="card">
       <h2>Weekly comparison <span class="tag weekly">weekly</span></h2>
       <div class="tablewrap" id="wowWrap"></div>
     </div>
@@ -456,21 +465,6 @@
         <br><br>
         <em>Caveat:</em> a good week makes whatever site you used look good. Trust the ranking after 4–6 weeks of rotating between sites.
       </div>
-    </div>
-
-    <div class="card">
-      <h2>Doctor visit summary <span class="tag daily">last 30 days</span></h2>
-      <div class="sub" style="margin-bottom:14px;">A short paragraph you can paste into your provider chat before a check-in.</div>
-
-      <label>Questions for my doctor (optional)</label>
-      <textarea id="doctorQuestions" placeholder="Anything you want to remember to ask — one per line"></textarea>
-
-      <div style="display:flex; gap:10px; align-items:center; margin-top:16px; flex-wrap:wrap;">
-        <button class="save-btn" id="copySummaryBtn" style="margin-top:0; width:auto; padding:10px 20px;">Copy summary</button>
-        <span class="msg" id="copySummaryMsg" style="margin-top:0;"></span>
-      </div>
-
-      <pre class="doctor-output" id="doctorSummaryText"></pre>
     </div>
 
     <div class="card">
@@ -1440,18 +1434,12 @@ function buildDoctorSummary(){
   sentences.push(suggestion);
 
   const body = sentences.join(' ');
-  const questions = (document.getElementById('doctorQuestions')?.value || '')
-    .split('\n').map(q => q.trim()).filter(Boolean);
 
   const header =
     `GLP-1 Summary — ${fmtDate(startISO)} to ${fmtDate(today)}\n` +
     `Current dose: ${lastW?.dose ?? '—'} mg\n\n`;
 
-  let text = header + body;
-  if(questions.length){
-    text += '\n\nQuestions:\n' + questions.map((q, i) => `${i+1}. ${q}`).join('\n');
-  }
-  return text;
+  return header + body;
 }
 
 function renderDoctorSummary(){
@@ -1675,7 +1663,7 @@ document.getElementById('saveWeeklyBtn').onclick = async ()=>{
   }
 };
 
-/* ---------- Doctor summary handlers ---------- */
+/* ---------- Doctor summary handler ---------- */
 document.getElementById('copySummaryBtn').onclick = async ()=>{
   const msg = document.getElementById('copySummaryMsg');
   const text = buildDoctorSummary();
@@ -1689,8 +1677,6 @@ document.getElementById('copySummaryBtn').onclick = async ()=>{
     msg.className = 'msg err';
   }
 };
-
-document.getElementById('doctorQuestions').addEventListener('input', renderDoctorSummary);
 
 /* ============================================================
    CSV import
