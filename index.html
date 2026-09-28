@@ -41,7 +41,7 @@
   }
   .tag.daily{background:var(--sage-soft); color:#3E5445;}
   .tag.weekly{background:var(--amber-soft); color:#7A5C24;}
-  .sub{color:var(--ink-soft); font-size:14px; margin-top:4px;}
+  .sub{color:var(--ink-soft); font-size:14px; margin-top:4px; line-height:1.5;}
   header{
     border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:20px;
   }
@@ -69,7 +69,7 @@
 
   label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:4px; margin-top:14px;}
   label:first-of-type{margin-top:0;}
-  input[type=date], input[type=number], select, textarea{
+  input[type=date], input[type=number], input[type=text], select, textarea{
     width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:var(--radius);
     background:#fff; font-family:'IBM Plex Sans', sans-serif; font-size:14px; color:var(--ink);
   }
@@ -118,6 +118,13 @@
   .obs-item:last-child{border-bottom:none;}
   .obs-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:3px;}
   .obs-text{font-size:13px; line-height:1.5; white-space:pre-wrap; color:var(--ink); overflow-wrap:break-word;}
+
+  /* ---------- NSV list ---------- */
+  .nsv-list{margin-top:2px;}
+  .nsv-item{padding:12px 0; border-bottom:1px dashed var(--line); font-size:13.5px; line-height:1.5;}
+  .nsv-item:last-child{border-bottom:none;}
+  .nsv-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:4px;}
+  .nsv-star{color:var(--amber); margin-right:6px; font-weight:700;}
 
   .chart-caption{font-size:11px; color:var(--ink-soft); margin-top:8px; min-height:14px; line-height:1.4;}
   .chart-caption.warn{color:var(--rose);}
@@ -252,6 +259,14 @@
   .flag-good{background:var(--sage-soft); color:#2F4237;}
   .flag-info{background:var(--amber-soft); color:#6B4E1E;}
 
+  /* ---------- Doctor summary ---------- */
+  .doctor-output{
+    margin-top:18px; padding:14px 16px;
+    background:#FBF9F2; border:1px solid var(--line); border-radius:var(--radius);
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; line-height:1.6;
+    white-space:pre-wrap; overflow-wrap:break-word; color:var(--ink);
+  }
+
   @media (max-width: 600px){
     body{padding:16px 14px 48px;}
 
@@ -271,7 +286,7 @@
     .card{padding:16px;}
     .card + .card{margin-top:14px;}
 
-    input[type=date], input[type=number], select, textarea{
+    input[type=date], input[type=number], input[type=text], select, textarea{
       font-size:16px;
       padding:10px 12px;
     }
@@ -306,6 +321,8 @@
 
     .verdict-signal{grid-template-columns: 1fr auto; font-size:11px;}
     .verdict-signal .vs-compare{display:none;}
+
+    .doctor-output{font-size:11.5px; padding:12px 14px;}
 
     .menu-btn:active{transform:scale(0.98);}
     .save-btn:active{transform:scale(0.99);}
@@ -358,6 +375,9 @@
       <label>Notes</label>
       <textarea id="d-notes" placeholder="Cravings, sleep, anything else worth remembering..."></textarea>
 
+      <label>Non-scale victory (optional)</label>
+      <input type="text" id="d-nsv" placeholder="e.g. Climbed the stairs without stopping">
+
       <button class="save-btn" id="saveDailyBtn">Save daily check-in</button>
       <div class="msg" id="dailyMsg"></div>
     </div>
@@ -398,6 +418,12 @@
 
   <section id="view-reports" class="view">
     <div class="card">
+      <h2>Non-scale victories</h2>
+      <div class="sub" style="margin-bottom:14px;">Every NSV you've logged. Newest first — a reminder on the hard days.</div>
+      <div id="nsvWrap"></div>
+    </div>
+
+    <div class="card">
       <h2>Worth attention <span class="tag daily">as needed</span></h2>
       <div id="flagsWrap"></div>
     </div>
@@ -432,7 +458,22 @@
       </div>
     </div>
 
-        <div class="card">
+    <div class="card">
+      <h2>Doctor visit summary <span class="tag daily">last 30 days</span></h2>
+      <div class="sub" style="margin-bottom:14px;">A short paragraph you can paste into your provider chat before a check-in.</div>
+
+      <label>Questions for my doctor (optional)</label>
+      <textarea id="doctorQuestions" placeholder="Anything you want to remember to ask — one per line"></textarea>
+
+      <div style="display:flex; gap:10px; align-items:center; margin-top:16px; flex-wrap:wrap;">
+        <button class="save-btn" id="copySummaryBtn" style="margin-top:0; width:auto; padding:10px 20px;">Copy summary</button>
+        <span class="msg" id="copySummaryMsg" style="margin-top:0;"></span>
+      </div>
+
+      <pre class="doctor-output" id="doctorSummaryText"></pre>
+    </div>
+
+    <div class="card">
       <h2>Import data</h2>
       <div class="sub" style="margin-bottom:14px;">Upload a filled-in CSV template to add entries in bulk. New rows are added to your existing log — nothing gets overwritten.</div>
       <label>Daily check-ins CSV</label>
@@ -526,6 +567,7 @@ let dailyEntries = [];
 let weeklyEntries = [];
 let currentSymptoms = {};
 
+/* ---------- Tab activation + persistence ---------- */
 function activateView(viewName){
   document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -605,7 +647,6 @@ function todayISO(){
 }
 
 /* ---------- Robust date handling ---------- */
-
 function parseDateAny(d){
   if(d == null || d === '') return null;
   if(d instanceof Date) return isNaN(d.getTime()) ? null : d;
@@ -669,6 +710,7 @@ function symptomBurden_(e){
    ============================================================ */
 function renderAll(){
   renderStats();
+  renderNSVs();
   renderWeekOverWeek();
   renderMuscleProtection();
   renderSiteVerdicts();
@@ -676,6 +718,7 @@ function renderAll(){
   renderWeightChart();
   renderWeeklyTable();
   renderDailyTable();
+  renderDoctorSummary();
 }
 
 function renderStats(){
@@ -697,6 +740,25 @@ function renderStats(){
     <div class="stat"><span class="num">${changeStr}</span><span class="label">weight change</span></div>
     <div class="stat"><span class="num">${lastDose}</span><span class="label">current mg</span></div>
   `;
+}
+
+/* ---------- Card: Non-scale victories ---------- */
+function renderNSVs(){
+  const wrap = document.getElementById('nsvWrap');
+  if(!wrap) return;
+  const withNSV = dailyEntries.filter(e => e.nsv && String(e.nsv).trim());
+  if(withNSV.length === 0){
+    wrap.innerHTML = '<div class="empty">Log your first one on today\'s check-in.</div>';
+    return;
+  }
+  const reversed = [...withNSV].reverse();
+  wrap.innerHTML = `<div class="nsv-list">
+    ${reversed.map(e => `
+      <div class="nsv-item">
+        <div class="nsv-date">${fmtDate(e.date)}</div>
+        <div><span class="nsv-star">★</span>${escapeHtml_(e.nsv)}</div>
+      </div>`).join('')}
+  </div>`;
 }
 
 /* ---------- Card: Weekly comparison ---------- */
@@ -1252,6 +1314,152 @@ function renderWeightChart(){
   }
 }
 
+/* ---------- Card: Doctor visit summary ---------- */
+function buildDoctorSummary(){
+  const today = todayISO();
+  const startISO = addDaysISO(today, -30);
+
+  const monthDaily = dailyEntries.filter(d => d.date >= startISO && d.date <= today);
+  const monthWeekly = weeklyEntries.filter(w => w.date >= startISO && w.date <= today);
+
+  if(monthDaily.length === 0 && monthWeekly.length === 0){
+    return 'Not enough data in the last 30 days to build a summary.';
+  }
+
+  const sentences = [];
+
+  /* 1. Symptoms */
+  if(monthDaily.length > 0){
+    const symptomTotals = {};
+    SYMPTOMS.forEach(s => symptomTotals[s] = { sum: 0, peak: 0 });
+    monthDaily.forEach(d => {
+      SYMPTOMS.forEach(s => {
+        const v = Number(d.symptoms?.[s]) || 0;
+        symptomTotals[s].sum += v;
+        if(v > symptomTotals[s].peak) symptomTotals[s].peak = v;
+      });
+    });
+
+    const ranked = Object.entries(symptomTotals)
+      .filter(([,t]) => t.sum > 0)
+      .sort((a,b) => b[1].sum - a[1].sum);
+
+    const totalBurden = Object.values(symptomTotals).reduce((sum,t) => sum + t.sum, 0);
+    const avgPerDay = totalBurden / monthDaily.length;
+    const severityWord = avgPerDay < 1.0 ? 'minimal and mild' :
+                         avgPerDay < 2.5 ? 'mild to moderate' :
+                         avgPerDay < 5 ? 'moderate' : 'notable';
+
+    if(ranked.length === 0){
+      sentences.push('No symptoms were logged this month.');
+    } else {
+      const top = ranked[0];
+      const peakLabel = SEV_LABELS[top[1].peak].toLowerCase();
+      let s = `Symptoms have been ${severityWord}, with ${top[0].toLowerCase()} being the most prevalent (peak ${peakLabel})`;
+      const secondary = ranked[1];
+      if(secondary){
+        s += `, followed by ${secondary[0].toLowerCase()}`;
+      }
+      s += '.';
+      sentences.push(s);
+    }
+  }
+
+  /* 2. Weight */
+  const firstW = monthWeekly[0];
+  const lastW  = monthWeekly[monthWeekly.length-1];
+  if(firstW && lastW && firstW !== lastW && firstW.weight > 0){
+    const change = lastW.weight - firstW.weight;
+    const weeksElapsed = Math.max(1, Math.round((parseDateAny(lastW.date) - parseDateAny(firstW.date)) / (7*86400000)));
+    const pctPerWeek = Math.abs((change / firstW.weight) * 100 / weeksElapsed);
+    const direction = change < 0 ? 'Weight loss' : 'Weight gain';
+    sentences.push(`${direction} of ${Math.abs(change).toFixed(1)} lb over ${weeksElapsed} week${weeksElapsed === 1 ? '' : 's'}; currently ${lastW.weight.toFixed(1)} lb (${pctPerWeek.toFixed(1)}% per week).`);
+  } else if(lastW){
+    sentences.push(`Current weight is ${lastW.weight.toFixed(1)} lb.`);
+  }
+
+  /* 3. Suppression trend */
+  const priorStart = addDaysISO(today, -60);
+  const priorEnd   = addDaysISO(today, -30);
+  const priorDaily = dailyEntries.filter(d => d.date >= priorStart && d.date < priorEnd);
+
+  const thisApp  = avg(monthDaily.map(d => d.appetite).filter(v => v != null));
+  const priorApp = avg(priorDaily.map(d => d.appetite).filter(v => v != null));
+  const thisFN   = avg(monthDaily.map(d => d.foodNoise).filter(v => v != null));
+
+  if(thisApp != null){
+    const strength = thisApp < 2 ? 'strong' : thisApp < 3.5 ? 'adequate' : 'weakening';
+    let s = `Appetite suppression is currently ${strength} (avg appetite ${thisApp.toFixed(1)}/5`;
+    if(thisFN != null) s += `; food noise ${thisFN.toFixed(1)}/5`;
+    s += ')';
+    if(priorApp != null){
+      const diff = thisApp - priorApp;
+      if(diff >= 0.3){
+        s += `, weaker than the prior month (${priorApp.toFixed(1)} → ${thisApp.toFixed(1)})`;
+      } else if(diff <= -0.3){
+        s += `, stronger than the prior month (${priorApp.toFixed(1)} → ${thisApp.toFixed(1)})`;
+      }
+    }
+    s += '.';
+    sentences.push(s);
+  }
+
+  /* 4. Muscle-protection snapshot */
+  const recentDaily = dailyEntries.filter(d => d.date >= addDaysISO(today, -7) && d.date <= today);
+  if(recentDaily.length >= 3){
+    const proteinDays = recentDaily.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
+    const strengthDays = recentDaily.filter(d => d.strength).length;
+    if(proteinDays >= PROTEIN_DAYS_GOAL && strengthDays >= STRENGTH_GOAL){
+      sentences.push(`Muscle-protection habits are in place: protein goal met ${proteinDays} of the last 7 days, ${strengthDays} strength session${strengthDays === 1 ? '' : 's'}.`);
+    } else if(proteinDays < 3 || strengthDays === 0){
+      sentences.push(`Muscle-protection habits are lagging: protein goal met ${proteinDays} of the last 7 days, ${strengthDays} strength session${strengthDays === 1 ? '' : 's'}.`);
+    }
+  }
+
+  /* 5. Suggestion */
+  const heavySymptoms = avg(monthDaily.map(d => symptomBurden_(d))) > 4;
+  const losingFast = (firstW && lastW && firstW !== lastW && firstW.weight > 0) ? (() => {
+    const pct = ((firstW.weight - lastW.weight) / firstW.weight) * 100;
+    const weeks = Math.max(1, Math.round((parseDateAny(lastW.date) - parseDateAny(firstW.date)) / (7*86400000)));
+    return (pct / weeks) > 1.2;
+  })() : false;
+  const suppWaning = thisApp != null && priorApp != null && thisApp > priorApp + 0.3;
+
+  let suggestion;
+  if(heavySymptoms && suppWaning){
+    suggestion = 'Given both symptom burden and weakening suppression, the current dose may warrant review.';
+  } else if(heavySymptoms){
+    suggestion = 'Given symptom burden, remaining on the current dose may be worth discussing.';
+  } else if(losingFast){
+    suggestion = 'Weight loss is running faster than the 1% per week target; the current dose may be higher than needed.';
+  } else if(suppWaning){
+    suggestion = 'Appetite suppression has weakened compared to the prior month; a dose increase may be appropriate.';
+  } else {
+    suggestion = 'Signals suggest the current dose is working well; may be appropriate to remain on it.';
+  }
+  sentences.push(suggestion);
+
+  const body = sentences.join(' ');
+  const questions = (document.getElementById('doctorQuestions')?.value || '')
+    .split('\n').map(q => q.trim()).filter(Boolean);
+
+  const header =
+    `GLP-1 Summary — ${fmtDate(startISO)} to ${fmtDate(today)}\n` +
+    `Current dose: ${lastW?.dose ?? '—'} mg\n\n`;
+
+  let text = header + body;
+  if(questions.length){
+    text += '\n\nQuestions:\n' + questions.map((q, i) => `${i+1}. ${q}`).join('\n');
+  }
+  return text;
+}
+
+function renderDoctorSummary(){
+  const el = document.getElementById('doctorSummaryText');
+  if(!el) return;
+  el.textContent = buildDoctorSummary();
+}
+
 /* ---------- Log tables ---------- */
 function renderWeeklyTable(){
   const wrap = document.getElementById('weeklyTableWrap');
@@ -1324,14 +1532,15 @@ function renderDailyTable(){
     </tr>`;
   }).join('');
 
-  const withNotes = reversed.filter(e => e.notes && String(e.notes).trim());
-  const notesBlock = withNotes.length
+  const withDetail = reversed.filter(e => (e.notes && String(e.notes).trim()) || (e.nsv && String(e.nsv).trim()));
+  const notesBlock = withDetail.length
     ? `<div class="obs-list">
-        <h3>Daily notes</h3>
-        ${withNotes.map(e => `
+        <h3>Daily notes &amp; NSVs</h3>
+        ${withDetail.map(e => `
           <div class="obs-item">
             <div class="obs-date">${fmtDate(e.date)}</div>
-            <div class="obs-text">${escapeHtml_(e.notes)}</div>
+            ${e.nsv ? `<div class="obs-text"><span class="nsv-star">★</span>${escapeHtml_(e.nsv)}</div>` : ''}
+            ${e.notes ? `<div class="obs-text" style="${e.nsv ? 'margin-top:6px;' : ''}">${escapeHtml_(e.notes)}</div>` : ''}
           </div>`).join('')}
       </div>`
     : '';
@@ -1370,6 +1579,7 @@ document.getElementById('saveDailyBtn').onclick = async ()=>{
   const movement  = document.getElementById('d-movement').checked;
   const strength  = document.getElementById('d-strength').checked;
   const notes     = document.getElementById('d-notes').value.trim();
+  const nsv       = document.getElementById('d-nsv').value.trim();
   const msg = document.getElementById('dailyMsg');
   const btn = document.getElementById('saveDailyBtn');
 
@@ -1388,6 +1598,7 @@ document.getElementById('saveDailyBtn').onclick = async ()=>{
     protein:   isNaN(protein)   ? null : protein,
     period, movement, strength,
     notes: notes || null,
+    nsv:   nsv   || null,
     symptoms: {...currentSymptoms}
   };
 
@@ -1404,7 +1615,7 @@ document.getElementById('saveDailyBtn').onclick = async ()=>{
     msg.textContent = 'Saved to your sheet.';
     msg.className = 'msg ok';
 
-    ['d-energy','d-appetite','d-foodnoise','d-protein','d-notes'].forEach(id => document.getElementById(id).value = '');
+    ['d-energy','d-appetite','d-foodnoise','d-protein','d-notes','d-nsv'].forEach(id => document.getElementById(id).value = '');
     ['d-period','d-movement','d-strength'].forEach(id => document.getElementById(id).checked = false);
     buildSymList();
   }catch(e){
@@ -1463,6 +1674,23 @@ document.getElementById('saveWeeklyBtn').onclick = async ()=>{
     btn.disabled = false;
   }
 };
+
+/* ---------- Doctor summary handlers ---------- */
+document.getElementById('copySummaryBtn').onclick = async ()=>{
+  const msg = document.getElementById('copySummaryMsg');
+  const text = buildDoctorSummary();
+  try{
+    await navigator.clipboard.writeText(text);
+    msg.textContent = 'Copied to clipboard.';
+    msg.className = 'msg ok';
+    setTimeout(() => { msg.textContent = ''; }, 2500);
+  }catch(err){
+    msg.textContent = 'Copy failed — select the text manually.';
+    msg.className = 'msg err';
+  }
+};
+
+document.getElementById('doctorQuestions').addEventListener('input', renderDoctorSummary);
 
 /* ============================================================
    CSV import
@@ -1529,6 +1757,7 @@ document.getElementById('importDailyFile').addEventListener('change', async (ev)
         movement:  toYesBool(row.movement),
         strength:  toYesBool(row.strength),
         notes: row.notes || null,
+        nsv:   row.nsv   || null,
         symptoms
       });
     });
@@ -1600,16 +1829,15 @@ document.getElementById('importWeeklyFile').addEventListener('change', async (ev
    ============================================================ */
 document.getElementById('d-date').value = todayISO();
 document.getElementById('w-date').value = todayISO();
-document.getElementById('d-date').value = todayISO();
-document.getElementById('w-date').value = todayISO();
 
+/* Restore last-viewed tab */
 try {
   const lastTab = localStorage.getItem('glp1_last_tab');
   if(lastTab && document.getElementById('view-' + lastTab)){
     activateView(lastTab);
   }
 } catch(e){}
-  
-  buildSymList();
+
+buildSymList();
 loadAll();
 </script>
