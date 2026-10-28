@@ -42,9 +42,7 @@
   .tag.daily{background:var(--sage-soft); color:#3E5445;}
   .tag.weekly{background:var(--amber-soft); color:#7A5C24;}
   .sub{color:var(--ink-soft); font-size:14px; margin-top:4px; line-height:1.5;}
-  header{
-    border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:20px;
-  }
+  header{ border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:20px; }
   .stats{display:flex; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--card); margin-top:14px; width:fit-content;}
   .stat{padding:10px 18px; text-align:center; border-right:1px solid var(--line); min-width:88px;}
   .stat:last-child{border-right:none;}
@@ -106,7 +104,6 @@
   td.num{font-family:'IBM Plex Mono', monospace;}
   .del{cursor:pointer; border:1px solid var(--rose); background:#fff; border-radius:3px; font-size:11px; padding:2px 6px; color:var(--rose);}
   .empty{color:var(--ink-soft); font-size:13px; padding:20px 0; text-align:center;}
-  .divider{border:none; border-top:1px solid var(--line); margin:22px 0;}
   .tablewrap{overflow-x:auto;}
   .check-row{display:flex; gap:18px; margin-top:16px; flex-wrap:wrap;}
   .check-label{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink); margin:0; cursor:pointer;}
@@ -119,7 +116,6 @@
   .obs-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:3px;}
   .obs-text{font-size:13px; line-height:1.5; white-space:pre-wrap; color:var(--ink); overflow-wrap:break-word;}
 
-  /* ---------- NSV list ---------- */
   .nsv-list{margin-top:2px;}
   .nsv-item{padding:12px 0; border-bottom:1px dashed var(--line); font-size:13.5px; line-height:1.5;}
   .nsv-item:last-child{border-bottom:none;}
@@ -129,125 +125,74 @@
   .chart-caption{font-size:11px; color:var(--ink-soft); margin-top:8px; min-height:14px; line-height:1.4;}
   .chart-caption.warn{color:var(--rose);}
 
-  /* ---------- Week over week (4 columns) ---------- */
-  .wow-table{width:100%; border-collapse:collapse; font-size:13px; table-layout:auto;}
+  .wow-table{width:100%; border-collapse:collapse; font-size:13px;}
   .wow-table th{
     color:var(--ink-soft); font-weight:500; font-size:11px; text-transform:lowercase;
-    padding:6px 8px; text-align:left; border-bottom:1px solid var(--line);
-    white-space:nowrap;
+    padding:6px 8px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;
   }
   .wow-table th.col-num, .wow-table th.col-change{text-align:right;}
   .wow-table td{padding:11px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
   .wow-table tr:last-child td{border-bottom:none;}
   .wow-table td.metric{font-weight:500; color:var(--ink);}
-  .wow-table td.num{
-    font-family:'IBM Plex Mono', monospace;
-    white-space:nowrap; text-align:right;
-  }
-  .wow-table td.change{
-    text-align:right; white-space:nowrap;
-    width:1%;
-  }
+  .wow-table td.num{font-family:'IBM Plex Mono', monospace; white-space:nowrap; text-align:right;}
+  .wow-table td.change{text-align:right; white-space:nowrap; width:1%;}
   .wow-delta{
     display:inline-flex; align-items:center; gap:5px;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px; font-weight:700;
-    padding:3px 10px; border-radius:11px;
-    letter-spacing:0.02em;
-    white-space:nowrap;
-    line-height:1.4;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:11px; letter-spacing:0.02em; white-space:nowrap; line-height:1.4;
   }
-  .wow-delta.good{
-    background:#A8CCA9;
-    color:#1B3F22;
-    box-shadow:inset 0 0 0 1px #7FA582;
-  }
-  .wow-delta.bad{
-    background:#E6B0A4;
-    color:#7A2418;
-    box-shadow:inset 0 0 0 1px #C9877A;
-  }
-  .wow-delta.neutral{
-    background:#DDD3B6;
-    color:#5C6B63;
-    box-shadow:inset 0 0 0 1px #C5BC9F;
-  }
+  .wow-delta.good{ background:#A8CCA9; color:#1B3F22; box-shadow:inset 0 0 0 1px #7FA582; }
+  .wow-delta.bad{ background:#E6B0A4; color:#7A2418; box-shadow:inset 0 0 0 1px #C9877A; }
+  .wow-delta.neutral{ background:#DDD3B6; color:#5C6B63; box-shadow:inset 0 0 0 1px #C5BC9F; }
   .wow-delta-icon{font-size:12px; line-height:1; font-weight:700;}
 
-  /* ---------- Muscle protection verdict card ---------- */
   .mp-verdict{
     display:flex; gap:16px; align-items:flex-start;
-    padding:20px 22px; border-radius:8px;
-    border:1px solid;
+    padding:20px 22px; border-radius:8px; border:1px solid;
   }
   .mp-verdict-green{ background:#E6F0E7; border-color:#B0CFB3; }
   .mp-verdict-amber{ background:#FBF1D8; border-color:#E3C77F; }
   .mp-verdict-red  { background:#F7DED7; border-color:#DDA496; }
   .mp-verdict-none { background:#F1EDE1; border-color:var(--line); }
-
   .mp-indicator{ flex-shrink:0; margin-top:4px; }
   .mp-dot{ display:block; width:16px; height:16px; border-radius:50%; }
   .mp-verdict-green .mp-dot{ background:#4F8260; box-shadow:0 0 0 5px rgba(79,130,96,0.18); }
   .mp-verdict-amber .mp-dot{ background:#C79A46; box-shadow:0 0 0 5px rgba(199,154,70,0.20); }
   .mp-verdict-red   .mp-dot{ background:#B5675A; box-shadow:0 0 0 5px rgba(181,103,90,0.20); }
   .mp-verdict-none  .mp-dot{ background:#B8AD94; box-shadow:0 0 0 5px rgba(184,173,148,0.20); }
-
   .mp-content{ flex:1; min-width:0; }
-  .mp-title{
-    font-family:'Roboto Slab', serif; font-weight:700;
-    font-size:16px; margin-bottom:5px; line-height:1.3;
-  }
+  .mp-title{ font-family:'Roboto Slab', serif; font-weight:700; font-size:16px; margin-bottom:5px; line-height:1.3; }
   .mp-verdict-green .mp-title{ color:#2A4A33; }
   .mp-verdict-amber .mp-title{ color:#6B4E1E; }
   .mp-verdict-red   .mp-title{ color:#5A2D24; }
   .mp-verdict-none  .mp-title{ color:var(--ink-soft); }
-
   .mp-body{ font-size:13.5px; line-height:1.55; }
   .mp-verdict-green .mp-body{ color:#3B5B40; }
   .mp-verdict-amber .mp-body{ color:#6B4E1E; }
   .mp-verdict-red   .mp-body{ color:#6B362D; }
   .mp-verdict-none  .mp-body{ color:var(--ink-soft); }
 
-  /* ---------- Site verdict cards ---------- */
-  .verdict-card{
-    background:#FBF9F2; border:1px solid var(--line); border-radius:var(--radius);
-    padding:14px 16px; margin-bottom:10px;
+  .rotation-summary{
+    padding:12px 14px; border-radius:var(--radius); margin-bottom:16px;
+    font-size:13px; line-height:1.5;
   }
-  .verdict-card.verdict-working{border-left:3px solid var(--sage);}
-  .verdict-card.verdict-mixed{border-left:3px solid var(--amber);}
-  .verdict-card.verdict-lagging{border-left:3px solid var(--rose);}
-  .verdict-card.verdict-none{border-left:3px solid var(--line); opacity:0.85;}
-
-  .verdict-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
-  .verdict-site{font-weight:600; font-size:14px;}
-  .verdict-badge{
-    font-family:'IBM Plex Mono', monospace; font-size:11px;
-    padding:3px 9px; border-radius:10px; white-space:nowrap;
+  .rotation-summary.ok{background:var(--sage-soft); color:#2F4237; border-left:3px solid var(--sage);}
+  .rotation-summary.warning{background:var(--rose-soft); color:#5A2D24; border-left:3px solid var(--rose);}
+  .rotation-summary.info{background:var(--amber-soft); color:#6B4E1E; border-left:3px solid var(--amber);}
+  .rotation-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .rotation-table th{
+    text-align:left; padding:6px 8px; font-size:11px; color:var(--ink-soft);
+    text-transform:lowercase; border-bottom:1px solid var(--line); font-weight:500;
   }
-  .verdict-working .verdict-badge{background:var(--sage-soft); color:#3E5445;}
-  .verdict-mixed   .verdict-badge{background:var(--amber-soft); color:#7A5C24;}
-  .verdict-lagging .verdict-badge{background:var(--rose-soft); color:#7B3A2E;}
-  .verdict-none    .verdict-badge{background:var(--line); color:var(--ink-soft);}
+  .rotation-table td{padding:10px 8px; border-bottom:1px solid var(--line);}
+  .rotation-table tr:last-child td{border-bottom:none;}
+  .rotation-table td.date{font-family:'IBM Plex Mono', monospace; color:var(--ink-soft); font-size:12px; white-space:nowrap;}
+  .rotation-table td.site{font-weight:500;}
+  .rotation-table td.gap{font-family:'IBM Plex Mono', monospace; font-size:12px; text-align:right; white-space:nowrap;}
+  .rotation-table td.gap.short{color:var(--rose); font-weight:600;}
+  .rotation-table td.gap.ok{color:var(--sage);}
+  .rotation-table td.count{font-family:'IBM Plex Mono', monospace; color:var(--ink-soft); font-size:12px; text-align:right;}
 
-  .verdict-signals{display:flex; flex-direction:column; gap:5px; margin-bottom:4px;}
-  .verdict-signal{
-    display:grid; grid-template-columns: 1fr auto auto; gap:10px; align-items:baseline;
-    font-size:12px;
-  }
-  .verdict-signal .vs-label{color:var(--ink-soft);}
-  .verdict-signal .vs-value{font-family:'IBM Plex Mono', monospace; font-weight:600;}
-  .verdict-signal .vs-compare{color:var(--ink-soft); font-size:11px; min-width:110px; text-align:right;}
-  .verdict-signal.better .vs-value{color:var(--sage);}
-  .verdict-signal.worse .vs-value{color:var(--ink);}
-
-  .verdict-meta{font-size:11px; color:var(--ink-soft); margin-top:8px;}
-
-  .verdict-note{
-    font-size:11px; color:var(--ink-soft); line-height:1.5; margin-top:14px;
-    padding-top:12px; border-top:1px dashed var(--line);
-  }
-
-  /* ---------- Flags ---------- */
   .flag{
     display:flex; gap:10px; padding:12px 14px; border-radius:var(--radius);
     margin-bottom:8px; font-size:13px; line-height:1.5;
@@ -259,9 +204,8 @@
   .flag-good{background:var(--sage-soft); color:#2F4237;}
   .flag-info{background:var(--amber-soft); color:#6B4E1E;}
 
-  /* ---------- Doctor summary ---------- */
   .doctor-output{
-    margin-top:0; padding:14px 16px;
+    padding:14px 16px;
     background:#FBF9F2; border:1px solid var(--line); border-radius:var(--radius);
     font-family:'IBM Plex Mono', monospace; font-size:12.5px; line-height:1.6;
     white-space:pre-wrap; overflow-wrap:break-word; color:var(--ink);
@@ -269,61 +213,42 @@
 
   @media (max-width: 600px){
     body{padding:16px 14px 48px;}
-
     h1{font-size:22px;}
     h2{font-size:15px;}
     .sub{font-size:13px; line-height:1.4;}
     header{padding-bottom:14px; margin-bottom:18px;}
-
     .stats{width:100%; margin-top:12px;}
     .stat{flex:1 1 0; min-width:0; padding:10px 6px;}
     .stat .num{font-size:17px;}
     .stat .label{font-size:10px;}
-
     .menu{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px;}
     .menu-btn{padding:12px 8px; font-size:13px; touch-action:manipulation;}
-
     .card{padding:16px;}
     .card + .card{margin-top:14px;}
-
-    input[type=date], input[type=number], input[type=text], select, textarea{
-      font-size:16px;
-      padding:10px 12px;
-    }
-
+    input[type=date], input[type=number], input[type=text], select, textarea{font-size:16px; padding:10px 12px;}
     .sym-row{padding:9px 0;}
     .sym-name{font-size:14px;}
     .sev-btn{width:36px; height:36px; font-size:13px; touch-action:manipulation;}
-
     .save-btn{padding:14px; font-size:15px; touch-action:manipulation;}
-
     .check-row{gap:14px;}
     .check-label{font-size:14px;}
     .check-label input[type=checkbox]{width:18px; height:18px;}
-
     .tablewrap{-webkit-overflow-scrolling:touch;}
-    #dailyTableWrap table{min-width:720px;}
-    #weeklyTableWrap table{min-width:460px;}
-
+    #dailyTableWrap table{min-width:820px;}
+    #weeklyTableWrap table{min-width:520px;}
     .del{padding:5px 9px; font-size:12px; touch-action:manipulation;}
-
     canvas{max-height:220px;}
-
     .wow-table{font-size:12px;}
     .wow-table th, .wow-table td{padding:9px 5px;}
     .wow-table td.metric{font-size:12px;}
     .wow-delta{font-size:10px; padding:3px 8px; gap:3px;}
     .wow-delta-icon{font-size:11px;}
-
     .mp-verdict{padding:16px 16px; gap:12px;}
     .mp-title{font-size:15px;}
     .mp-body{font-size:13px;}
-
-    .verdict-signal{grid-template-columns: 1fr auto; font-size:11px;}
-    .verdict-signal .vs-compare{display:none;}
-
+    .rotation-table{font-size:12px;}
+    .rotation-table th, .rotation-table td{padding:8px 5px;}
     .doctor-output{font-size:11.5px; padding:12px 14px;}
-
     .menu-btn:active{transform:scale(0.98);}
     .save-btn:active{transform:scale(0.99);}
     .sev-btn:active{transform:scale(0.94);}
@@ -353,6 +278,9 @@
 
       <label>Energy (1 low – 5 high)</label>
       <input type="number" inputmode="numeric" min="1" max="5" id="d-energy" placeholder="1–5">
+
+      <label>Mood (1 low – 5 high)</label>
+      <input type="number" inputmode="numeric" min="1" max="5" id="d-mood" placeholder="1–5">
 
       <label>Appetite (1 no appetite – 5 very hungry)</label>
       <input type="number" inputmode="numeric" min="1" max="5" id="d-appetite" placeholder="1–5">
@@ -445,7 +373,6 @@
         <button class="save-btn" id="copySummaryBtn" style="margin-top:0; width:auto; padding:10px 20px;">Copy summary</button>
         <span class="msg" id="copySummaryMsg" style="margin-top:0;"></span>
       </div>
-
       <pre class="doctor-output" id="doctorSummaryText"></pre>
     </div>
 
@@ -455,16 +382,9 @@
     </div>
 
     <div class="card">
-      <h2>Injection site effectiveness <span class="tag weekly">weekly</span></h2>
-      <div class="sub" style="margin-bottom:14px;">Each site is judged on the three things that matter: are you losing weight, are symptoms low, is your energy good.</div>
-      <div id="siteVerdictsWrap"></div>
-      <div class="verdict-note">
-        <strong>How this works.</strong> For each site, average the weight change, symptom burden, and energy across the days that followed each injection.
-        Each value is compared against your own overall average. Two or three signals better than your average → <strong>Working well</strong>.
-        One signal better → <strong>Mixed</strong>. None better → <strong>Lagging</strong>. Sites need at least 2 injections before a verdict is shown.
-        <br><br>
-        <em>Caveat:</em> a good week makes whatever site you used look good. Trust the ranking after 4–6 weeks of rotating between sites.
-      </div>
+      <h2>Injection rotation <span class="tag weekly">weekly</span></h2>
+      <div class="sub" style="margin-bottom:14px;">Rotating sites protects tissue and preserves absorption. Aim for 4+ weeks between uses of the same site.</div>
+      <div id="rotationWrap"></div>
     </div>
 
     <div class="card">
@@ -500,6 +420,7 @@ const API_TOKEN = '';
 const PROTEIN_GOAL      = 100;
 const STRENGTH_GOAL     = 2;
 const PROTEIN_DAYS_GOAL = 5;
+const ROTATION_MIN_DAYS = 28;
 
 const SYMPTOMS = ["Nausea","Constipation","Diarrhea","Headache","Reflux","Dizziness"];
 
@@ -551,9 +472,8 @@ const deleteWeeklyEntry = (id)      => apiPost_({ action:'deleteWeekly', id: id 
 const bulkSaveDaily     = (entries) => apiPost_({ action:'bulkDaily',  entries: entries, dedupe: true });
 const bulkSaveWeekly    = (entries) => apiPost_({ action:'bulkWeekly', entries: entries, dedupe: true });
 
-
 /* ============================================================
-   State + constants
+   State
    ============================================================ */
 const SEV_LABELS = ["None","Mild","Mod","Severe"];
 
@@ -561,11 +481,9 @@ let dailyEntries = [];
 let weeklyEntries = [];
 let currentSymptoms = {};
 
-/* ---------- Tab activation + persistence ---------- */
 function activateView(viewName){
   document.querySelectorAll('.menu-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-
   const btn = document.querySelector('.menu-btn[data-view="' + viewName + '"]');
   const view = document.getElementById('view-' + viewName);
   if(btn) btn.classList.add('active');
@@ -640,30 +558,21 @@ function todayISO(){
   return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
 }
 
-/* ---------- Robust date handling ---------- */
 function parseDateAny(d){
   if(d == null || d === '') return null;
   if(d instanceof Date) return isNaN(d.getTime()) ? null : d;
-
   const s = String(d).trim();
   if(!s) return null;
-
   let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if(m){
     const y = Number(m[1]), mo = Number(m[2]), da = Number(m[3]);
-    if(y >= 1900 && y <= 2200 && mo >= 1 && mo <= 12 && da >= 1 && da <= 31){
-      return new Date(y, mo - 1, da);
-    }
+    if(y >= 1900 && y <= 2200 && mo >= 1 && mo <= 12 && da >= 1 && da <= 31) return new Date(y, mo - 1, da);
   }
-
   m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if(m){
     const mo = Number(m[1]), da = Number(m[2]), y = Number(m[3]);
-    if(mo >= 1 && mo <= 12 && da >= 1 && da <= 31){
-      return new Date(y, mo - 1, da);
-    }
+    if(mo >= 1 && mo <= 12 && da >= 1 && da <= 31) return new Date(y, mo - 1, da);
   }
-
   const dt = new Date(s);
   return isNaN(dt.getTime()) ? null : dt;
 }
@@ -707,7 +616,7 @@ function renderAll(){
   renderNSVs();
   renderWeekOverWeek();
   renderMuscleProtection();
-  renderSiteVerdicts();
+  renderRotation();
   renderFlags();
   renderWeightChart();
   renderWeeklyTable();
@@ -730,13 +639,13 @@ function renderStats(){
   }
   const lastDose = [...weeklyEntries].reverse().find(e=>e.dose != null)?.dose ?? '—';
   bar.innerHTML = `
-    <div class="stat"><span class="num">${weeklyEntries.length}</span><span class="label">current week</span></div>
+    <div class="stat"><span class="num">${weeklyEntries.length}</span><span class="label">weeks in</span></div>
     <div class="stat"><span class="num">${changeStr}</span><span class="label">weight change</span></div>
     <div class="stat"><span class="num">${lastDose}</span><span class="label">current mg</span></div>
   `;
 }
 
-/* ---------- Card: Non-scale victories ---------- */
+/* ---------- Non-scale victories ---------- */
 function renderNSVs(){
   const wrap = document.getElementById('nsvWrap');
   if(!wrap) return;
@@ -755,15 +664,17 @@ function renderNSVs(){
   </div>`;
 }
 
-/* ---------- Card: Weekly comparison ---------- */
+/* ---------- Weekly comparison ---------- */
 function windowStats(startISO, endISO){
   const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
   const energyVals   = inRange.map(d => d.energy).filter(v => v != null);
+  const moodVals     = inRange.map(d => d.mood).filter(v => v != null);
   const appetiteVals = inRange.map(d => d.appetite).filter(v => v != null);
   const fnVals       = inRange.map(d => d.foodNoise).filter(v => v != null);
   const burdenSum    = inRange.reduce((s, d) => s + symptomBurden_(d), 0);
   return {
     energy:    avg(energyVals),
+    mood:      avg(moodVals),
     appetite:  avg(appetiteVals),
     foodNoise: avg(fnVals),
     burden:    inRange.length > 0 ? burdenSum : null
@@ -790,33 +701,23 @@ function renderWeekOverWeek(){
 
   function deltaPill(thisVal, lastVal, opts){
     const { direction = 'neutral', deltaFormat = v => v.toFixed(1), sameIsGood = false } = opts;
-
     if(thisVal == null || lastVal == null) return '';
-
     const diff = thisVal - lastVal;
     const isSame = Math.abs(diff) < 0.005;
-
     if(isSame){
       if(direction === 'neutral') return '<span class="wow-delta neutral">no change</span>';
       if(sameIsGood)             return '<span class="wow-delta good"><span class="wow-delta-icon">✓</span>same</span>';
       return '<span class="wow-delta neutral">no change</span>';
     }
-
     const sign = diff > 0 ? '+' : '−';
     const absStr = deltaFormat(Math.abs(diff));
-
     let kind = 'neutral';
     let iconHtml = '';
-
     if(direction !== 'neutral'){
       const wentRight = direction === 'up-good' ? diff > 0 : diff < 0;
-      if(wentRight){
-        kind = 'good'; iconHtml = '<span class="wow-delta-icon">✓</span>';
-      } else {
-        kind = 'bad';  iconHtml = '<span class="wow-delta-icon">⚠</span>';
-      }
+      if(wentRight){ kind = 'good'; iconHtml = '<span class="wow-delta-icon">✓</span>'; }
+      else { kind = 'bad'; iconHtml = '<span class="wow-delta-icon">⚠</span>'; }
     }
-
     return `<span class="wow-delta ${kind}">${iconHtml}${sign}${absStr}</span>`;
   }
 
@@ -825,7 +726,6 @@ function renderWeekOverWeek(){
     const thisStr = format(thisVal);
     const lastStr = format(lastVal);
     const pill = deltaPill(thisVal, lastVal, { direction, deltaFormat, sameIsGood });
-
     return `<tr>
       <td class="metric">${label}</td>
       <td class="num">${lastStr}</td>
@@ -855,15 +755,10 @@ function renderWeekOverWeek(){
           direction: 'neutral',
           deltaFormat: v => v.toFixed(2)
         })}
-        ${row('Energy',     thisStats.energy,    lastStats.energy,    {
-          direction: 'up-good', sameIsGood: true
-        })}
-        ${row('Appetite',   thisStats.appetite,  lastStats.appetite,  {
-          direction: 'down-good', sameIsGood: true
-        })}
-        ${row('Food noise', thisStats.foodNoise, lastStats.foodNoise, {
-          direction: 'down-good', sameIsGood: true
-        })}
+        ${row('Energy',     thisStats.energy,    lastStats.energy,    { direction: 'up-good', sameIsGood: true })}
+        ${row('Mood',       thisStats.mood,      lastStats.mood,      { direction: 'up-good', sameIsGood: true })}
+        ${row('Appetite',   thisStats.appetite,  lastStats.appetite,  { direction: 'down-good', sameIsGood: true })}
+        ${row('Food noise', thisStats.foodNoise, lastStats.foodNoise, { direction: 'down-good', sameIsGood: true })}
         ${row('Symptom burden', thisStats.burden, lastStats.burden, {
           format: v => v == null ? '—' : v.toFixed(0),
           direction: 'down-good',
@@ -880,7 +775,7 @@ function renderWeekOverWeek(){
   wrap.innerHTML = html;
 }
 
-/* ---------- Card: Muscle protection (verdict) ---------- */
+/* ---------- Muscle protection (14-day windows, softened strength) ---------- */
 function renderMuscleProtection(){
   const wrap = document.getElementById('muscleWrap');
 
@@ -899,22 +794,25 @@ function renderMuscleProtection(){
 
   const latest   = weeklyEntries[weeklyEntries.length-1];
   const previous = weeklyEntries[weeklyEntries.length-2];
+  const today    = todayISO();
 
   const lossPct = (previous.weight != null && latest.weight != null && previous.weight > 0)
     ? ((previous.weight - latest.weight) / previous.weight) * 100
     : null;
 
-  const thisWeekStart = addDaysISO(latest.date, -7);
-  const thisWeekEnd   = latest.date;
-  const weekEntries   = dailyEntries.filter(d => d.date >= thisWeekStart && d.date < thisWeekEnd);
+  const fourteenStart = addDaysISO(today, -14);
+  const fourteenEnd   = addDaysISO(today, 1);
+  const twoWeeks      = dailyEntries.filter(d => d.date >= fourteenStart && d.date < fourteenEnd);
 
-  if(lossPct == null || weekEntries.length < 3){
+  if(twoWeeks.length < 6){
     wrap.innerHTML = notEnough;
     return;
   }
 
-  const strengthDays = weekEntries.filter(d => d.strength).length;
-  const proteinDays  = weekEntries.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
+  const strengthDays14 = twoWeeks.filter(d => d.strength).length;
+  const proteinDays14  = twoWeeks.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
+  const strengthPerWeek = strengthDays14 / 2;
+  const proteinPerWeek  = proteinDays14 / 2;
 
   function scoreLoss(v){
     if(v == null) return null;
@@ -922,24 +820,25 @@ function renderMuscleProtection(){
     if(v <= 1.5) return 1;
     return 2;
   }
-  function scoreStrength(n){
-    if(n >= STRENGTH_GOAL) return 0;
-    if(n === 1) return 1;
+  function scoreStrength(v){
+    if(v >= STRENGTH_GOAL) return 0;
+    if(v >= 1) return 1;
     return 2;
   }
-  function scoreProtein(n){
-    if(n >= PROTEIN_DAYS_GOAL) return 0;
-    if(n >= 3) return 1;
+  function scoreProtein(v){
+    if(v >= PROTEIN_DAYS_GOAL) return 0;
+    if(v >= 3) return 1;
     return 2;
   }
 
   const signals = [
     { name: 'loss',     score: scoreLoss(lossPct) },
-    { name: 'strength', score: scoreStrength(strengthDays) },
-    { name: 'protein',  score: scoreProtein(proteinDays) }
-  ];
+    { name: 'strength', score: scoreStrength(strengthPerWeek) },
+    { name: 'protein',  score: scoreProtein(proteinPerWeek) }
+  ].filter(s => s.score != null);
 
   const slipping = signals.filter(s => s.score >= 1);
+  const hasEverDoneStrength = dailyEntries.some(d => d.strength);
 
   let verdictClass, title, body;
 
@@ -954,11 +853,16 @@ function renderMuscleProtection(){
       title = "Pace is a touch fast";
       body  = "Your protein and strength habits look good. Try to slow the loss slightly — keep protein high, don't add training volume this week, and consider easing up on the calorie deficit.";
     } else if(which === 'strength'){
-      title = "Strength training has slipped";
-      body  = "Your pace and protein look okay. Adding even one session this week makes a difference — muscle needs a reason to stay.";
+      if(!hasEverDoneStrength){
+        title = "Strength training can wait a little longer";
+        body  = "You've mentioned resistance bands are on the way. Even one or two short sessions a week starts to change the picture — there's no rush, and starting with something small is fine.";
+      } else {
+        title = "Strength training has slipped a little";
+        body  = "Your pace and protein look okay. A single session this week is a good restart — muscle needs a reason to stay, and even a short one counts.";
+      }
     } else {
-      title = "Protein has been low";
-      body  = "Your pace and strength training look fine. Protein is the missing piece — try to hit your goal most days. A shake on low-appetite days is an easy top-up.";
+      title = "Protein could be a bit higher";
+      body  = "Your pace and strength training look fine. Try to nudge protein up over the next week — a shake on low-appetite days is an easy top-up.";
     }
   } else {
     verdictClass = 'mp-verdict-red';
@@ -975,132 +879,96 @@ function renderMuscleProtection(){
   </div>`;
 }
 
-/* ---------- Card: Site verdicts ---------- */
-function renderSiteVerdicts(){
-  const wrap = document.getElementById('siteVerdictsWrap');
-  if(weeklyEntries.length < 2){
-    wrap.innerHTML = '<div class="empty">Log 2+ weekly entries to compare injection sites.</div>';
+/* ---------- Injection rotation ---------- */
+function renderRotation(){
+  const wrap = document.getElementById('rotationWrap');
+  if(weeklyEntries.length === 0){
+    wrap.innerHTML = '<div class="empty">Log a weekly entry with an injection site to see this view.</div>';
     return;
   }
 
-  const allWeightDeltas = [];
-  for(let i = 1; i < weeklyEntries.length; i++){
-    const a = weeklyEntries[i-1].weight, b = weeklyEntries[i].weight;
-    if(a != null && b != null && isFinite(a) && isFinite(b)) allWeightDeltas.push(b - a);
-  }
-  const userAvgWeightDelta = avg(allWeightDeltas);
-  const userAvgEnergy = avg(dailyEntries.map(d => d.energy).filter(v => v != null));
-  const userAvgBurden = dailyEntries.length > 0
-    ? avg(dailyEntries.map(d => symptomBurden_(d)))
-    : null;
-
-  const sites = {};
-  weeklyEntries.forEach((w, i) => {
+  const siteUsage = {};
+  weeklyEntries.forEach(w => {
     if(!w.site) return;
-    if(!sites[w.site]) sites[w.site] = {
-      injections: 0, lastDate: null,
-      weightDeltas: [], energies: [], burdens: []
-    };
-    const s = sites[w.site];
-    s.injections++;
-    if(!s.lastDate || w.date > s.lastDate) s.lastDate = w.date;
-
-    if(i + 1 < weeklyEntries.length){
-      const next = weeklyEntries[i+1];
-      if(w.weight != null && next.weight != null){
-        s.weightDeltas.push(next.weight - w.weight);
-      }
-    }
-
-    const start = w.date;
-    const end = addDaysISO(start, 7);
-    dailyEntries.forEach(d => {
-      if(d.date < start || d.date >= end) return;
-      if(d.energy != null) s.energies.push(d.energy);
-      s.burdens.push(symptomBurden_(d));
-    });
+    if(!siteUsage[w.site]) siteUsage[w.site] = { count: 0, dates: [] };
+    siteUsage[w.site].count++;
+    siteUsage[w.site].dates.push(w.date);
   });
 
-  const sitesArr = Object.entries(sites).map(([site, s]) => {
-    const avgWD = avg(s.weightDeltas);
-    const avgE  = avg(s.energies);
-    const avgB  = avg(s.burdens);
+  if(Object.keys(siteUsage).length === 0){
+    wrap.innerHTML = '<div class="empty">No injection sites logged yet.</div>';
+    return;
+  }
 
-    const signals = [];
-    let better = 0, total = 0;
-
-    if(avgWD != null && userAvgWeightDelta != null){
-      const isBetter = avgWD < userAvgWeightDelta;
-      if(isBetter) better++;
-      total++;
-      signals.push({ label:'Weight change', value:avgWD, userAvg:userAvgWeightDelta, better:isBetter, unit:'lb' });
+  const today = todayISO();
+  const sites = Object.entries(siteUsage).map(([site, info]) => {
+    const chrono = info.dates.slice().sort((a,b) => (parseDateAny(a)?.getTime() || 0) - (parseDateAny(b)?.getTime() || 0));
+    const lastDate = chrono[chrono.length - 1];
+    const daysSince = Math.round((parseDateAny(today) - parseDateAny(lastDate)) / 86400000);
+    let shortestGap = null;
+    for(let i = 1; i < chrono.length; i++){
+      const gap = Math.round((parseDateAny(chrono[i]) - parseDateAny(chrono[i-1])) / 86400000);
+      if(shortestGap == null || gap < shortestGap) shortestGap = gap;
     }
-    if(avgE != null && userAvgEnergy != null){
-      const isBetter = avgE > userAvgEnergy;
-      if(isBetter) better++;
-      total++;
-      signals.push({ label:'Energy', value:avgE, userAvg:userAvgEnergy, better:isBetter, unit:'' });
-    }
-    if(avgB != null && userAvgBurden != null){
-      const isBetter = avgB < userAvgBurden;
-      if(isBetter) better++;
-      total++;
-      signals.push({ label:'Symptom burden', value:avgB, userAvg:userAvgBurden, better:isBetter, unit:'' });
-    }
-
-    let verdict;
-    if(s.injections < 2 || total < 2) verdict = 'none';
-    else if(better >= 2)             verdict = 'working';
-    else if(better === 1)            verdict = 'mixed';
-    else                             verdict = 'lagging';
-
-    return { site, injections: s.injections, lastDate: s.lastDate, signals, verdict };
+    return { site, count: info.count, lastDate, daysSince, shortestGap };
   });
+  sites.sort((a,b) => b.daysSince - a.daysSince);
 
-  const order = { working:0, mixed:1, lagging:2, none:3 };
-  sitesArr.sort((a,b) => {
-    const d = order[a.verdict] - order[b.verdict];
-    return d !== 0 ? d : b.injections - a.injections;
+  const eightWeeksAgo = addDaysISO(today, -56);
+  const recentSites = new Set();
+  weeklyEntries.forEach(w => {
+    if(w.date >= eightWeeksAgo && w.site) recentSites.add(w.site);
   });
+  const sitesInLast8 = recentSites.size;
 
-  const verdictLabel = {
-    working: '✓ Working well',
-    mixed:   '~ Mixed',
-    lagging: '⚠ Lagging',
-    none:    'Not enough data'
-  };
-  const verdictClass = {
-    working: 'verdict-working',
-    mixed:   'verdict-mixed',
-    lagging: 'verdict-lagging',
-    none:    'verdict-none'
-  };
+  const tooRecent = sites.filter(s => s.shortestGap != null && s.shortestGap < ROTATION_MIN_DAYS);
 
-  const cards = sitesArr.map(v => {
-    const sigsHtml = v.signals.map(sig => {
-      const vStr = (sig.value >= 0 ? '+' : '') + sig.value.toFixed(2) + (sig.unit ? ' ' + sig.unit : '');
-      const uStr = (sig.userAvg >= 0 ? '+' : '') + sig.userAvg.toFixed(2) + (sig.unit ? ' ' + sig.unit : '');
-      return `<div class="verdict-signal ${sig.better ? 'better' : 'worse'}">
-        <span class="vs-label">${sig.label}</span>
-        <span class="vs-value">${vStr}</span>
-        <span class="vs-compare">avg: ${uStr}</span>
-      </div>`;
-    }).join('');
+  let summaryClass, summaryText;
+  if(weeklyEntries.length < 4){
+    summaryClass = 'info';
+    summaryText = `<strong>Building your rotation picture.</strong> Log a few more injections to see patterns.`;
+  } else if(tooRecent.length > 0){
+    const sitesList = tooRecent.map(s => `"${s.site}" (${Math.round(s.shortestGap/7)} weeks apart)`).join(', ');
+    summaryClass = 'warning';
+    summaryText = `<strong>Some sites were reused too soon.</strong> ${sitesList}. Aim for 4+ weeks between uses of the same site to protect tissue.`;
+  } else if(sitesInLast8 < 3){
+    summaryClass = 'info';
+    summaryText = `<strong>Only ${sitesInLast8} site${sitesInLast8 === 1 ? '' : 's'} used in the last 8 weeks.</strong> Adding variety helps absorption — try mixing in a different region.`;
+  } else {
+    summaryClass = 'ok';
+    summaryText = `<strong>Good rotation.</strong> ${sitesInLast8} sites used in the last 8 weeks, no rapid reuses. This protects absorption and tissue health.`;
+  }
 
-    return `<div class="verdict-card ${verdictClass[v.verdict]}">
-      <div class="verdict-head">
-        <div class="verdict-site">${escapeHtml_(v.site)}</div>
-        <div class="verdict-badge">${verdictLabel[v.verdict]}</div>
-      </div>
-      ${v.signals.length ? `<div class="verdict-signals">${sigsHtml}</div>` : ''}
-      <div class="verdict-meta">${v.injections} injection${v.injections === 1 ? '' : 's'} · last used ${fmtDate(v.lastDate)}</div>
-    </div>`;
+  const rows = sites.map(s => {
+    const weeks = (s.daysSince / 7).toFixed(1);
+    let gapClass = '';
+    if(s.daysSince < ROTATION_MIN_DAYS) gapClass = 'short';
+    else gapClass = 'ok';
+    return `<tr>
+      <td class="site">${escapeHtml_(s.site)}</td>
+      <td class="date">${fmtDate(s.lastDate)}</td>
+      <td class="gap ${gapClass}">${weeks} wk</td>
+      <td class="count">${s.count}</td>
+    </tr>`;
   }).join('');
 
-  wrap.innerHTML = cards;
+  wrap.innerHTML = `
+    <div class="rotation-summary ${summaryClass}">${summaryText}</div>
+    <table class="rotation-table">
+      <thead>
+        <tr>
+          <th>Site</th>
+          <th>Last used</th>
+          <th style="text-align:right">Weeks ago</th>
+          <th style="text-align:right">Times</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
 }
 
-/* ---------- Card: Worth attention ---------- */
+/* ---------- Worth attention ---------- */
 function avgBurdenInRange(startISO, endISO){
   let sum = 0, n = 0;
   dailyEntries.forEach(d => {
@@ -1116,6 +984,7 @@ function renderFlags(){
   const wrap = document.getElementById('flagsWrap');
   const flags = [];
 
+  /* Rapid loss */
   if(weeklyEntries.length >= 2){
     const last = weeklyEntries[weeklyEntries.length-1];
     const prev = weeklyEntries[weeklyEntries.length-2];
@@ -1131,6 +1000,7 @@ function renderFlags(){
     }
   }
 
+  /* Plateau */
   if(weeklyEntries.length >= 4){
     const recent = weeklyEntries.slice(-4);
     const change = recent[recent.length-1].weight - recent[0].weight;
@@ -1143,6 +1013,7 @@ function renderFlags(){
     }
   }
 
+  /* Symptom trend */
   const today = todayISO();
   const recent14 = avgBurdenInRange(addDaysISO(today, -14), addDaysISO(today, 1));
   const prior14  = avgBurdenInRange(addDaysISO(today, -28), addDaysISO(today, -14));
@@ -1163,6 +1034,35 @@ function renderFlags(){
     }
   }
 
+  /* Mood trend */
+  const moodRange = dailyEntries
+    .filter(d => d.date >= addDaysISO(today, -14) && d.date < addDaysISO(today, 1) && d.mood != null)
+    .sort((a,b) => (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
+
+  if(moodRange.length >= 5){
+    let consecutiveLow = 0, maxConsecutiveLow = 0;
+    moodRange.forEach(d => {
+      if(d.mood <= 2){ consecutiveLow++; maxConsecutiveLow = Math.max(maxConsecutiveLow, consecutiveLow); }
+      else consecutiveLow = 0;
+    });
+    const avgMood14 = avg(moodRange.map(d => d.mood));
+
+    if(maxConsecutiveLow >= 3){
+      flags.push({
+        icon: '💭',
+        type: 'warn',
+        text: `Mood has been low (2 or below) for ${maxConsecutiveLow} days in a row. Worth noting — mood and appetite interact, and it's a useful thing for your provider to know.`
+      });
+    } else if(avgMood14 != null && avgMood14 < 2.5){
+      flags.push({
+        icon: '💭',
+        type: 'info',
+        text: `Mood has been low over the past two weeks (avg ${avgMood14.toFixed(1)}/5). Not unusual during rapid weight loss, but worth keeping an eye on.`
+      });
+    }
+  }
+
+  /* Missed logging */
   if(dailyEntries.length > 0){
     const lastDate = dailyEntries[dailyEntries.length-1].date;
     const lastParsed = parseDateAny(lastDate);
@@ -1198,7 +1098,7 @@ function renderFlags(){
   ).join('');
 }
 
-/* ---------- Card: Weight chart ---------- */
+/* ---------- Weight chart ---------- */
 let weightChartInstance = null;
 function renderWeightChart(){
   const canvas = document.getElementById('weightChart');
@@ -1261,16 +1161,12 @@ function renderWeightChart(){
       interaction:{mode:'index', intersect:false},
       plugins:{
         legend:{position:'bottom', labels:{font:{family:'IBM Plex Sans', size:11}, boxWidth:12}},
-        tooltip:{
-          callbacks:{
-            afterBody: (items) => {
-              const i = items[0].dataIndex;
-              const out = [];
-              if(fastLossIdx.has(i)) out.push('⚠ >1% loss this week');
-              return out;
-            }
-          }
-        }
+        tooltip:{ callbacks:{ afterBody: (items) => {
+          const i = items[0].dataIndex;
+          const out = [];
+          if(fastLossIdx.has(i)) out.push('⚠ >1% loss this week');
+          return out;
+        } } }
       },
       scales:{
         y:{ position:'left', title:{display:true, text:'Weight', font:{family:'IBM Plex Sans', size:11}}, grid:{color:'#EEE8D8'} },
@@ -1308,13 +1204,14 @@ function renderWeightChart(){
   }
 }
 
-/* ---------- Card: Doctor visit summary ---------- */
+/* ---------- Doctor visit summary ---------- */
 function buildDoctorSummary(){
   const today = todayISO();
   const startISO = addDaysISO(today, -30);
 
-  const monthDaily = dailyEntries.filter(d => d.date >= startISO && d.date <= today);
+  const monthDaily  = dailyEntries.filter(d => d.date >= startISO && d.date <= today);
   const monthWeekly = weeklyEntries.filter(w => w.date >= startISO && w.date <= today);
+  const priorDaily  = dailyEntries.filter(d => d.date >= addDaysISO(today, -60) && d.date < startISO);
 
   if(monthDaily.length === 0 && monthWeekly.length === 0){
     return 'Not enough data in the last 30 days to build a summary.';
@@ -1322,7 +1219,20 @@ function buildDoctorSummary(){
 
   const sentences = [];
 
-  /* 1. Symptoms */
+  /* Weeks at current dose */
+  const lastW = monthWeekly[monthWeekly.length-1] || weeklyEntries[weeklyEntries.length-1];
+  const currentDose = lastW?.dose ?? null;
+  let weeksAtDose = null;
+  if(currentDose != null && weeklyEntries.length > 0){
+    let count = 0;
+    for(let i = weeklyEntries.length - 1; i >= 0; i--){
+      if(weeklyEntries[i].dose === currentDose) count++;
+      else break;
+    }
+    weeksAtDose = count;
+  }
+
+  /* Symptoms */
   if(monthDaily.length > 0){
     const symptomTotals = {};
     SYMPTOMS.forEach(s => symptomTotals[s] = { sum: 0, peak: 0 });
@@ -1351,17 +1261,14 @@ function buildDoctorSummary(){
       const peakLabel = SEV_LABELS[top[1].peak].toLowerCase();
       let s = `Symptoms have been ${severityWord}, with ${top[0].toLowerCase()} being the most prevalent (peak ${peakLabel})`;
       const secondary = ranked[1];
-      if(secondary){
-        s += `, followed by ${secondary[0].toLowerCase()}`;
-      }
+      if(secondary) s += `, followed by ${secondary[0].toLowerCase()}`;
       s += '.';
       sentences.push(s);
     }
   }
 
-  /* 2. Weight */
+  /* Weight */
   const firstW = monthWeekly[0];
-  const lastW  = monthWeekly[monthWeekly.length-1];
   if(firstW && lastW && firstW !== lastW && firstW.weight > 0){
     const change = lastW.weight - firstW.weight;
     const weeksElapsed = Math.max(1, Math.round((parseDateAny(lastW.date) - parseDateAny(firstW.date)) / (7*86400000)));
@@ -1372,52 +1279,66 @@ function buildDoctorSummary(){
     sentences.push(`Current weight is ${lastW.weight.toFixed(1)} lb.`);
   }
 
-  /* 3. Suppression trend */
-  const priorStart = addDaysISO(today, -60);
-  const priorEnd   = addDaysISO(today, -30);
-  const priorDaily = dailyEntries.filter(d => d.date >= priorStart && d.date < priorEnd);
-
+  /* Suppression — appetite AND food noise */
   const thisApp  = avg(monthDaily.map(d => d.appetite).filter(v => v != null));
   const priorApp = avg(priorDaily.map(d => d.appetite).filter(v => v != null));
   const thisFN   = avg(monthDaily.map(d => d.foodNoise).filter(v => v != null));
+  const priorFN  = avg(priorDaily.map(d => d.foodNoise).filter(v => v != null));
 
-  if(thisApp != null){
-    const strength = thisApp < 2 ? 'strong' : thisApp < 3.5 ? 'adequate' : 'weakening';
-    let s = `Appetite suppression is currently ${strength} (avg appetite ${thisApp.toFixed(1)}/5`;
-    if(thisFN != null) s += `; food noise ${thisFN.toFixed(1)}/5`;
-    s += ')';
-    if(priorApp != null){
-      const diff = thisApp - priorApp;
-      if(diff >= 0.3){
-        s += `, weaker than the prior month (${priorApp.toFixed(1)} → ${thisApp.toFixed(1)})`;
-      } else if(diff <= -0.3){
-        s += `, stronger than the prior month (${priorApp.toFixed(1)} → ${thisApp.toFixed(1)})`;
-      }
-    }
+  const appWorse  = thisApp != null && priorApp != null && thisApp > priorApp + 0.3;
+  const appBetter = thisApp != null && priorApp != null && thisApp < priorApp - 0.3;
+  const fnWorse   = thisFN  != null && priorFN  != null && thisFN  > priorFN  + 0.3;
+  const fnBetter  = thisFN  != null && priorFN  != null && thisFN  < priorFN  - 0.3;
+
+  if(thisApp != null || thisFN != null){
+    const parts = [];
+    if(thisApp != null) parts.push(`appetite ${thisApp.toFixed(1)}/5`);
+    if(thisFN != null)  parts.push(`food noise ${thisFN.toFixed(1)}/5`);
+    let s = `Suppression: ${parts.join(', ')}`;
+
+    const trendPieces = [];
+    if(appWorse)       trendPieces.push(`appetite weakening (${priorApp.toFixed(1)} → ${thisApp.toFixed(1)})`);
+    else if(appBetter) trendPieces.push(`appetite strengthening (${priorApp.toFixed(1)} → ${thisApp.toFixed(1)})`);
+    if(fnWorse)        trendPieces.push(`food noise rising (${priorFN.toFixed(1)} → ${thisFN.toFixed(1)})`);
+    else if(fnBetter)  trendPieces.push(`food noise falling (${priorFN.toFixed(1)} → ${thisFN.toFixed(1)})`);
+
+    if(trendPieces.length) s += `; vs prior month, ${trendPieces.join(' and ')}`;
     s += '.';
     sentences.push(s);
   }
 
-  /* 4. Muscle-protection snapshot */
-  const recentDaily = dailyEntries.filter(d => d.date >= addDaysISO(today, -7) && d.date <= today);
-  if(recentDaily.length >= 3){
-    const proteinDays = recentDaily.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
-    const strengthDays = recentDaily.filter(d => d.strength).length;
-    if(proteinDays >= PROTEIN_DAYS_GOAL && strengthDays >= STRENGTH_GOAL){
-      sentences.push(`Muscle-protection habits are in place: protein goal met ${proteinDays} of the last 7 days, ${strengthDays} strength session${strengthDays === 1 ? '' : 's'}.`);
-    } else if(proteinDays < 3 || strengthDays === 0){
-      sentences.push(`Muscle-protection habits are lagging: protein goal met ${proteinDays} of the last 7 days, ${strengthDays} strength session${strengthDays === 1 ? '' : 's'}.`);
+  /* Muscle-protection snapshot (14-day) */
+  const recent14 = dailyEntries.filter(d => d.date >= addDaysISO(today, -14) && d.date <= today);
+  if(recent14.length >= 6){
+    const proteinDays = recent14.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
+    const strengthDays = recent14.filter(d => d.strength).length;
+    const proteinRate = proteinDays / 2;
+    const strengthRate = strengthDays / 2;
+    if(proteinRate >= PROTEIN_DAYS_GOAL && strengthRate >= STRENGTH_GOAL){
+      sentences.push(`Muscle protection is in place: protein goal on roughly ${proteinRate.toFixed(0)} days/week, ${strengthRate.toFixed(0)} strength sessions/week.`);
+    } else if(proteinRate < 3 || strengthDays === 0){
+      sentences.push(`Muscle protection needs attention: protein goal on roughly ${proteinRate.toFixed(0)} days/week, ${strengthRate.toFixed(0)} strength sessions/week.`);
     }
   }
 
-  /* 5. Suggestion */
+  /* Mood */
+  const thisMood  = avg(monthDaily.map(d => d.mood).filter(v => v != null));
+  const priorMood = avg(priorDaily.map(d => d.mood).filter(v => v != null));
+  if(thisMood != null && thisMood <= 2.5){
+    let s = `Mood has been reported as low on some days (avg ${thisMood.toFixed(1)}/5`;
+    if(priorMood != null && thisMood < priorMood - 0.3) s += `, down from ${priorMood.toFixed(1)}`;
+    s += ').';
+    sentences.push(s);
+  }
+
+  /* Suggestion */
   const heavySymptoms = avg(monthDaily.map(d => symptomBurden_(d))) > 4;
   const losingFast = (firstW && lastW && firstW !== lastW && firstW.weight > 0) ? (() => {
     const pct = ((firstW.weight - lastW.weight) / firstW.weight) * 100;
     const weeks = Math.max(1, Math.round((parseDateAny(lastW.date) - parseDateAny(firstW.date)) / (7*86400000)));
     return (pct / weeks) > 1.2;
   })() : false;
-  const suppWaning = thisApp != null && priorApp != null && thisApp > priorApp + 0.3;
+  const suppWaning = appWorse || fnWorse;
 
   let suggestion;
   if(heavySymptoms && suppWaning){
@@ -1427,7 +1348,12 @@ function buildDoctorSummary(){
   } else if(losingFast){
     suggestion = 'Weight loss is running faster than the 1% per week target; the current dose may be higher than needed.';
   } else if(suppWaning){
-    suggestion = 'Appetite suppression has weakened compared to the prior month; a dose increase may be appropriate.';
+    const what = appWorse && fnWorse ? 'both appetite suppression and food noise' :
+                 appWorse ? 'appetite suppression' : 'food noise';
+    const cap = what.charAt(0).toUpperCase() + what.slice(1);
+    suggestion = `${cap} ${fnWorse && !appWorse ? 'has' : 'have'} weakened compared to the prior month; a dose increase may be appropriate.`;
+  } else if(weeksAtDose != null && weeksAtDose >= 8){
+    suggestion = `Currently ${weeksAtDose} weeks at this dose with stable suppression and minimal symptoms; may be appropriate to remain on it.`;
   } else {
     suggestion = 'Signals suggest the current dose is working well; may be appropriate to remain on it.';
   }
@@ -1437,7 +1363,9 @@ function buildDoctorSummary(){
 
   const header =
     `GLP-1 Summary — ${fmtDate(startISO)} to ${fmtDate(today)}\n` +
-    `Current dose: ${lastW?.dose ?? '—'} mg\n\n`;
+    `Current dose: ${currentDose ?? '—'} mg` +
+    (weeksAtDose != null ? ` (week ${weeksAtDose} at this dose)` : '') +
+    `\n\n`;
 
   return header + body;
 }
@@ -1469,361 +1397,4 @@ function renderWeeklyTable(){
         <h3>Observations</h3>
         ${withObs.map(e => `
           <div class="obs-item">
-            <div class="obs-date">${fmtDate(e.date)}</div>
-            <div class="obs-text">${escapeHtml_(e.observations)}</div>
-          </div>`).join('')}
-      </div>`
-    : '';
-
-  wrap.innerHTML = `<table>
-    <tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th></th></tr>
-    ${rows}
-  </table>${obsBlock}`;
-
-  wrap.querySelectorAll('.del').forEach(el=>{
-    el.onclick = async ()=>{
-      const id = el.dataset.id;
-      el.textContent = '…';
-      try{
-        await deleteWeeklyEntry(id);
-        weeklyEntries = weeklyEntries.filter(e=>e.id !== id);
-        renderAll();
-      }catch(err){
-        alert('Could not delete: ' + err.message);
-        el.textContent = 'remove';
-      }
-    };
-  });
-}
-
-function renderDailyTable(){
-  const wrap = document.getElementById('dailyTableWrap');
-  if(dailyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No daily check-ins yet.</div>'; return; }
-  const reversed = [...dailyEntries].reverse();
-
-  const rows = reversed.map(e=>{
-    const topSym = Object.entries(e.symptoms||{})
-      .filter(([k,v]) => v > 0 && SYMPTOMS.includes(k))
-      .sort((a,b)=>b[1]-a[1])[0];
-    const proteinTxt = e.protein != null ? Math.round(e.protein) + ' g' : '—';
-    return `<tr>
-      <td>${fmtDate(e.date)}</td>
-      <td class="num">${e.energy ?? '—'}</td>
-      <td class="num">${e.appetite ?? '—'}</td>
-      <td class="num">${e.foodNoise ?? '—'}</td>
-      <td class="num">${proteinTxt}</td>
-      <td>${e.period ? 'Yes' : '—'}</td>
-      <td>${e.movement ? 'Yes' : '—'}</td>
-      <td>${e.strength ? 'Yes' : '—'}</td>
-      <td>${topSym ? topSym[0] + ' (' + SEV_LABELS[topSym[1]] + ')' : '—'}</td>
-      <td><span class="del" data-id="${e.id}">remove</span></td>
-    </tr>`;
-  }).join('');
-
-  const withDetail = reversed.filter(e => (e.notes && String(e.notes).trim()) || (e.nsv && String(e.nsv).trim()));
-  const notesBlock = withDetail.length
-    ? `<div class="obs-list">
-        <h3>Daily notes &amp; NSVs</h3>
-        ${withDetail.map(e => `
-          <div class="obs-item">
-            <div class="obs-date">${fmtDate(e.date)}</div>
-            ${e.nsv ? `<div class="obs-text"><span class="nsv-star">★</span>${escapeHtml_(e.nsv)}</div>` : ''}
-            ${e.notes ? `<div class="obs-text" style="${e.nsv ? 'margin-top:6px;' : ''}">${escapeHtml_(e.notes)}</div>` : ''}
-          </div>`).join('')}
-      </div>`
-    : '';
-
-  wrap.innerHTML = `<table>
-    <tr><th>Date</th><th>Energy</th><th>Appetite</th><th>Food noise</th><th>Protein</th><th>Period</th><th>Movement</th><th>Strength</th><th>Top symptom</th><th></th></tr>
-    ${rows}
-  </table>${notesBlock}`;
-
-  wrap.querySelectorAll('.del').forEach(el=>{
-    el.onclick = async ()=>{
-      const id = el.dataset.id;
-      el.textContent = '…';
-      try{
-        await deleteDailyEntry(id);
-        dailyEntries = dailyEntries.filter(e=>e.id !== id);
-        renderAll();
-      }catch(err){
-        alert('Could not delete: ' + err.message);
-        el.textContent = 'remove';
-      }
-    };
-  });
-}
-
-/* ============================================================
-   Save handlers
-   ============================================================ */
-document.getElementById('saveDailyBtn').onclick = async ()=>{
-  const date      = document.getElementById('d-date').value;
-  const energy    = parseInt(document.getElementById('d-energy').value, 10);
-  const appetite  = parseInt(document.getElementById('d-appetite').value, 10);
-  const foodNoise = parseInt(document.getElementById('d-foodnoise').value, 10);
-  const protein   = parseInt(document.getElementById('d-protein').value, 10);
-  const period    = document.getElementById('d-period').checked;
-  const movement  = document.getElementById('d-movement').checked;
-  const strength  = document.getElementById('d-strength').checked;
-  const notes     = document.getElementById('d-notes').value.trim();
-  const nsv       = document.getElementById('d-nsv').value.trim();
-  const msg = document.getElementById('dailyMsg');
-  const btn = document.getElementById('saveDailyBtn');
-
-  if(!date){
-    msg.textContent = 'Date is required.';
-    msg.className = 'msg err';
-    return;
-  }
-
-  const entry = {
-    id: 'd' + Date.now().toString(),
-    date,
-    energy:    isNaN(energy)    ? null : energy,
-    appetite:  isNaN(appetite)  ? null : appetite,
-    foodNoise: isNaN(foodNoise) ? null : foodNoise,
-    protein:   isNaN(protein)   ? null : protein,
-    period, movement, strength,
-    notes: notes || null,
-    nsv:   nsv   || null,
-    symptoms: {...currentSymptoms}
-  };
-
-  btn.disabled = true;
-  msg.textContent = 'Saving…';
-  msg.className = 'msg';
-
-  try{
-    await saveDailyEntry(entry);
-    dailyEntries.push(entry);
-    dailyEntries.sort((a,b)=> (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
-    renderAll();
-
-    msg.textContent = 'Saved to your sheet.';
-    msg.className = 'msg ok';
-
-    ['d-energy','d-appetite','d-foodnoise','d-protein','d-notes','d-nsv'].forEach(id => document.getElementById(id).value = '');
-    ['d-period','d-movement','d-strength'].forEach(id => document.getElementById(id).checked = false);
-    buildSymList();
-  }catch(e){
-    msg.textContent = 'Could not save: ' + e.message;
-    msg.className = 'msg err';
-  }finally{
-    btn.disabled = false;
-  }
-};
-
-document.getElementById('saveWeeklyBtn').onclick = async ()=>{
-  const date = document.getElementById('w-date').value;
-  const dose = parseFloat(document.getElementById('w-dose').value);
-  const weight = parseFloat(document.getElementById('w-weight').value);
-  const site = document.getElementById('w-site').value;
-  const observations = document.getElementById('w-observations').value.trim();
-  const msg = document.getElementById('weeklyMsg');
-  const btn = document.getElementById('saveWeeklyBtn');
-
-  if(!date || isNaN(weight)){
-    msg.textContent = 'Date and weight are required.';
-    msg.className = 'msg err';
-    return;
-  }
-
-  const entry = {
-    id: 'w' + Date.now().toString(),
-    date,
-    dose: isNaN(dose) ? null : dose,
-    weight,
-    site: site || null,
-    observations: observations || null
-  };
-
-  btn.disabled = true;
-  msg.textContent = 'Saving…';
-  msg.className = 'msg';
-
-  try{
-    await saveWeeklyEntry(entry);
-    weeklyEntries.push(entry);
-    weeklyEntries.sort((a,b)=> (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
-    renderAll();
-
-    msg.textContent = 'Saved to your sheet.';
-    msg.className = 'msg ok';
-
-    document.getElementById('w-dose').value = '2.5';
-    document.getElementById('w-weight').value = '';
-    document.getElementById('w-site').value = '';
-    document.getElementById('w-observations').value = '';
-  }catch(e){
-    msg.textContent = 'Could not save: ' + e.message;
-    msg.className = 'msg err';
-  }finally{
-    btn.disabled = false;
-  }
-};
-
-/* ---------- Doctor summary handler ---------- */
-document.getElementById('copySummaryBtn').onclick = async ()=>{
-  const msg = document.getElementById('copySummaryMsg');
-  const text = buildDoctorSummary();
-  try{
-    await navigator.clipboard.writeText(text);
-    msg.textContent = 'Copied to clipboard.';
-    msg.className = 'msg ok';
-    setTimeout(() => { msg.textContent = ''; }, 2500);
-  }catch(err){
-    msg.textContent = 'Copy failed — select the text manually.';
-    msg.className = 'msg err';
-  }
-};
-
-/* ============================================================
-   CSV import
-   ============================================================ */
-function parseCSV(text){
-  const lines = text.replace(/\r/g,'').split('\n').filter(l=>l.trim().length>0);
-  if(lines.length < 2) return [];
-  const splitLine = (line)=>{
-    const out = []; let cur=''; let inQuotes=false;
-    for(let i=0;i<line.length;i++){
-      const ch=line[i];
-      if(ch === '"'){ inQuotes = !inQuotes; }
-      else if(ch === ',' && !inQuotes){ out.push(cur); cur=''; }
-      else{ cur += ch; }
-    }
-    out.push(cur);
-    return out.map(s=>s.trim());
-  };
-  const headers = splitLine(lines[0]).map(h=>h.toLowerCase());
-  return lines.slice(1).map(line=>{
-    const vals = splitLine(line);
-    const row = {};
-    headers.forEach((h,i)=>{ row[h] = vals[i] !== undefined ? vals[i] : ''; });
-    return row;
-  });
-}
-
-function toYesBool(v){ return ['yes','y','true','1'].includes((v||'').toLowerCase()); }
-function toNumOrNull(v){ const n = parseFloat(v); return isNaN(n) ? null : n; }
-function pickKey(row, names){
-  const targets = names.map(n => n.replace(/[^a-z]/g,''));
-  return Object.keys(row).find(k => targets.indexOf(k.replace(/[^a-z]/g,'')) !== -1);
-}
-
-document.getElementById('importDailyFile').addEventListener('change', async (ev)=>{
-  const file = ev.target.files[0];
-  const msg = document.getElementById('importDailyMsg');
-  if(!file) return;
-  msg.textContent = 'Reading…';
-  msg.className = 'msg';
-
-  try{
-    const text = await file.text();
-    const rows = parseCSV(text);
-    const entries = [];
-
-    rows.forEach(row=>{
-      if(!row.date) return;
-      const symptoms = {};
-      SYMPTOMS.forEach(name=>{
-        const key = name.toLowerCase().replace(/[^a-z]+/g,'');
-        const rawKey = Object.keys(row).find(k=> k.replace(/[^a-z]+/g,'') === key);
-        symptoms[name] = rawKey ? (parseInt(row[rawKey],10) || 0) : 0;
-      });
-      const fnKey = pickKey(row, ['foodnoise','food noise']);
-      entries.push({
-        id: 'd' + Date.now().toString() + Math.random().toString(36).slice(2,7),
-        date: row.date,
-        energy:    toNumOrNull(row.energy),
-        appetite:  toNumOrNull(row.appetite),
-        foodNoise: fnKey ? toNumOrNull(row[fnKey]) : null,
-        protein:   toNumOrNull(row.protein),
-        period:    toYesBool(row.period),
-        movement:  toYesBool(row.movement),
-        strength:  toYesBool(row.strength),
-        notes: row.notes || null,
-        nsv:   row.nsv   || null,
-        symptoms
-      });
-    });
-
-    if(entries.length === 0){
-      msg.textContent = 'No usable rows found — check that your CSV has a "date" column.';
-      msg.className = 'msg err';
-      ev.target.value = '';
-      return;
-    }
-
-    const result = await bulkSaveDaily(entries);
-    await loadAll();
-    msg.textContent = `Added ${result.added} daily ${result.added === 1 ? 'entry' : 'entries'}` +
-                      (result.skipped ? ` (skipped ${result.skipped} already in the sheet).` : '.');
-    msg.className = 'msg ok';
-  }catch(e){
-    msg.textContent = 'Could not import: ' + e.message;
-    msg.className = 'msg err';
-  }
-  ev.target.value = '';
-});
-
-document.getElementById('importWeeklyFile').addEventListener('change', async (ev)=>{
-  const file = ev.target.files[0];
-  const msg = document.getElementById('importWeeklyMsg');
-  if(!file) return;
-  msg.textContent = 'Reading…';
-  msg.className = 'msg';
-
-  try{
-    const text = await file.text();
-    const rows = parseCSV(text);
-    const entries = [];
-
-    rows.forEach(row=>{
-      if(!row.date || row.weight === undefined || row.weight === '') return;
-      entries.push({
-        id: 'w' + Date.now().toString() + Math.random().toString(36).slice(2,7),
-        date: row.date,
-        dose: toNumOrNull(row.dose),
-        weight: parseFloat(row.weight),
-        site: row.site || null,
-        observations: row.observations || null
-      });
-    });
-
-    if(entries.length === 0){
-      msg.textContent = 'No usable rows found — check that your CSV has "date" and "weight" columns.';
-      msg.className = 'msg err';
-      ev.target.value = '';
-      return;
-    }
-
-    const result = await bulkSaveWeekly(entries);
-    await loadAll();
-    msg.textContent = `Added ${result.added} weekly ${result.added === 1 ? 'entry' : 'entries'}` +
-                      (result.skipped ? ` (skipped ${result.skipped} already in the sheet).` : '.');
-    msg.className = 'msg ok';
-  }catch(e){
-    msg.textContent = 'Could not import: ' + e.message;
-    msg.className = 'msg err';
-  }
-  ev.target.value = '';
-});
-
-/* ============================================================
-   Boot
-   ============================================================ */
-document.getElementById('d-date').value = todayISO();
-document.getElementById('w-date').value = todayISO();
-
-/* Restore last-viewed tab */
-try {
-  const lastTab = localStorage.getItem('glp1_last_tab');
-  if(lastTab && document.getElementById('view-' + lastTab)){
-    activateView(lastTab);
-  }
-} catch(e){}
-
-buildSymList();
-loadAll();
-</script>
+            <div class="obs
