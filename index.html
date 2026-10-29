@@ -459,7 +459,6 @@ const uiState = {
   nsvExpanded: false,
   weeklyLogExpanded: false,
   dailyLogExpanded: false,
-  dailyNotesExpanded: false
 };
 
 async function unwrap_(res){
@@ -1335,7 +1334,7 @@ function renderWeeklyTable(){
       ).join('') + '</div>'
     : '';
 
-  wrap.innerHTML = '<table><tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th>Pen</th><th></th></tr>' + rows + '</table>' + obsBlock +
+    wrap.innerHTML = '<table><tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th>New Pen</th><th></th></tr>' + rows + '</table>' + obsBlock +
     (reversed.length > 4
       ? '<button class="expand-btn" id="weeklyLogExpandBtn">' + (uiState.weeklyLogExpanded ? 'Show fewer' : 'Show all (' + reversed.length + ')') + '</button>'
       : '');
