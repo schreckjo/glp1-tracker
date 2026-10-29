@@ -109,7 +109,6 @@
   .check-label{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink); margin:0; cursor:pointer;}
   .check-label input[type=checkbox]{width:16px; height:16px; accent-color:var(--sage); cursor:pointer;}
 
-  /* Notes / observations lists */
   .obs-list{margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);}
   .obs-list h3{font-size:14px; margin-bottom:12px;}
   .obs-item{padding:10px 0; border-bottom:1px dashed var(--line);}
@@ -117,14 +116,12 @@
   .obs-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:3px;}
   .obs-text{font-size:13px; line-height:1.5; white-space:pre-wrap; color:var(--ink); overflow-wrap:break-word;}
 
-  /* NSV list */
   .nsv-list{margin-top:2px;}
   .nsv-item{padding:12px 0; border-bottom:1px dashed var(--line); font-size:13.5px; line-height:1.5;}
   .nsv-item:last-child{border-bottom:none;}
   .nsv-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:4px;}
   .nsv-star{color:var(--amber); margin-right:6px; font-weight:700;}
 
-  /* Expand / collapse control */
   .expand-btn{
     margin-top:14px; padding:8px 14px; border:1px solid var(--line); background:transparent;
     border-radius:var(--radius); font-family:'IBM Plex Sans', sans-serif; font-size:12px;
@@ -135,8 +132,8 @@
 
   .chart-caption{font-size:11px; color:var(--ink-soft); margin-top:8px; min-height:14px; line-height:1.4;}
   .chart-caption.warn{color:var(--rose);}
+  .chart-legend{display:flex; gap:14px; align-items:center; margin-top:8px; font-size:11px; color:var(--ink-soft); flex-wrap:wrap;}
 
-  /* Week-over-week */
   .wow-table{width:100%; border-collapse:collapse; font-size:13px;}
   .wow-table th{
     color:var(--ink-soft); font-weight:500; font-size:11px; text-transform:lowercase;
@@ -158,7 +155,6 @@
   .wow-delta.neutral{ background:#DDD3B6; color:#5C6B63; box-shadow:inset 0 0 0 1px #C5BC9F; }
   .wow-delta-icon{font-size:12px; line-height:1; font-weight:700;}
 
-  /* Injection sites — rotation + effectiveness */
   .site-summary{
     padding:12px 14px; border-radius:var(--radius); margin-bottom:16px;
     font-size:13px; line-height:1.5;
@@ -198,7 +194,6 @@
     padding-top:12px; border-top:1px dashed var(--line);
   }
 
-  /* Cycle-day symptom heatmap */
   .heat-wrap{overflow-x:auto;}
   .heat{border-collapse:collapse; font-size:11px; width:auto;}
   .heat th{padding:6px 8px; text-align:center; font-weight:500; color:var(--ink-soft); white-space:nowrap; font-size:11px;}
@@ -208,7 +203,26 @@
   .heat-legend{display:flex; gap:16px; align-items:center; margin-top:12px; font-size:11px; color:var(--ink-soft); flex-wrap:wrap;}
   .swatch{width:12px; height:12px; display:inline-block; border-radius:2px; vertical-align:-2px; margin-right:5px; border:1px solid rgba(0,0,0,0.06);}
 
-  /* Flags (Worth attention) */
+  /* Period vs non-period card */
+  .period-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .period-table th{
+    text-align:left; padding:6px 8px; font-size:11px; color:var(--ink-soft);
+    text-transform:lowercase; border-bottom:1px solid var(--line); font-weight:500;
+  }
+  .period-table th.num-head{text-align:right;}
+  .period-table td{padding:11px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  .period-table tr:last-child td{border-bottom:none;}
+  .period-table td.metric{font-weight:500; color:var(--ink);}
+  .period-table td.num{font-family:'IBM Plex Mono', monospace; text-align:right; white-space:nowrap;}
+  .period-table td.num.period-better{color:var(--sage); font-weight:600;}
+  .period-table td.num.period-worse{color:var(--amber); font-weight:600;}
+  .period-meta{font-size:11px; color:var(--ink-soft); margin-top:10px; line-height:1.5;}
+  .period-note{
+    font-size:11px; color:#6B4E1E; margin-top:8px; line-height:1.5;
+    padding:8px 10px; background:var(--amber-soft); border-radius:var(--radius);
+    border-left:2px solid var(--amber);
+  }
+
   .flag{
     display:flex; gap:10px; padding:12px 14px; border-radius:var(--radius);
     margin-bottom:8px; font-size:13px; line-height:1.5;
@@ -220,7 +234,6 @@
   .flag-good{background:var(--sage-soft); color:#2F4237;}
   .flag-info{background:var(--amber-soft); color:#6B4E1E;}
 
-  /* Doctor summary */
   .doctor-output{
     padding:14px 16px;
     background:#FBF9F2; border:1px solid var(--line); border-radius:var(--radius);
@@ -264,6 +277,7 @@
     .site-table th, .site-table td{padding:8px 5px;}
     .site-table td.verdict{display:none;}
     .heat-cell{width:36px; height:30px; font-size:10px;}
+    .period-table th, .period-table td{padding:9px 5px;}
     .doctor-output{font-size:11.5px; padding:12px 14px;}
     .menu-btn:active{transform:scale(0.98);}
     .save-btn:active{transform:scale(0.99);}
@@ -366,6 +380,9 @@
       <h2>Weight, dosage &amp; trend <span class="tag weekly">weekly</span></h2>
       <canvas id="weightChart"></canvas>
       <div class="chart-caption" id="weightChartCaption"></div>
+      <div class="chart-legend">
+        <span><span class="swatch" style="background:rgba(181,103,90,0.25)"></span>period days</span>
+      </div>
     </div>
 
     <div class="card">
@@ -403,6 +420,12 @@
         <span><span class="swatch" style="background:var(--rose-soft)"></span>severe</span>
         <span style="color:var(--ink-soft);font-style:italic;">n = days logged</span>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>Period vs non-period <span class="tag daily">daily</span></h2>
+      <div class="sub" style="margin-bottom:14px;">How your daily metrics compare on period days vs. the rest of the month.</div>
+      <div id="periodWrap"></div>
     </div>
 
     <div class="card">
@@ -444,7 +467,6 @@ const ROTATION_MIN_DAYS = 28;
 
 const SYMPTOMS = ["Nausea","Constipation","Diarrhea","Headache","Reflux","Dizziness","Depression"];
 const SEV_LABELS = ["None","Mild","Mod","Severe"];
-const SEV_COLORS = ["var(--sage-soft)","var(--amber-soft)","#EBC58B","var(--rose-soft)"];
 
 if (typeof Chart === 'undefined') {
   window.Chart = function(){ return { destroy: function(){} }; };
@@ -458,7 +480,7 @@ let currentSymptoms = {};
 const uiState = {
   nsvExpanded: false,
   weeklyLogExpanded: false,
-  dailyLogExpanded: false,
+  dailyLogExpanded: false
 };
 
 async function unwrap_(res){
@@ -651,6 +673,7 @@ function renderAll(){
   renderFlags();
   renderSites();
   renderCycleHeat();
+  renderPeriodComparison();
   renderNSVs();
   renderWeeklyTable();
   renderDailyTable();
@@ -676,7 +699,6 @@ function renderStats(){
     '<div class="stat"><span class="num">' + lastDose + '</span><span class="label">current mg</span></div>';
 }
 
-/* ---------- Non-scale victories (collapsed to 3) ---------- */
 function renderNSVs(){
   const wrap = document.getElementById('nsvWrap');
   if(!wrap) return;
@@ -693,16 +715,13 @@ function renderNSVs(){
       '<div><span class="nsv-star">★</span>' + escapeHtml_(e.nsv) + '</div>' +
     '</div>'
   ).join('') + '</div>';
-
   wrap.innerHTML = html + (reversed.length > 3
     ? '<button class="expand-btn" id="nsvExpandBtn">' + (uiState.nsvExpanded ? 'Show fewer' : 'Show all (' + reversed.length + ')') + '</button>'
     : '');
-
   const btn = document.getElementById('nsvExpandBtn');
   if(btn) btn.onclick = ()=>{ uiState.nsvExpanded = !uiState.nsvExpanded; renderNSVs(); };
 }
 
-/* ---------- Weekly comparison ---------- */
 function windowStats(startISO, endISO){
   const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
   const energyVals   = inRange.map(d => d.energy).filter(v => v != null);
@@ -776,7 +795,6 @@ function renderWeekOverWeek(){
   wrap.innerHTML = html;
 }
 
-/* ---------- Worth attention (now includes muscle-protection flags) ---------- */
 function avgBurdenInRange(startISO, endISO){
   let sum = 0, n = 0;
   dailyEntries.forEach(d => { if(d.date >= startISO && d.date < endISO){ sum += symptomBurden_(d); n++; } });
@@ -788,7 +806,6 @@ function renderFlags(){
   const flags = [];
   const today = todayISO();
 
-  /* Rapid loss */
   if(weeklyEntries.length >= 2){
     const last = weeklyEntries[weeklyEntries.length-1];
     const prev = weeklyEntries[weeklyEntries.length-2];
@@ -800,7 +817,6 @@ function renderFlags(){
     }
   }
 
-  /* Plateau */
   if(weeklyEntries.length >= 4){
     const recent = weeklyEntries.slice(-4);
     const change = recent[recent.length-1].weight - recent[0].weight;
@@ -809,7 +825,6 @@ function renderFlags(){
     }
   }
 
-  /* Symptom trend */
   const recent14 = avgBurdenInRange(addDaysISO(today, -14), addDaysISO(today, 1));
   const prior14  = avgBurdenInRange(addDaysISO(today, -28), addDaysISO(today, -14));
   if(recent14 != null && prior14 != null && prior14 > 0){
@@ -821,7 +836,6 @@ function renderFlags(){
     }
   }
 
-  /* Muscle protection (folded in) */
   if(weeklyEntries.length >= 2){
     const latest   = weeklyEntries[weeklyEntries.length-1];
     const previous = weeklyEntries[weeklyEntries.length-2];
@@ -868,7 +882,6 @@ function renderFlags(){
     }
   }
 
-  /* Missed logging */
   if(dailyEntries.length > 0){
     const lastDate = dailyEntries[dailyEntries.length-1].date;
     const lastParsed = parseDateAny(lastDate);
@@ -890,7 +903,6 @@ function renderFlags(){
   wrap.innerHTML = flags.map(f => '<div class="flag flag-' + f.type + '"><span class="flag-icon">' + f.icon + '</span><div class="flag-text">' + f.text + '</div></div>').join('');
 }
 
-/* ---------- Injection sites (rotation + effectiveness) ---------- */
 function renderSites(){
   const wrap = document.getElementById('sitesWrap');
   if(weeklyEntries.length === 0){
@@ -913,7 +925,6 @@ function renderSites(){
 
   const today = todayISO();
 
-  /* Rotation stats */
   const rotationSites = Object.entries(siteUsage).map(([site, info]) => {
     const chrono = info.dates.slice().sort((a,b) => (parseDateAny(a)?.getTime() || 0) - (parseDateAny(b)?.getTime() || 0));
     const lastDate = chrono[chrono.length - 1];
@@ -949,7 +960,6 @@ function renderSites(){
     summaryText = '<strong>Good rotation.</strong> ' + sitesInLast8 + ' sites used in the last 8 weeks, no rapid reuses. This protects absorption and tissue health.';
   }
 
-  /* Effectiveness stats */
   const userAvgWeightDelta = (() => {
     const deltas = [];
     for(let i = 1; i < weeklyEntries.length; i++){
@@ -968,12 +978,10 @@ function renderSites(){
     if(!effectSites[w.site]) effectSites[w.site] = { uses: 0, weightDeltas: [], burdens: [] };
     const s = effectSites[w.site];
     s.uses++;
-    /* Weight delta: from this injection to next week's weight */
     if(i + 1 < weeklyEntries.length){
       const next = weeklyEntries[i+1];
       if(w.weight != null && next.weight != null) s.weightDeltas.push(next.weight - w.weight);
     }
-    /* Burden over the 7 days following this injection */
     const start = w.date;
     const end = addDaysISO(start, 7);
     dailyEntries.forEach(d => {
@@ -998,7 +1006,6 @@ function renderSites(){
   });
   effectArr.sort((a,b) => b.uses - a.uses);
 
-  /* Render */
   const rotationRows = rotationSites.map(s => {
     const weeks = (s.daysSince / 7).toFixed(1);
     const gapClass = s.daysSince < ROTATION_MIN_DAYS ? 'bad' : 'good';
@@ -1025,7 +1032,6 @@ function renderSites(){
     '<div class="site-note"><strong>How effectiveness works.</strong> For each site, average the week-over-week weight change and the symptom burden across all the days that followed each injection. Raw numbers appear at 2+ uses. Verdicts (Works well / Mixed / Lags) appear at 3+ uses, comparing against your own overall averages. <em>Site effects can be confounded with week-to-week variation — trust verdicts after 6+ weeks of rotation.</em></div>';
 }
 
-/* ---------- Symptoms by cycle day ---------- */
 function cycleDayColor(avgVal){
   if(avgVal == null) return '#EFEBE0';
   if(avgVal < 0.25) return 'var(--sage-soft)';
@@ -1081,7 +1087,96 @@ function renderCycleHeat(){
   table.innerHTML = head + rows;
 }
 
-/* ---------- Weight chart ---------- */
+/* ---------- Period vs non-period comparison ---------- */
+function renderPeriodComparison(){
+  const wrap = document.getElementById('periodWrap');
+  if(!wrap) return;
+
+  const periodDays = dailyEntries.filter(d => d.period);
+  const nonPeriodDays = dailyEntries.filter(d => !d.period);
+
+  if(periodDays.length === 0){
+    wrap.innerHTML = '<div class="empty">No period days logged yet. Tick "Had period today" on those days to unlock this view.</div>';
+    return;
+  }
+  if(nonPeriodDays.length < 5){
+    wrap.innerHTML = '<div class="empty">Need more non-period days for comparison.</div>';
+    return;
+  }
+
+  function avgField(list, field){
+    return avg(list.map(d => d[field]).filter(v => v != null));
+  }
+  function avgBurden(list){
+    if(list.length === 0) return null;
+    return list.reduce((sum, d) => sum + symptomBurden_(d), 0) / list.length;
+  }
+  function avgWeightDeltaForPeriodDays(){
+    /* For each period day, find the weight change into the following weekly weigh-in. */
+    const deltas = [];
+    periodDays.forEach(pd => {
+      const nextW = weeklyEntries.find(w => w.date >= pd.date);
+      const priorW = weeklyEntries.slice().reverse().find(w => w.date <= pd.date);
+      if(nextW && priorW && nextW !== priorW && priorW.weight > 0 && nextW.weight != null){
+        const weeksBetween = Math.max(1, Math.round((parseDateAny(nextW.date) - parseDateAny(priorW.date)) / (7*86400000)));
+        deltas.push((nextW.weight - priorW.weight) / weeksBetween);
+      }
+    });
+    return avg(deltas);
+  }
+  function avgWeightDeltaOverall(){
+    const deltas = [];
+    for(let i = 1; i < weeklyEntries.length; i++){
+      const a = weeklyEntries[i-1].weight, b = weeklyEntries[i].weight;
+      if(a != null && b != null && isFinite(a) && isFinite(b)){
+        const weeks = Math.max(1, Math.round((parseDateAny(weeklyEntries[i].date) - parseDateAny(weeklyEntries[i-1].date)) / (7*86400000)));
+        deltas.push((b - a) / weeks);
+      }
+    }
+    return avg(deltas);
+  }
+
+  const metrics = [
+    { label:'Energy',         periodVal: avgField(periodDays, 'energy'),    otherVal: avgField(nonPeriodDays, 'energy'),    higherBetter: true,  fmt: v => v == null ? '—' : v.toFixed(1) },
+    { label:'Appetite',       periodVal: avgField(periodDays, 'appetite'),  otherVal: avgField(nonPeriodDays, 'appetite'),  higherBetter: false, fmt: v => v == null ? '—' : v.toFixed(1) },
+    { label:'Food noise',     periodVal: avgField(periodDays, 'foodNoise'), otherVal: avgField(nonPeriodDays, 'foodNoise'), higherBetter: false, fmt: v => v == null ? '—' : v.toFixed(1) },
+    { label:'Symptom burden', periodVal: avgBurden(periodDays),             otherVal: avgBurden(nonPeriodDays),             higherBetter: false, fmt: v => v == null ? '—' : v.toFixed(1) },
+    { label:'Weight change/wk', periodVal: avgWeightDeltaForPeriodDays(),  otherVal: avgWeightDeltaOverall(),              higherBetter: false, fmt: v => v == null ? '—' : ((v >= 0 ? '+' : '') + v.toFixed(2) + ' lb'), isWeight: true }
+  ];
+
+  const rows = metrics.map(m => {
+    const pv = m.periodVal, ov = m.otherVal;
+    let classPeriod = '';
+    if(pv != null && ov != null && Math.abs(pv - ov) > 0.05){
+      const periodIsBetter = m.higherBetter ? pv > ov : pv < ov;
+      classPeriod = periodIsBetter ? 'period-better' : 'period-worse';
+    }
+    return '<tr>' +
+      '<td class="metric">' + m.label + '</td>' +
+      '<td class="num ' + classPeriod + '">' + m.fmt(pv) + '</td>' +
+      '<td class="num">' + m.fmt(ov) + '</td>' +
+    '</tr>';
+  }).join('');
+
+  const periodDates = periodDays.map(d => d.date).sort();
+  const rangeStr = periodDates.length > 0
+    ? fmtDate(periodDates[0]) + (periodDates.length > 1 ? ' – ' + fmtDate(periodDates[periodDates.length-1]) : '')
+    : '';
+
+  const note = periodDays.length < 5
+    ? '<div class="period-note">Only ' + periodDays.length + ' period day' + (periodDays.length === 1 ? '' : 's') + ' logged so far — this is a glimpse, not a pattern. It gets more reliable after 3+ cycles.</div>'
+    : '';
+
+  wrap.innerHTML =
+    '<table class="period-table">' +
+      '<thead><tr><th>Metric</th><th class="num-head">Period days</th><th class="num-head">Other days</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table>' +
+    '<div class="period-meta">Based on ' + periodDays.length + ' period day' + (periodDays.length === 1 ? '' : 's') + ' (' + rangeStr + ') vs ' + nonPeriodDays.length + ' other days. Highlighted values show where the period group was meaningfully better or worse.</div>' +
+    note;
+}
+
+/* ---------- Weight chart (with period shading) ---------- */
 let weightChartInstance = null;
 function renderWeightChart(){
   const canvas = document.getElementById('weightChart');
@@ -1123,6 +1218,12 @@ function renderWeightChart(){
   const pointColors = weights.map((_, i) => fastLossIdx.has(i) ? '#B5675A' : '#6B8F71');
   const pointRadii  = weights.map((_, i) => fastLossIdx.has(i) ? 5 : 3);
 
+  /* Pre-compute period-day x positions in week units */
+  const periodDays = dailyEntries.filter(d => d.period);
+  const weeklyTimes = weeklyEntries.map(w => (parseDateAny(w.date)?.getTime() || 0));
+  const firstWeekTime = weeklyTimes[0];
+  const weekMs = 7 * 86400000;
+
   weightChartInstance = new Chart(ctx, {
     data: {
       labels: labels,
@@ -1146,28 +1247,55 @@ function renderWeightChart(){
         x:{ grid:{color:'#EEE8D8'}, ticks:{autoSkip:true, maxTicksLimit:7, maxRotation:0} }
       }
     },
-    plugins: [{
-      id: 'doseMarkers',
-      afterDatasetsDraw(chart){
-        const ctx2 = chart.ctx;
-        const area = chart.chartArea;
-        const xScale = chart.scales.x;
-        if(!xScale || !area) return;
-        ctx2.save();
-        ctx2.strokeStyle = 'rgba(199, 154, 70, 0.45)';
-        ctx2.setLineDash([4, 3]);
-        ctx2.lineWidth = 1;
-        doseChanges.forEach(dc => {
-          const xPos = xScale.getPixelForValue(dc.index);
-          if(xPos < area.left || xPos > area.right) return;
-          ctx2.beginPath();
-          ctx2.moveTo(xPos, area.top);
-          ctx2.lineTo(xPos, area.bottom);
-          ctx2.stroke();
-        });
-        ctx2.restore();
+    plugins: [
+      {
+        id: 'periodShading',
+        beforeDatasetsDraw(chart){
+          if(periodDays.length === 0 || !firstWeekTime) return;
+          const area = chart.chartArea;
+          const xScale = chart.scales.x;
+          if(!area || !xScale) return;
+          const c = chart.ctx;
+          c.save();
+          c.fillStyle = 'rgba(181, 103, 90, 0.15)';
+          const pixelsPerWeek = weeklyEntries.length > 1
+            ? (xScale.getPixelForValue(weeklyEntries.length - 1) - xScale.getPixelForValue(0)) / (weeklyEntries.length - 1)
+            : 60;
+          periodDays.forEach(pd => {
+            const t = parseDateAny(pd.date)?.getTime();
+            if(!t) return;
+            const weeksFromStart = (t - firstWeekTime) / weekMs;
+            const xCenter = xScale.getPixelForValue(weeksFromStart);
+            const halfBand = Math.max(3, pixelsPerWeek * 0.42);
+            if(xCenter < area.left - halfBand || xCenter > area.right + halfBand) return;
+            c.fillRect(xCenter - halfBand, area.top, halfBand * 2, area.height);
+          });
+          c.restore();
+        }
+      },
+      {
+        id: 'doseMarkers',
+        afterDatasetsDraw(chart){
+          const ctx2 = chart.ctx;
+          const area = chart.chartArea;
+          const xScale = chart.scales.x;
+          if(!xScale || !area) return;
+          ctx2.save();
+          ctx2.strokeStyle = 'rgba(199, 154, 70, 0.45)';
+          ctx2.setLineDash([4, 3]);
+          ctx2.lineWidth = 1;
+          doseChanges.forEach(dc => {
+            const xPos = xScale.getPixelForValue(dc.index);
+            if(xPos < area.left || xPos > area.right) return;
+            ctx2.beginPath();
+            ctx2.moveTo(xPos, area.top);
+            ctx2.lineTo(xPos, area.bottom);
+            ctx2.stroke();
+          });
+          ctx2.restore();
+        }
       }
-    }]
+    ]
   });
 
   if(fastLossIdx.size > 0){
@@ -1178,7 +1306,6 @@ function renderWeightChart(){
   }
 }
 
-/* ---------- Doctor visit summary ---------- */
 function buildDoctorSummary(){
   const today = todayISO();
   const startISO = addDaysISO(today, -30);
@@ -1193,7 +1320,6 @@ function buildDoctorSummary(){
   const lastW = monthWeekly[monthWeekly.length-1] || weeklyEntries[weeklyEntries.length-1];
   const currentDose = lastW?.dose ?? null;
 
-  /* Weeks at dose */
   let weeksAtDose = null;
   if(currentDose != null && weeklyEntries.length > 0){
     let count = 0;
@@ -1204,7 +1330,6 @@ function buildDoctorSummary(){
     weeksAtDose = count;
   }
 
-  /* Weeks of current Kwikpen */
   let weeksOfPen = null;
   for(let i = weeklyEntries.length - 1; i >= 0; i--){
     if(weeklyEntries[i].newPen){
@@ -1219,7 +1344,6 @@ function buildDoctorSummary(){
 
   const lines = [];
 
-  /* Symptoms — full list with severity */
   if(monthDaily.length > 0){
     const symptomSummaries = [];
     SYMPTOMS.forEach(s => {
@@ -1230,7 +1354,6 @@ function buildDoctorSummary(){
       let modeSev = 1;
       if(sevCounts[2] >= sevCounts[1] && sevCounts[2] >= sevCounts[3]) modeSev = 2;
       else if(sevCounts[3] > sevCounts[1] && sevCounts[3] > sevCounts[2]) modeSev = 3;
-      else modeSev = 1;
       let peak = 0;
       for(let i = 1; i <= 3; i++) if(sevCounts[i] > 0) peak = i;
       symptomSummaries.push({ name: s, days: daysWith, modeSev, peak });
@@ -1253,7 +1376,6 @@ function buildDoctorSummary(){
     }
   }
 
-  /* Weight — past month AND total */
   const firstW = monthWeekly[0];
   if(firstW && lastW && firstW !== lastW && firstW.weight > 0){
     const change = lastW.weight - firstW.weight;
@@ -1263,7 +1385,6 @@ function buildDoctorSummary(){
 
     let weightSentence = 'Weight ' + dirWord + ' this month: ' + Math.abs(change).toFixed(1) + ' lb (average ' + pctPerWeek.toFixed(1) + '% per week).';
 
-    /* Total since start */
     const startW = weeklyEntries[0];
     if(startW && startW !== lastW && startW.weight > 0){
       const totalChange = lastW.weight - startW.weight;
@@ -1277,7 +1398,6 @@ function buildDoctorSummary(){
     lines.push('Current weight is ' + lastW.weight.toFixed(1) + ' lb.');
   }
 
-  /* Suppression — plain analysis */
   const thisApp  = avg(monthDaily.map(d => d.appetite).filter(v => v != null));
   const priorApp = avg(priorDaily.map(d => d.appetite).filter(v => v != null));
   const thisFN   = avg(monthDaily.map(d => d.foodNoise).filter(v => v != null));
@@ -1302,7 +1422,6 @@ function buildDoctorSummary(){
     }
   }
 
-  /* Kwikpen callback */
   if(weeksOfPen === 3){
     lines.push('Week 3 of current Kwikpen — provider check-in suggested this week.');
   }
@@ -1316,7 +1435,6 @@ function renderDoctorSummary(){
   el.textContent = buildDoctorSummary();
 }
 
-/* ---------- Weekly log (collapsed to 4) ---------- */
 function renderWeeklyTable(){
   const wrap = document.getElementById('weeklyTableWrap');
   if(weeklyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No weekly check-ins yet.</div>'; return; }
@@ -1334,7 +1452,7 @@ function renderWeeklyTable(){
       ).join('') + '</div>'
     : '';
 
-    wrap.innerHTML = '<table><tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th>New Pen</th><th></th></tr>' + rows + '</table>' + obsBlock +
+  wrap.innerHTML = '<table><tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th>New Pen</th><th></th></tr>' + rows + '</table>' + obsBlock +
     (reversed.length > 4
       ? '<button class="expand-btn" id="weeklyLogExpandBtn">' + (uiState.weeklyLogExpanded ? 'Show fewer' : 'Show all (' + reversed.length + ')') + '</button>'
       : '');
@@ -1357,7 +1475,6 @@ function renderWeeklyTable(){
   if(btn) btn.onclick = ()=>{ uiState.weeklyLogExpanded = !uiState.weeklyLogExpanded; renderWeeklyTable(); };
 }
 
-/* ---------- Daily log (collapsed to 7) ---------- */
 function renderDailyTable(){
   const wrap = document.getElementById('dailyTableWrap');
   if(dailyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No daily check-ins yet.</div>'; return; }
@@ -1381,7 +1498,6 @@ function renderDailyTable(){
     '</tr>';
   }).join('');
 
-  /* Notes + NSVs — same visible window as the table, one toggle for both */
   const withDetail = visible.filter(e => (e.notes && String(e.notes).trim()) || (e.nsv && String(e.nsv).trim()));
   const notesBlock = withDetail.length
     ? '<div class="obs-list"><h3>Daily notes &amp; NSVs</h3>' + withDetail.map(e =>
@@ -1415,7 +1531,7 @@ function renderDailyTable(){
   const btnLog = document.getElementById('dailyLogExpandBtn');
   if(btnLog) btnLog.onclick = ()=>{ uiState.dailyLogExpanded = !uiState.dailyLogExpanded; renderDailyTable(); };
 }
-/* ---------- Save handlers ---------- */
+
 document.getElementById('saveDailyBtn').onclick = async ()=>{
   const date      = document.getElementById('d-date').value;
   const energy    = parseInt(document.getElementById('d-energy').value, 10);
@@ -1529,7 +1645,6 @@ document.getElementById('copySummaryBtn').onclick = async ()=>{
   }
 };
 
-/* ---------- CSV import ---------- */
 function parseCSV(text){
   const lines = text.replace(/\r/g,'').split('\n').filter(l=>l.trim().length>0);
   if(lines.length < 2) return [];
@@ -1650,7 +1765,6 @@ document.getElementById('importWeeklyFile').addEventListener('change', async (ev
   ev.target.value = '';
 });
 
-/* ---------- Boot ---------- */
 document.getElementById('d-date').value = todayISO();
 document.getElementById('w-date').value = todayISO();
 
