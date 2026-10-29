@@ -109,6 +109,7 @@
   .check-label{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink); margin:0; cursor:pointer;}
   .check-label input[type=checkbox]{width:16px; height:16px; accent-color:var(--sage); cursor:pointer;}
 
+  /* Notes / observations lists */
   .obs-list{margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);}
   .obs-list h3{font-size:14px; margin-bottom:12px;}
   .obs-item{padding:10px 0; border-bottom:1px dashed var(--line);}
@@ -116,15 +117,26 @@
   .obs-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:3px;}
   .obs-text{font-size:13px; line-height:1.5; white-space:pre-wrap; color:var(--ink); overflow-wrap:break-word;}
 
+  /* NSV list */
   .nsv-list{margin-top:2px;}
   .nsv-item{padding:12px 0; border-bottom:1px dashed var(--line); font-size:13.5px; line-height:1.5;}
   .nsv-item:last-child{border-bottom:none;}
   .nsv-date{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:4px;}
   .nsv-star{color:var(--amber); margin-right:6px; font-weight:700;}
 
+  /* Expand / collapse control */
+  .expand-btn{
+    margin-top:14px; padding:8px 14px; border:1px solid var(--line); background:transparent;
+    border-radius:var(--radius); font-family:'IBM Plex Sans', sans-serif; font-size:12px;
+    color:var(--ink-soft); cursor:pointer; font-weight:600;
+    transition:background 0.12s, border-color 0.12s, color 0.12s;
+  }
+  .expand-btn:hover{border-color:var(--ink-soft); color:var(--ink);}
+
   .chart-caption{font-size:11px; color:var(--ink-soft); margin-top:8px; min-height:14px; line-height:1.4;}
   .chart-caption.warn{color:var(--rose);}
 
+  /* Week-over-week */
   .wow-table{width:100%; border-collapse:collapse; font-size:13px;}
   .wow-table th{
     color:var(--ink-soft); font-weight:500; font-size:11px; text-transform:lowercase;
@@ -146,52 +158,45 @@
   .wow-delta.neutral{ background:#DDD3B6; color:#5C6B63; box-shadow:inset 0 0 0 1px #C5BC9F; }
   .wow-delta-icon{font-size:12px; line-height:1; font-weight:700;}
 
-  .mp-verdict{
-    display:flex; gap:16px; align-items:flex-start;
-    padding:20px 22px; border-radius:8px; border:1px solid;
-  }
-  .mp-verdict-green{ background:#E6F0E7; border-color:#B0CFB3; }
-  .mp-verdict-amber{ background:#FBF1D8; border-color:#E3C77F; }
-  .mp-verdict-red  { background:#F7DED7; border-color:#DDA496; }
-  .mp-verdict-none { background:#F1EDE1; border-color:var(--line); }
-  .mp-indicator{ flex-shrink:0; margin-top:4px; }
-  .mp-dot{ display:block; width:16px; height:16px; border-radius:50%; }
-  .mp-verdict-green .mp-dot{ background:#4F8260; box-shadow:0 0 0 5px rgba(79,130,96,0.18); }
-  .mp-verdict-amber .mp-dot{ background:#C79A46; box-shadow:0 0 0 5px rgba(199,154,70,0.20); }
-  .mp-verdict-red   .mp-dot{ background:#B5675A; box-shadow:0 0 0 5px rgba(181,103,90,0.20); }
-  .mp-verdict-none  .mp-dot{ background:#B8AD94; box-shadow:0 0 0 5px rgba(184,173,148,0.20); }
-  .mp-content{ flex:1; min-width:0; }
-  .mp-title{ font-family:'Roboto Slab', serif; font-weight:700; font-size:16px; margin-bottom:5px; line-height:1.3; }
-  .mp-verdict-green .mp-title{ color:#2A4A33; }
-  .mp-verdict-amber .mp-title{ color:#6B4E1E; }
-  .mp-verdict-red   .mp-title{ color:#5A2D24; }
-  .mp-verdict-none  .mp-title{ color:var(--ink-soft); }
-  .mp-body{ font-size:13.5px; line-height:1.55; }
-  .mp-verdict-green .mp-body{ color:#3B5B40; }
-  .mp-verdict-amber .mp-body{ color:#6B4E1E; }
-  .mp-verdict-red   .mp-body{ color:#6B362D; }
-  .mp-verdict-none  .mp-body{ color:var(--ink-soft); }
-
-  .rotation-summary{
+  /* Injection sites — rotation + effectiveness */
+  .site-summary{
     padding:12px 14px; border-radius:var(--radius); margin-bottom:16px;
     font-size:13px; line-height:1.5;
   }
-  .rotation-summary.ok{background:var(--sage-soft); color:#2F4237; border-left:3px solid var(--sage);}
-  .rotation-summary.warning{background:var(--rose-soft); color:#5A2D24; border-left:3px solid var(--rose);}
-  .rotation-summary.info{background:var(--amber-soft); color:#6B4E1E; border-left:3px solid var(--amber);}
-  .rotation-table{width:100%; border-collapse:collapse; font-size:13px;}
-  .rotation-table th{
+  .site-summary.ok{background:var(--sage-soft); color:#2F4237; border-left:3px solid var(--sage);}
+  .site-summary.warning{background:var(--rose-soft); color:#5A2D24; border-left:3px solid var(--rose);}
+  .site-summary.info{background:var(--amber-soft); color:#6B4E1E; border-left:3px solid var(--amber);}
+  .site-section-label{
+    font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em;
+    margin:20px 0 10px; font-weight:600;
+  }
+  .site-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .site-table th{
     text-align:left; padding:6px 8px; font-size:11px; color:var(--ink-soft);
     text-transform:lowercase; border-bottom:1px solid var(--line); font-weight:500;
   }
-  .rotation-table td{padding:10px 8px; border-bottom:1px solid var(--line);}
-  .rotation-table tr:last-child td{border-bottom:none;}
-  .rotation-table td.date{font-family:'IBM Plex Mono', monospace; color:var(--ink-soft); font-size:12px; white-space:nowrap;}
-  .rotation-table td.site{font-weight:500;}
-  .rotation-table td.gap{font-family:'IBM Plex Mono', monospace; font-size:12px; text-align:right; white-space:nowrap;}
-  .rotation-table td.gap.short{color:var(--rose); font-weight:600;}
-  .rotation-table td.gap.ok{color:var(--sage);}
-  .rotation-table td.count{font-family:'IBM Plex Mono', monospace; color:var(--ink-soft); font-size:12px; text-align:right;}
+  .site-table th.num-head{text-align:right;}
+  .site-table td{padding:10px 8px; border-bottom:1px solid var(--line);}
+  .site-table tr:last-child td{border-bottom:none;}
+  .site-table td.date{font-family:'IBM Plex Mono', monospace; color:var(--ink-soft); font-size:12px; white-space:nowrap;}
+  .site-table td.site{font-weight:500;}
+  .site-table td.num{font-family:'IBM Plex Mono', monospace; font-size:12px; text-align:right; white-space:nowrap;}
+  .site-table td.num.good{color:var(--sage); font-weight:600;}
+  .site-table td.num.warn{color:var(--amber); font-weight:600;}
+  .site-table td.num.bad{color:var(--rose); font-weight:600;}
+  .site-table td.verdict{white-space:nowrap; text-align:right;}
+  .site-verdict-badge{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:10px;
+    padding:2px 8px; border-radius:10px; font-weight:600;
+  }
+  .site-verdict-badge.good{background:var(--sage-soft); color:#3E5445;}
+  .site-verdict-badge.warn{background:var(--amber-soft); color:#7A5C24;}
+  .site-verdict-badge.bad{background:var(--rose-soft); color:#7B3A2E;}
+  .site-verdict-badge.none{background:var(--line); color:var(--ink-soft);}
+  .site-note{
+    font-size:11px; color:var(--ink-soft); line-height:1.5; margin-top:14px;
+    padding-top:12px; border-top:1px dashed var(--line);
+  }
 
   /* Cycle-day symptom heatmap */
   .heat-wrap{overflow-x:auto;}
@@ -203,6 +208,7 @@
   .heat-legend{display:flex; gap:16px; align-items:center; margin-top:12px; font-size:11px; color:var(--ink-soft); flex-wrap:wrap;}
   .swatch{width:12px; height:12px; display:inline-block; border-radius:2px; vertical-align:-2px; margin-right:5px; border:1px solid rgba(0,0,0,0.06);}
 
+  /* Flags (Worth attention) */
   .flag{
     display:flex; gap:10px; padding:12px 14px; border-radius:var(--radius);
     margin-bottom:8px; font-size:13px; line-height:1.5;
@@ -214,6 +220,7 @@
   .flag-good{background:var(--sage-soft); color:#2F4237;}
   .flag-info{background:var(--amber-soft); color:#6B4E1E;}
 
+  /* Doctor summary */
   .doctor-output{
     padding:14px 16px;
     background:#FBF9F2; border:1px solid var(--line); border-radius:var(--radius);
@@ -244,8 +251,8 @@
     .check-label{font-size:14px;}
     .check-label input[type=checkbox]{width:18px; height:18px;}
     .tablewrap{-webkit-overflow-scrolling:touch;}
-    #dailyTableWrap table{min-width:820px;}
-    #weeklyTableWrap table{min-width:520px;}
+    #dailyTableWrap table{min-width:860px;}
+    #weeklyTableWrap table{min-width:560px;}
     .del{padding:5px 9px; font-size:12px; touch-action:manipulation;}
     canvas{max-height:220px;}
     .wow-table{font-size:12px;}
@@ -253,17 +260,16 @@
     .wow-table td.metric{font-size:12px;}
     .wow-delta{font-size:10px; padding:3px 8px; gap:3px;}
     .wow-delta-icon{font-size:11px;}
-    .mp-verdict{padding:16px 16px; gap:12px;}
-    .mp-title{font-size:15px;}
-    .mp-body{font-size:13px;}
-    .rotation-table{font-size:12px;}
-    .rotation-table th, .rotation-table td{padding:8px 5px;}
+    .site-table{font-size:12px;}
+    .site-table th, .site-table td{padding:8px 5px;}
+    .site-table td.verdict{display:none;}
     .heat-cell{width:36px; height:30px; font-size:10px;}
     .doctor-output{font-size:11.5px; padding:12px 14px;}
     .menu-btn:active{transform:scale(0.98);}
     .save-btn:active{transform:scale(0.99);}
     .sev-btn:active{transform:scale(0.94);}
     .del:active{background:var(--rose-soft);}
+    .expand-btn{padding:10px 14px; font-size:13px; touch-action:manipulation;}
   }
 </style>
 <div class="wrap">
@@ -288,9 +294,6 @@
 
       <label>Energy (1 low – 5 high)</label>
       <input type="number" inputmode="numeric" min="1" max="5" id="d-energy" placeholder="1–5">
-
-      <label>Mood (1 low – 5 high)</label>
-      <input type="number" inputmode="numeric" min="1" max="5" id="d-mood" placeholder="1–5">
 
       <label>Appetite (1 no appetite – 5 very hungry)</label>
       <input type="number" inputmode="numeric" min="1" max="5" id="d-appetite" placeholder="1–5">
@@ -349,6 +352,10 @@
       <label>Observations from the previous week</label>
       <textarea id="w-observations" placeholder="Anything worth noting about the week that just passed — side effects, appetite changes, energy, sleep, cravings..."></textarea>
 
+      <div class="check-row" style="margin-top:18px;">
+        <label class="check-label"><input type="checkbox" id="w-newpen"> Started a new Kwikpen today</label>
+      </div>
+
       <button class="save-btn weekly-btn" id="saveWeeklyBtn">Save weekly check-in</button>
       <div class="msg" id="weeklyMsg"></div>
     </div>
@@ -356,25 +363,19 @@
 
   <section id="view-reports" class="view">
     <div class="card">
-      <h2>Non-scale victories</h2>
-      <div id="nsvWrap"></div>
+      <h2>Weight, dosage &amp; trend <span class="tag weekly">weekly</span></h2>
+      <canvas id="weightChart"></canvas>
+      <div class="chart-caption" id="weightChartCaption"></div>
+    </div>
+
+    <div class="card">
+      <h2>Weekly comparison <span class="tag weekly">weekly</span></h2>
+      <div class="tablewrap" id="wowWrap"></div>
     </div>
 
     <div class="card">
       <h2>Worth attention <span class="tag daily">as needed</span></h2>
       <div id="flagsWrap"></div>
-    </div>
-
-    <div class="card">
-      <h2>Muscle protection <span class="tag weekly">weekly</span></h2>
-      <div class="sub" style="margin-bottom:14px;">The three things that defend your lean mass during weight loss.</div>
-      <div id="muscleWrap"></div>
-    </div>
-
-    <div class="card">
-      <h2>Weight, dosage &amp; trend <span class="tag weekly">weekly</span></h2>
-      <canvas id="weightChart"></canvas>
-      <div class="chart-caption" id="weightChartCaption"></div>
     </div>
 
     <div class="card">
@@ -387,19 +388,13 @@
     </div>
 
     <div class="card">
-      <h2>Weekly comparison <span class="tag weekly">weekly</span></h2>
-      <div class="tablewrap" id="wowWrap"></div>
-    </div>
-
-    <div class="card">
-      <h2>Injection rotation <span class="tag weekly">weekly</span></h2>
-      <div class="sub" style="margin-bottom:14px;">Rotating sites protects tissue and preserves absorption. Aim for 4+ weeks between uses of the same site.</div>
-      <div id="rotationWrap"></div>
+      <h2>Injection sites <span class="tag weekly">weekly</span></h2>
+      <div id="sitesWrap"></div>
     </div>
 
     <div class="card">
       <h2>Symptoms by cycle day <span class="tag daily">daily</span></h2>
-      <div class="sub" style="margin-bottom:10px;">Average severity for each symptom, grouped by days since injection. Day 1 = injection day. Useful for spotting patterns after a dose change.</div>
+      <div class="sub" style="margin-bottom:10px;">Average severity for each symptom, grouped by days since injection. Day 1 = injection day.</div>
       <div class="heat-wrap"><table class="heat" id="cycleHeatTable"></table></div>
       <div class="heat-legend">
         <span><span class="swatch" style="background:var(--sage-soft)"></span>none</span>
@@ -408,6 +403,11 @@
         <span><span class="swatch" style="background:var(--rose-soft)"></span>severe</span>
         <span style="color:var(--ink-soft);font-style:italic;">n = days logged</span>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>Non-scale victories</h2>
+      <div id="nsvWrap"></div>
     </div>
 
     <div class="card">
@@ -442,8 +442,9 @@ const STRENGTH_GOAL     = 2;
 const PROTEIN_DAYS_GOAL = 5;
 const ROTATION_MIN_DAYS = 28;
 
-const SYMPTOMS = ["Nausea","Constipation","Diarrhea","Headache","Reflux","Dizziness"];
+const SYMPTOMS = ["Nausea","Constipation","Diarrhea","Headache","Reflux","Dizziness","Depression"];
 const SEV_LABELS = ["None","Mild","Mod","Severe"];
+const SEV_COLORS = ["var(--sage-soft)","var(--amber-soft)","#EBC58B","var(--rose-soft)"];
 
 if (typeof Chart === 'undefined') {
   window.Chart = function(){ return { destroy: function(){} }; };
@@ -453,6 +454,13 @@ if (typeof Chart === 'undefined') {
 let dailyEntries = [];
 let weeklyEntries = [];
 let currentSymptoms = {};
+
+const uiState = {
+  nsvExpanded: false,
+  weeklyLogExpanded: false,
+  dailyLogExpanded: false,
+  dailyNotesExpanded: false
+};
 
 async function unwrap_(res){
   const text = await res.text();
@@ -639,13 +647,12 @@ function cycleDayFor(dateStr){
 
 function renderAll(){
   renderStats();
-  renderNSVs();
-  renderWeekOverWeek();
-  renderMuscleProtection();
-  renderRotation();
-  renderFlags();
   renderWeightChart();
+  renderWeekOverWeek();
+  renderFlags();
+  renderSites();
   renderCycleHeat();
+  renderNSVs();
   renderWeeklyTable();
   renderDailyTable();
   renderDoctorSummary();
@@ -670,6 +677,7 @@ function renderStats(){
     '<div class="stat"><span class="num">' + lastDose + '</span><span class="label">current mg</span></div>';
 }
 
+/* ---------- Non-scale victories (collapsed to 3) ---------- */
 function renderNSVs(){
   const wrap = document.getElementById('nsvWrap');
   if(!wrap) return;
@@ -679,24 +687,31 @@ function renderNSVs(){
     return;
   }
   const reversed = withNSV.slice().reverse();
-  wrap.innerHTML = '<div class="nsv-list">' + reversed.map(e =>
+  const visible = uiState.nsvExpanded ? reversed : reversed.slice(0, 3);
+  const html = '<div class="nsv-list">' + visible.map(e =>
     '<div class="nsv-item">' +
       '<div class="nsv-date">' + fmtDate(e.date) + '</div>' +
       '<div><span class="nsv-star">★</span>' + escapeHtml_(e.nsv) + '</div>' +
     '</div>'
   ).join('') + '</div>';
+
+  wrap.innerHTML = html + (reversed.length > 3
+    ? '<button class="expand-btn" id="nsvExpandBtn">' + (uiState.nsvExpanded ? 'Show fewer' : 'Show all (' + reversed.length + ')') + '</button>'
+    : '');
+
+  const btn = document.getElementById('nsvExpandBtn');
+  if(btn) btn.onclick = ()=>{ uiState.nsvExpanded = !uiState.nsvExpanded; renderNSVs(); };
 }
 
+/* ---------- Weekly comparison ---------- */
 function windowStats(startISO, endISO){
   const inRange = dailyEntries.filter(d => d.date >= startISO && d.date < endISO);
   const energyVals   = inRange.map(d => d.energy).filter(v => v != null);
-  const moodVals     = inRange.map(d => d.mood).filter(v => v != null);
   const appetiteVals = inRange.map(d => d.appetite).filter(v => v != null);
   const fnVals       = inRange.map(d => d.foodNoise).filter(v => v != null);
   const burdenSum    = inRange.reduce((s, d) => s + symptomBurden_(d), 0);
   return {
     energy:    avg(energyVals),
-    mood:      avg(moodVals),
     appetite:  avg(appetiteVals),
     foodNoise: avg(fnVals),
     burden:    inRange.length > 0 ? burdenSum : null
@@ -754,7 +769,6 @@ function renderWeekOverWeek(){
     row('Weight', latest.weight, previous.weight, {format: v => v == null ? '—' : v.toFixed(1), direction: 'down-good', deltaFormat: v => v.toFixed(1)}) +
     row('Dose (mg)', latest.dose, previous.dose, {format: v => v == null ? '—' : v.toFixed(2), direction: 'neutral', deltaFormat: v => v.toFixed(2)}) +
     row('Energy', thisStats.energy, lastStats.energy, {direction: 'up-good', sameIsGood: true}) +
-    row('Mood', thisStats.mood, lastStats.mood, {direction: 'up-good', sameIsGood: true}) +
     row('Appetite', thisStats.appetite, lastStats.appetite, {direction: 'down-good', sameIsGood: true}) +
     row('Food noise', thisStats.foodNoise, lastStats.foodNoise, {direction: 'down-good', sameIsGood: true}) +
     row('Symptom burden', thisStats.burden, lastStats.burden, {format: v => v == null ? '—' : v.toFixed(0), direction: 'down-good', deltaFormat: v => v.toFixed(0)}) +
@@ -763,78 +777,128 @@ function renderWeekOverWeek(){
   wrap.innerHTML = html;
 }
 
-function renderMuscleProtection(){
-  const wrap = document.getElementById('muscleWrap');
-  const notEnough = '<div class="mp-verdict mp-verdict-none"><div class="mp-indicator"><span class="mp-dot"></span></div><div class="mp-content"><div class="mp-title">Still learning your baseline</div><div class="mp-body">Once you have a few weeks of entries, this will tell you whether you\'re protecting muscle. Keep logging.</div></div></div>';
-  if(weeklyEntries.length < 2){ wrap.innerHTML = notEnough; return; }
-
-  const latest   = weeklyEntries[weeklyEntries.length-1];
-  const previous = weeklyEntries[weeklyEntries.length-2];
-  const today    = todayISO();
-
-  const lossPct = (previous.weight != null && latest.weight != null && previous.weight > 0)
-    ? ((previous.weight - latest.weight) / previous.weight) * 100 : null;
-
-  const twoWeeks = dailyEntries.filter(d => d.date >= addDaysISO(today, -14) && d.date <= today);
-  if(twoWeeks.length < 6){ wrap.innerHTML = notEnough; return; }
-
-  const strengthDays14 = twoWeeks.filter(d => d.strength).length;
-  const proteinDays14  = twoWeeks.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
-  const strengthPerWeek = strengthDays14 / 2;
-  const proteinPerWeek  = proteinDays14 / 2;
-
-  function scoreLoss(v){ if(v == null) return null; if(v <= 1.0) return 0; if(v <= 1.5) return 1; return 2; }
-  function scoreStrength(v){ if(v >= STRENGTH_GOAL) return 0; if(v >= 1) return 1; return 2; }
-  function scoreProtein(v){ if(v >= PROTEIN_DAYS_GOAL) return 0; if(v >= 3) return 1; return 2; }
-
-  const signals = [
-    { name:'loss',     score: scoreLoss(lossPct) },
-    { name:'strength', score: scoreStrength(strengthPerWeek) },
-    { name:'protein',  score: scoreProtein(proteinPerWeek) }
-  ].filter(s => s.score != null);
-
-  const slipping = signals.filter(s => s.score >= 1);
-  const hasEverDoneStrength = dailyEntries.some(d => d.strength);
-
-  let verdictClass, title, body;
-
-  if(slipping.length === 0){
-    verdictClass = 'mp-verdict-green';
-    title = "You're protecting your muscle";
-    body = "Losing at a healthy pace, strength training regularly, and hitting your protein most days. This is exactly what you want during weight loss.";
-  } else if(slipping.length === 1){
-    verdictClass = 'mp-verdict-amber';
-    const which = slipping[0].name;
-    if(which === 'loss'){
-      title = 'Pace is a touch fast';
-      body = "Your protein and strength habits look good. Try to slow the loss slightly — keep protein high, don't add training volume this week, and consider easing up on the calorie deficit.";
-    } else if(which === 'strength'){
-      if(!hasEverDoneStrength){
-        title = 'Strength training can wait a little longer';
-        body = "You've mentioned resistance bands are on the way. Even one or two short sessions a week starts to change the picture — there's no rush, and starting with something small is fine.";
-      } else {
-        title = 'Strength training has slipped a little';
-        body = 'Your pace and protein look okay. A single session this week is a good restart — muscle needs a reason to stay, and even a short one counts.';
-      }
-    } else {
-      title = 'Protein could be a bit higher';
-      body = 'Your pace and strength training look fine. Try to nudge protein up over the next week — a shake on low-appetite days is an easy top-up.';
-    }
-  } else {
-    verdictClass = 'mp-verdict-red';
-    title = 'Muscle loss risk';
-    body = 'Two of the key habits are off right now. The fastest fixes are protein and resistance training. If the loss has been fast for a while, slowing down is the single biggest lever.';
-  }
-
-  wrap.innerHTML = '<div class="mp-verdict ' + verdictClass + '"><div class="mp-indicator"><span class="mp-dot"></span></div><div class="mp-content"><div class="mp-title">' + title + '</div><div class="mp-body">' + body + '</div></div></div>';
+/* ---------- Worth attention (now includes muscle-protection flags) ---------- */
+function avgBurdenInRange(startISO, endISO){
+  let sum = 0, n = 0;
+  dailyEntries.forEach(d => { if(d.date >= startISO && d.date < endISO){ sum += symptomBurden_(d); n++; } });
+  return n > 0 ? sum / n : null;
 }
 
-function renderRotation(){
-  const wrap = document.getElementById('rotationWrap');
+function renderFlags(){
+  const wrap = document.getElementById('flagsWrap');
+  const flags = [];
+  const today = todayISO();
+
+  /* Rapid loss */
+  if(weeklyEntries.length >= 2){
+    const last = weeklyEntries[weeklyEntries.length-1];
+    const prev = weeklyEntries[weeklyEntries.length-2];
+    if(last.weight != null && prev.weight != null && prev.weight > 0){
+      const pct = (prev.weight - last.weight) / prev.weight;
+      if(pct > 0.01){
+        flags.push({ icon:'⚠', type:'warn', text:'You lost <strong>' + (prev.weight - last.weight).toFixed(1) + ' lb</strong> this week — ' + (pct*100).toFixed(1) + '% of body weight. Fast loss can eat into muscle. Keep protein up and consider strength training.' });
+      }
+    }
+  }
+
+  /* Plateau */
+  if(weeklyEntries.length >= 4){
+    const recent = weeklyEntries.slice(-4);
+    const change = recent[recent.length-1].weight - recent[0].weight;
+    if(change > -0.5){
+      flags.push({ icon:'·', type:'info', text:'Weight has been essentially flat for 3 weeks. Plateauing is normal — worth a look if it persists past 4 weeks.' });
+    }
+  }
+
+  /* Symptom trend */
+  const recent14 = avgBurdenInRange(addDaysISO(today, -14), addDaysISO(today, 1));
+  const prior14  = avgBurdenInRange(addDaysISO(today, -28), addDaysISO(today, -14));
+  if(recent14 != null && prior14 != null && prior14 > 0){
+    const change = (recent14 - prior14) / prior14;
+    if(change <= -0.2){
+      flags.push({ icon:'✓', type:'good', text:'Symptom burden has been trending down over the last two weeks. Whatever you\'re doing seems to be working.' });
+    } else if(change >= 0.2){
+      flags.push({ icon:'⚠', type:'warn', text:'Symptom burden has been trending up over the last two weeks. Might be worth a closer look — dose change, food, cycle?' });
+    }
+  }
+
+  /* Muscle protection (folded in) */
+  if(weeklyEntries.length >= 2){
+    const latest   = weeklyEntries[weeklyEntries.length-1];
+    const previous = weeklyEntries[weeklyEntries.length-2];
+    const lossPct = (previous.weight != null && latest.weight != null && previous.weight > 0)
+      ? ((previous.weight - latest.weight) / previous.weight) * 100 : null;
+
+    const twoWeeks = dailyEntries.filter(d => d.date >= addDaysISO(today, -14) && d.date <= today);
+
+    if(twoWeeks.length >= 6){
+      const strengthDays14 = twoWeeks.filter(d => d.strength).length;
+      const proteinDays14  = twoWeeks.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
+      const strengthPerWeek = strengthDays14 / 2;
+      const proteinPerWeek  = proteinDays14 / 2;
+
+      function scoreLoss(v){ if(v == null) return null; if(v <= 1.0) return 0; if(v <= 1.5) return 1; return 2; }
+      function scoreStrength(v){ if(v >= STRENGTH_GOAL) return 0; if(v >= 1) return 1; return 2; }
+      function scoreProtein(v){ if(v >= PROTEIN_DAYS_GOAL) return 0; if(v >= 3) return 1; return 2; }
+
+      const signals = [
+        { name:'loss',     score: scoreLoss(lossPct) },
+        { name:'strength', score: scoreStrength(strengthPerWeek) },
+        { name:'protein',  score: scoreProtein(proteinPerWeek) }
+      ].filter(s => s.score != null);
+
+      const slipping = signals.filter(s => s.score >= 1);
+      const hasEverDoneStrength = dailyEntries.some(d => d.strength);
+
+      if(slipping.length === 1){
+        const which = slipping[0].name;
+        if(which === 'loss'){
+          flags.push({ icon:'⚠', type:'warn', text:'Pace is a touch fast. Your protein and strength habits look good — keep protein high, don\'t add training volume this week, and consider easing up on the calorie deficit.' });
+        } else if(which === 'strength'){
+          if(!hasEverDoneStrength){
+            flags.push({ icon:'💡', type:'info', text:'Strength training hasn\'t started yet. Even one or two short sessions a week — resistance bands count — starts to change the muscle-protection picture. No rush.' });
+          } else {
+            flags.push({ icon:'·', type:'info', text:'Strength training has slipped a little this week. A single session is a good restart — muscle needs a reason to stay.' });
+          }
+        } else {
+          flags.push({ icon:'·', type:'info', text:'Protein has been a bit low over the past two weeks — about ' + proteinDays14 + ' of 14 days at goal. A shake on low-appetite days is an easy top-up.' });
+        }
+      } else if(slipping.length >= 2){
+        flags.push({ icon:'⚠', type:'warn', text:'Two of the three muscle-protection habits are off right now. Protein and resistance training are the fastest fixes — if loss has been fast for a while, slowing down is the single biggest lever.' });
+      }
+    }
+  }
+
+  /* Missed logging */
+  if(dailyEntries.length > 0){
+    const lastDate = dailyEntries[dailyEntries.length-1].date;
+    const lastParsed = parseDateAny(lastDate);
+    const todayParsed = parseDateAny(today);
+    if(lastParsed && todayParsed){
+      const days = Math.round((todayParsed - lastParsed) / 86400000);
+      if(days === 2){
+        flags.push({ icon:'📝', type:'info', text:'You didn\'t log yesterday. One missed day is fine — a quick catch-up keeps the trend lines honest.' });
+      } else if(days >= 3){
+        flags.push({ icon:'📝', type:'info', text:'Last daily check-in was ' + days + ' days ago. A quick log keeps the data useful.' });
+      }
+    }
+  }
+
+  if(flags.length === 0){
+    wrap.innerHTML = '<div class="empty" style="padding:14px 0;">Nothing needs your attention right now. Keep logging.</div>';
+    return;
+  }
+  wrap.innerHTML = flags.map(f => '<div class="flag flag-' + f.type + '"><span class="flag-icon">' + f.icon + '</span><div class="flag-text">' + f.text + '</div></div>').join('');
+}
+
+/* ---------- Injection sites (rotation + effectiveness) ---------- */
+function renderSites(){
+  const wrap = document.getElementById('sitesWrap');
   if(weeklyEntries.length === 0){
     wrap.innerHTML = '<div class="empty">Log a weekly entry with an injection site to see this view.</div>';
     return;
   }
+
   const siteUsage = {};
   weeklyEntries.forEach(w => {
     if(!w.site) return;
@@ -842,12 +906,16 @@ function renderRotation(){
     siteUsage[w.site].count++;
     siteUsage[w.site].dates.push(w.date);
   });
+
   if(Object.keys(siteUsage).length === 0){
     wrap.innerHTML = '<div class="empty">No injection sites logged yet.</div>';
     return;
   }
+
   const today = todayISO();
-  const sites = Object.entries(siteUsage).map(([site, info]) => {
+
+  /* Rotation stats */
+  const rotationSites = Object.entries(siteUsage).map(([site, info]) => {
     const chrono = info.dates.slice().sort((a,b) => (parseDateAny(a)?.getTime() || 0) - (parseDateAny(b)?.getTime() || 0));
     const lastDate = chrono[chrono.length - 1];
     const daysSince = Math.round((parseDateAny(today) - parseDateAny(lastDate)) / 86400000);
@@ -858,13 +926,13 @@ function renderRotation(){
     }
     return { site, count: info.count, lastDate, daysSince, shortestGap };
   });
-  sites.sort((a,b) => b.daysSince - a.daysSince);
+  rotationSites.sort((a,b) => b.daysSince - a.daysSince);
 
   const eightWeeksAgo = addDaysISO(today, -56);
   const recentSites = new Set();
   weeklyEntries.forEach(w => { if(w.date >= eightWeeksAgo && w.site) recentSites.add(w.site); });
   const sitesInLast8 = recentSites.size;
-  const tooRecent = sites.filter(s => s.shortestGap != null && s.shortestGap < ROTATION_MIN_DAYS);
+  const tooRecent = rotationSites.filter(s => s.shortestGap != null && s.shortestGap < ROTATION_MIN_DAYS);
 
   let summaryClass, summaryText;
   if(weeklyEntries.length < 4){
@@ -882,93 +950,139 @@ function renderRotation(){
     summaryText = '<strong>Good rotation.</strong> ' + sitesInLast8 + ' sites used in the last 8 weeks, no rapid reuses. This protects absorption and tissue health.';
   }
 
-  const rows = sites.map(s => {
+  /* Effectiveness stats */
+  const userAvgWeightDelta = (() => {
+    const deltas = [];
+    for(let i = 1; i < weeklyEntries.length; i++){
+      const a = weeklyEntries[i-1].weight, b = weeklyEntries[i].weight;
+      if(a != null && b != null && isFinite(a) && isFinite(b)) deltas.push(b - a);
+    }
+    return avg(deltas);
+  })();
+  const userAvgBurden = dailyEntries.length > 0
+    ? avg(dailyEntries.map(d => symptomBurden_(d)))
+    : null;
+
+  const effectSites = {};
+  weeklyEntries.forEach((w, i) => {
+    if(!w.site) return;
+    if(!effectSites[w.site]) effectSites[w.site] = { uses: 0, weightDeltas: [], burdens: [] };
+    const s = effectSites[w.site];
+    s.uses++;
+    /* Weight delta: from this injection to next week's weight */
+    if(i + 1 < weeklyEntries.length){
+      const next = weeklyEntries[i+1];
+      if(w.weight != null && next.weight != null) s.weightDeltas.push(next.weight - w.weight);
+    }
+    /* Burden over the 7 days following this injection */
+    const start = w.date;
+    const end = addDaysISO(start, 7);
+    dailyEntries.forEach(d => {
+      if(d.date < start || d.date >= end) return;
+      s.burdens.push(symptomBurden_(d));
+    });
+  });
+
+  const effectArr = Object.entries(effectSites).map(([site, s]) => {
+    const avgWD = avg(s.weightDeltas);
+    const avgB  = avg(s.burdens);
+    let verdict = 'none', verdictLabel = '—';
+    if(s.uses >= 3 && avgWD != null && avgB != null && userAvgWeightDelta != null && userAvgBurden != null){
+      const weightBetter  = avgWD < userAvgWeightDelta;
+      const burdenBetter  = avgB  < userAvgBurden;
+      const betterCount = (weightBetter ? 1 : 0) + (burdenBetter ? 1 : 0);
+      if(betterCount === 2){ verdict = 'good'; verdictLabel = 'Works well'; }
+      else if(betterCount === 1){ verdict = 'warn'; verdictLabel = 'Mixed'; }
+      else { verdict = 'bad'; verdictLabel = 'Lags'; }
+    }
+    return { site, uses: s.uses, avgWD, avgB, verdict, verdictLabel };
+  });
+  effectArr.sort((a,b) => b.uses - a.uses);
+
+  /* Render */
+  const rotationRows = rotationSites.map(s => {
     const weeks = (s.daysSince / 7).toFixed(1);
-    const gapClass = s.daysSince < ROTATION_MIN_DAYS ? 'short' : 'ok';
-    return '<tr><td class="site">' + escapeHtml_(s.site) + '</td><td class="date">' + fmtDate(s.lastDate) + '</td><td class="gap ' + gapClass + '">' + weeks + ' wk</td><td class="count">' + s.count + '</td></tr>';
+    const gapClass = s.daysSince < ROTATION_MIN_DAYS ? 'bad' : 'good';
+    return '<tr><td class="site">' + escapeHtml_(s.site) + '</td><td class="date">' + fmtDate(s.lastDate) + '</td><td class="num ' + gapClass + '">' + weeks + ' wk</td><td class="num">' + s.count + '</td></tr>';
   }).join('');
 
-  wrap.innerHTML = '<div class="rotation-summary ' + summaryClass + '">' + summaryText + '</div>' +
-    '<table class="rotation-table"><thead><tr><th>Site</th><th>Last used</th><th style="text-align:right">Weeks ago</th><th style="text-align:right">Times</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  const effectRows = effectArr.map(s => {
+    const wCell = s.uses >= 2 && s.avgWD != null
+      ? '<td class="num">' + (s.avgWD >= 0 ? '+' : '') + s.avgWD.toFixed(1) + ' lb</td>'
+      : '<td class="num">—</td>';
+    const bCell = s.uses >= 2 && s.avgB != null
+      ? '<td class="num">' + s.avgB.toFixed(1) + '</td>'
+      : '<td class="num">—</td>';
+    const verdictCell = '<td class="verdict"><span class="site-verdict-badge ' + s.verdict + '">' + s.verdictLabel + '</span></td>';
+    return '<tr><td class="site">' + escapeHtml_(s.site) + '</td><td class="num">' + s.uses + '</td>' + wCell + bCell + verdictCell + '</tr>';
+  }).join('');
+
+  wrap.innerHTML =
+    '<div class="site-summary ' + summaryClass + '">' + summaryText + '</div>' +
+    '<div class="site-section-label">Rotation</div>' +
+    '<table class="site-table"><thead><tr><th>Site</th><th>Last used</th><th class="num-head">Weeks ago</th><th class="num-head">Uses</th></tr></thead><tbody>' + rotationRows + '</tbody></table>' +
+    '<div class="site-section-label">Effectiveness</div>' +
+    '<table class="site-table"><thead><tr><th>Site</th><th class="num-head">Uses</th><th class="num-head">Avg weight</th><th class="num-head">Avg burden</th><th class="num-head">Verdict</th></tr></thead><tbody>' + effectRows + '</tbody></table>' +
+    '<div class="site-note"><strong>How effectiveness works.</strong> For each site, average the week-over-week weight change and the symptom burden across all the days that followed each injection. Raw numbers appear at 2+ uses. Verdicts (Works well / Mixed / Lags) appear at 3+ uses, comparing against your own overall averages. <em>Site effects can be confounded with week-to-week variation — trust verdicts after 6+ weeks of rotation.</em></div>';
 }
 
-function avgBurdenInRange(startISO, endISO){
-  let sum = 0, n = 0;
-  dailyEntries.forEach(d => { if(d.date >= startISO && d.date < endISO){ sum += symptomBurden_(d); n++; } });
-  return n > 0 ? sum / n : null;
+/* ---------- Symptoms by cycle day ---------- */
+function cycleDayColor(avgVal){
+  if(avgVal == null) return '#EFEBE0';
+  if(avgVal < 0.25) return 'var(--sage-soft)';
+  if(avgVal < 1.0)  return 'var(--amber-soft)';
+  if(avgVal < 2.0)  return '#EBC58B';
+  return 'var(--rose-soft)';
 }
 
-function renderFlags(){
-  const wrap = document.getElementById('flagsWrap');
-  const flags = [];
-  const today = todayISO();
-
-  if(weeklyEntries.length >= 2){
-    const last = weeklyEntries[weeklyEntries.length-1];
-    const prev = weeklyEntries[weeklyEntries.length-2];
-    if(last.weight != null && prev.weight != null && prev.weight > 0){
-      const pct = (prev.weight - last.weight) / prev.weight;
-      if(pct > 0.01){
-        flags.push({ icon:'⚠', type:'warn', text:'You lost <strong>' + (prev.weight - last.weight).toFixed(1) + ' lb</strong> this week — ' + (pct*100).toFixed(1) + '% of body weight. Fast loss can eat into muscle. Keep protein up and consider strength training.' });
-      }
-    }
-  }
-
-  if(weeklyEntries.length >= 4){
-    const recent = weeklyEntries.slice(-4);
-    const change = recent[recent.length-1].weight - recent[0].weight;
-    if(change > -0.5){
-      flags.push({ icon:'·', type:'info', text:'Weight has been essentially flat for 3 weeks. Plateauing is normal — worth a look if it persists past 4 weeks.' });
-    }
-  }
-
-  const recent14 = avgBurdenInRange(addDaysISO(today, -14), addDaysISO(today, 1));
-  const prior14  = avgBurdenInRange(addDaysISO(today, -28), addDaysISO(today, -14));
-  if(recent14 != null && prior14 != null && prior14 > 0){
-    const change = (recent14 - prior14) / prior14;
-    if(change <= -0.2){
-      flags.push({ icon:'✓', type:'good', text:"Symptom burden has been trending down over the last two weeks. Whatever you're doing seems to be working." });
-    } else if(change >= 0.2){
-      flags.push({ icon:'⚠', type:'warn', text:'Symptom burden has been trending up over the last two weeks. Might be worth a closer look — dose change, food, cycle?' });
-    }
-  }
-
-  const moodRange = dailyEntries
-    .filter(d => d.date >= addDaysISO(today, -14) && d.date < addDaysISO(today, 1) && d.mood != null)
-    .sort((a,b) => (parseDateAny(a.date)?.getTime() || 0) - (parseDateAny(b.date)?.getTime() || 0));
-
-  if(moodRange.length >= 5){
-    let consecutiveLow = 0, maxConsecutiveLow = 0;
-    moodRange.forEach(d => { if(d.mood <= 2){ consecutiveLow++; maxConsecutiveLow = Math.max(maxConsecutiveLow, consecutiveLow); } else consecutiveLow = 0; });
-    const avgMood14 = avg(moodRange.map(d => d.mood));
-    if(maxConsecutiveLow >= 3){
-      flags.push({ icon:'💭', type:'warn', text:'Mood has been low (2 or below) for ' + maxConsecutiveLow + ' days in a row. Worth noting — mood and appetite interact, and it\'s a useful thing for your provider to know.' });
-    } else if(avgMood14 != null && avgMood14 < 2.5){
-      flags.push({ icon:'💭', type:'info', text:'Mood has been low over the past two weeks (avg ' + avgMood14.toFixed(1) + '/5). Not unusual during rapid weight loss, but worth keeping an eye on.' });
-    }
-  }
-
-  if(dailyEntries.length > 0){
-    const lastDate = dailyEntries[dailyEntries.length-1].date;
-    const lastParsed = parseDateAny(lastDate);
-    const todayParsed = parseDateAny(today);
-    if(lastParsed && todayParsed){
-      const days = Math.round((todayParsed - lastParsed) / 86400000);
-      if(days === 2){
-        flags.push({ icon:'📝', type:'info', text:"You didn't log yesterday. One missed day is fine — a quick catch-up keeps the trend lines honest." });
-      } else if(days >= 3){
-        flags.push({ icon:'📝', type:'info', text:'Last daily check-in was ' + days + ' days ago. A quick log keeps the data useful.' });
-      }
-    }
-  }
-
-  if(flags.length === 0){
-    wrap.innerHTML = '<div class="empty" style="padding:14px 0;">Nothing needs your attention right now. Keep logging.</div>';
+function renderCycleHeat(){
+  const table = document.getElementById('cycleHeatTable');
+  if(weeklyEntries.length === 0 || dailyEntries.length === 0){
+    table.innerHTML = '<tr><td class="empty">Need both weekly and daily entries to compute this view.</td></tr>';
     return;
   }
-  wrap.innerHTML = flags.map(f => '<div class="flag flag-' + f.type + '"><span class="flag-icon">' + f.icon + '</span><div class="flag-text">' + f.text + '</div></div>').join('');
+
+  const buckets = {};
+  for(let d = 1; d <= 7; d++){
+    buckets[d] = {};
+    SYMPTOMS.forEach(s => buckets[d][s] = { sum: 0, n: 0 });
+  }
+
+  dailyEntries.forEach(de => {
+    const cd = cycleDayFor(de.date);
+    if(cd == null || cd < 1 || cd > 7) return;
+    SYMPTOMS.forEach(s => {
+      const sev = (de.symptoms && de.symptoms[s]) || 0;
+      buckets[cd][s].sum += sev;
+      buckets[cd][s].n += 1;
+    });
+  });
+
+  let head = '<tr><th class="symname"></th>';
+  for(let d = 1; d <= 7; d++){
+    const totalDays = Object.values(buckets[d]).reduce((max, b) => Math.max(max, b.n), 0);
+    head += '<th>Day ' + d + (totalDays > 0 ? '<br><span style="font-weight:400;font-size:9px;">n=' + totalDays + '</span>' : '') + '</th>';
+  }
+  head += '</tr>';
+
+  const rows = SYMPTOMS.map(s => {
+    let row = '<tr><th class="symname">' + s + '</th>';
+    for(let d = 1; d <= 7; d++){
+      const b = buckets[d][s];
+      const avgVal = b.n > 0 ? b.sum / b.n : null;
+      const color = cycleDayColor(avgVal);
+      const label = avgVal == null ? '—' : avgVal.toFixed(1);
+      const title = avgVal == null ? s + ' day ' + d + ': no data' : s + ' day ' + d + ': avg ' + avgVal.toFixed(2) + ' (n=' + b.n + ')';
+      row += '<td><div class="heat-cell" style="background:' + color + '" title="' + title + '">' + label + '</div></td>';
+    }
+    row += '</tr>';
+    return row;
+  }).join('');
+
+  table.innerHTML = head + rows;
 }
 
+/* ---------- Weight chart ---------- */
 let weightChartInstance = null;
 function renderWeightChart(){
   const canvas = document.getElementById('weightChart');
@@ -1065,61 +1179,7 @@ function renderWeightChart(){
   }
 }
 
-function cycleDayColor(avgVal){
-  if(avgVal == null) return '#EFEBE0';
-  if(avgVal < 0.25) return 'var(--sage-soft)';
-  if(avgVal < 1.0)  return 'var(--amber-soft)';
-  if(avgVal < 2.0)  return '#EBC58B';
-  return 'var(--rose-soft)';
-}
-
-function renderCycleHeat(){
-  const table = document.getElementById('cycleHeatTable');
-  if(weeklyEntries.length === 0 || dailyEntries.length === 0){
-    table.innerHTML = '<tr><td class="empty">Need both weekly and daily entries to compute this view.</td></tr>';
-    return;
-  }
-
-  const buckets = {};
-  for(let d = 1; d <= 7; d++){
-    buckets[d] = {};
-    SYMPTOMS.forEach(s => buckets[d][s] = { sum: 0, n: 0 });
-  }
-
-  dailyEntries.forEach(de => {
-    const cd = cycleDayFor(de.date);
-    if(cd == null || cd < 1 || cd > 7) return;
-    SYMPTOMS.forEach(s => {
-      const sev = (de.symptoms && de.symptoms[s]) || 0;
-      buckets[cd][s].sum += sev;
-      buckets[cd][s].n += 1;
-    });
-  });
-
-  let head = '<tr><th class="symname"></th>';
-  for(let d = 1; d <= 7; d++){
-    const totalDays = Object.values(buckets[d]).reduce((max, b) => Math.max(max, b.n), 0);
-    head += '<th>Day ' + d + (totalDays > 0 ? '<br><span style="font-weight:400;font-size:9px;">n=' + totalDays + '</span>' : '') + '</th>';
-  }
-  head += '</tr>';
-
-  const rows = SYMPTOMS.map(s => {
-    let row = '<tr><th class="symname">' + s + '</th>';
-    for(let d = 1; d <= 7; d++){
-      const b = buckets[d][s];
-      const avgVal = b.n > 0 ? b.sum / b.n : null;
-      const color = cycleDayColor(avgVal);
-      const label = avgVal == null ? '—' : avgVal.toFixed(1);
-      const title = avgVal == null ? s + ' day ' + d + ': no data' : s + ' day ' + d + ': avg ' + avgVal.toFixed(2) + ' (n=' + b.n + ')';
-      row += '<td><div class="heat-cell" style="background:' + color + '" title="' + title + '">' + label + '</div></td>';
-    }
-    row += '</tr>';
-    return row;
-  }).join('');
-
-  table.innerHTML = head + rows;
-}
-
+/* ---------- Doctor visit summary ---------- */
 function buildDoctorSummary(){
   const today = todayISO();
   const startISO = addDaysISO(today, -30);
@@ -1131,9 +1191,10 @@ function buildDoctorSummary(){
     return 'Not enough data in the last 30 days to build a summary.';
   }
 
-  const sentences = [];
   const lastW = monthWeekly[monthWeekly.length-1] || weeklyEntries[weeklyEntries.length-1];
   const currentDose = lastW?.dose ?? null;
+
+  /* Weeks at dose */
   let weeksAtDose = null;
   if(currentDose != null && weeklyEntries.length > 0){
     let count = 0;
@@ -1144,120 +1205,110 @@ function buildDoctorSummary(){
     weeksAtDose = count;
   }
 
-  if(monthDaily.length > 0){
-    const symptomTotals = {};
-    SYMPTOMS.forEach(s => symptomTotals[s] = { sum: 0, peak: 0 });
-    monthDaily.forEach(d => {
-      SYMPTOMS.forEach(s => {
-        const v = Number(d.symptoms?.[s]) || 0;
-        symptomTotals[s].sum += v;
-        if(v > symptomTotals[s].peak) symptomTotals[s].peak = v;
-      });
-    });
-    const ranked = Object.entries(symptomTotals).filter(([,t]) => t.sum > 0).sort((a,b) => b[1].sum - a[1].sum);
-    const totalBurden = Object.values(symptomTotals).reduce((sum,t) => sum + t.sum, 0);
-    const avgPerDay = totalBurden / monthDaily.length;
-    const severityWord = avgPerDay < 1.0 ? 'minimal and mild' : avgPerDay < 2.5 ? 'mild to moderate' : avgPerDay < 5 ? 'moderate' : 'notable';
-    if(ranked.length === 0){
-      sentences.push('No symptoms were logged this month.');
-    } else {
-      const top = ranked[0];
-      const peakLabel = SEV_LABELS[top[1].peak].toLowerCase();
-      let s = 'Symptoms have been ' + severityWord + ', with ' + top[0].toLowerCase() + ' being the most prevalent (peak ' + peakLabel + ')';
-      const secondary = ranked[1];
-      if(secondary) s += ', followed by ' + secondary[0].toLowerCase();
-      s += '.';
-      sentences.push(s);
+  /* Weeks of current Kwikpen */
+  let weeksOfPen = null;
+  for(let i = weeklyEntries.length - 1; i >= 0; i--){
+    if(weeklyEntries[i].newPen){
+      weeksOfPen = weeklyEntries.length - i;
+      break;
     }
   }
 
+  const header = 'GLP-1 Summary — ' + fmtDate(startISO) + ' to ' + fmtDate(today) + '\n' +
+    'Current dose: ' + (currentDose ?? '—') + ' mg' + (weeksAtDose != null ? ' (week ' + weeksAtDose + ' at this dose)' : '') + '\n' +
+    (weeksOfPen != null ? 'Kwikpen: week ' + weeksOfPen + ' of current pen\n' : '') + '\n';
+
+  const lines = [];
+
+  /* Symptoms — full list with severity */
+  if(monthDaily.length > 0){
+    const symptomSummaries = [];
+    SYMPTOMS.forEach(s => {
+      const daysWith = monthDaily.filter(d => Number(d.symptoms?.[s]) > 0).length;
+      if(daysWith === 0) return;
+      const sevCounts = [0,0,0,0];
+      monthDaily.forEach(d => { sevCounts[Number(d.symptoms?.[s]) || 0]++; });
+      let modeSev = 1;
+      if(sevCounts[2] >= sevCounts[1] && sevCounts[2] >= sevCounts[3]) modeSev = 2;
+      else if(sevCounts[3] > sevCounts[1] && sevCounts[3] > sevCounts[2]) modeSev = 3;
+      else modeSev = 1;
+      let peak = 0;
+      for(let i = 1; i <= 3; i++) if(sevCounts[i] > 0) peak = i;
+      symptomSummaries.push({ name: s, days: daysWith, modeSev, peak });
+    });
+    symptomSummaries.sort((a,b) => b.days - a.days);
+
+    if(symptomSummaries.length === 0){
+      lines.push('No symptoms were logged this month.');
+    } else {
+      const pieces = symptomSummaries.map(s => {
+        const modeLabel = SEV_LABELS[s.modeSev].toLowerCase();
+        let piece = s.name.toLowerCase() + ' (' + modeLabel + ', ' + s.days + ' day' + (s.days === 1 ? '' : 's');
+        if(s.peak > s.modeSev){
+          piece += '; peaked ' + SEV_LABELS[s.peak].toLowerCase();
+        }
+        piece += ')';
+        return piece;
+      });
+      lines.push('Symptoms over the past month: ' + pieces.join(', ') + '.');
+    }
+  }
+
+  /* Weight — past month AND total */
   const firstW = monthWeekly[0];
   if(firstW && lastW && firstW !== lastW && firstW.weight > 0){
     const change = lastW.weight - firstW.weight;
     const weeksElapsed = Math.max(1, Math.round((parseDateAny(lastW.date) - parseDateAny(firstW.date)) / (7*86400000)));
     const pctPerWeek = Math.abs((change / firstW.weight) * 100 / weeksElapsed);
-    const direction = change < 0 ? 'Weight loss' : 'Weight gain';
-    sentences.push(direction + ' of ' + Math.abs(change).toFixed(1) + ' lb over ' + weeksElapsed + ' week' + (weeksElapsed === 1 ? '' : 's') + '; currently ' + lastW.weight.toFixed(1) + ' lb (' + pctPerWeek.toFixed(1) + '% per week).');
+    const dirWord = change < 0 ? 'loss' : 'gain';
+
+    let weightSentence = 'Weight ' + dirWord + ' this month: ' + Math.abs(change).toFixed(1) + ' lb (average ' + pctPerWeek.toFixed(1) + '% per week).';
+
+    /* Total since start */
+    const startW = weeklyEntries[0];
+    if(startW && startW !== lastW && startW.weight > 0){
+      const totalChange = lastW.weight - startW.weight;
+      const totalWeeks = Math.max(1, Math.round((parseDateAny(lastW.date) - parseDateAny(startW.date)) / (7*86400000)));
+      const totalPct = Math.abs((totalChange / startW.weight) * 100 / totalWeeks);
+      weightSentence += ' Total since starting: ' + Math.abs(totalChange).toFixed(1) + ' lb over ' + totalWeeks + ' week' + (totalWeeks === 1 ? '' : 's') + ' (average ' + totalPct.toFixed(1) + '% per week).';
+    }
+    weightSentence += ' Currently ' + lastW.weight.toFixed(1) + ' lb.';
+    lines.push(weightSentence);
   } else if(lastW){
-    sentences.push('Current weight is ' + lastW.weight.toFixed(1) + ' lb.');
+    lines.push('Current weight is ' + lastW.weight.toFixed(1) + ' lb.');
   }
 
+  /* Suppression — plain analysis */
   const thisApp  = avg(monthDaily.map(d => d.appetite).filter(v => v != null));
   const priorApp = avg(priorDaily.map(d => d.appetite).filter(v => v != null));
   const thisFN   = avg(monthDaily.map(d => d.foodNoise).filter(v => v != null));
   const priorFN  = avg(priorDaily.map(d => d.foodNoise).filter(v => v != null));
+
   const appWorse  = thisApp != null && priorApp != null && thisApp > priorApp + 0.3;
   const appBetter = thisApp != null && priorApp != null && thisApp < priorApp - 0.3;
   const fnWorse   = thisFN  != null && priorFN  != null && thisFN  > priorFN  + 0.3;
   const fnBetter  = thisFN  != null && priorFN  != null && thisFN  < priorFN  - 0.3;
 
   if(thisApp != null || thisFN != null){
-    const parts = [];
-    if(thisApp != null) parts.push('appetite ' + thisApp.toFixed(1) + '/5');
-    if(thisFN != null)  parts.push('food noise ' + thisFN.toFixed(1) + '/5');
-    let s = 'Suppression: ' + parts.join(', ');
-    const trendPieces = [];
-    if(appWorse)       trendPieces.push('appetite weakening (' + priorApp.toFixed(1) + ' → ' + thisApp.toFixed(1) + ')');
-    else if(appBetter) trendPieces.push('appetite strengthening (' + priorApp.toFixed(1) + ' → ' + thisApp.toFixed(1) + ')');
-    if(fnWorse)        trendPieces.push('food noise rising (' + priorFN.toFixed(1) + ' → ' + thisFN.toFixed(1) + ')');
-    else if(fnBetter)  trendPieces.push('food noise falling (' + priorFN.toFixed(1) + ' → ' + thisFN.toFixed(1) + ')');
-    if(trendPieces.length) s += '; vs prior month, ' + trendPieces.join(' and ');
-    s += '.';
-    sentences.push(s);
-  }
-
-  const recent14 = dailyEntries.filter(d => d.date >= addDaysISO(today, -14) && d.date <= today);
-  if(recent14.length >= 6){
-    const proteinDays = recent14.filter(d => d.protein != null && d.protein >= PROTEIN_GOAL).length;
-    const strengthDays = recent14.filter(d => d.strength).length;
-    const proteinRate = proteinDays / 2;
-    const strengthRate = strengthDays / 2;
-    if(proteinRate >= PROTEIN_DAYS_GOAL && strengthRate >= STRENGTH_GOAL){
-      sentences.push('Muscle protection is in place: protein goal on roughly ' + proteinRate.toFixed(0) + ' days/week, ' + strengthRate.toFixed(0) + ' strength sessions/week.');
-    } else if(proteinRate < 3 || strengthDays === 0){
-      sentences.push('Muscle protection needs attention: protein goal on roughly ' + proteinRate.toFixed(0) + ' days/week, ' + strengthRate.toFixed(0) + ' strength sessions/week.');
+    if(appWorse && fnWorse){
+      lines.push('Appetite suppression is weakening. Both appetite and food noise have increased over the past month, which suggests the current dose may be losing effect. I\'m considering whether a dose increase is appropriate.');
+    } else if(fnWorse && !appWorse){
+      lines.push('Appetite suppression remains strong, but food noise has increased over the past month, which often signals the current dose is beginning to lose effect. I\'m considering whether a dose increase is appropriate.');
+    } else if(appWorse && !fnWorse){
+      lines.push('Physical appetite has increased over the past month though food noise remains stable. I\'m wondering whether the current dose is still the right level.');
+    } else if(appBetter || fnBetter){
+      lines.push('Suppression remains effective. Appetite and food noise are both stable or improving. May be appropriate to remain on the current dose.');
+    } else {
+      lines.push('Suppression remains stable compared with the prior month. May be appropriate to remain on the current dose.');
     }
   }
 
-  const thisMood  = avg(monthDaily.map(d => d.mood).filter(v => v != null));
-  const priorMood = avg(priorDaily.map(d => d.mood).filter(v => v != null));
-  if(thisMood != null && thisMood <= 2.5){
-    let s = 'Mood has been reported as low on some days (avg ' + thisMood.toFixed(1) + '/5';
-    if(priorMood != null && thisMood < priorMood - 0.3) s += ', down from ' + priorMood.toFixed(1);
-    s += ').';
-    sentences.push(s);
+  /* Kwikpen callback */
+  if(weeksOfPen === 3){
+    lines.push('Week 3 of current Kwikpen — provider check-in suggested this week.');
   }
 
-  const heavySymptoms = avg(monthDaily.map(d => symptomBurden_(d))) > 4;
-  const losingFast = (firstW && lastW && firstW !== lastW && firstW.weight > 0) ? (() => {
-    const pct = ((firstW.weight - lastW.weight) / firstW.weight) * 100;
-    const weeks = Math.max(1, Math.round((parseDateAny(lastW.date) - parseDateAny(firstW.date)) / (7*86400000)));
-    return (pct / weeks) > 1.2;
-  })() : false;
-  const suppWaning = appWorse || fnWorse;
-
-  let suggestion;
-  if(heavySymptoms && suppWaning){
-    suggestion = 'Given both symptom burden and weakening suppression, the current dose may warrant review.';
-  } else if(heavySymptoms){
-    suggestion = 'Given symptom burden, remaining on the current dose may be worth discussing.';
-  } else if(losingFast){
-    suggestion = 'Weight loss is running faster than the 1% per week target; the current dose may be higher than needed.';
-  } else if(suppWaning){
-    const what = appWorse && fnWorse ? 'both appetite suppression and food noise' : appWorse ? 'appetite suppression' : 'food noise';
-    const cap = what.charAt(0).toUpperCase() + what.slice(1);
-    suggestion = cap + (fnWorse && !appWorse ? ' has' : ' have') + ' weakened compared to the prior month; a dose increase may be appropriate.';
-  } else if(weeksAtDose != null && weeksAtDose >= 8){
-    suggestion = 'Currently ' + weeksAtDose + ' weeks at this dose with stable suppression and minimal symptoms; may be appropriate to remain on it.';
-  } else {
-    suggestion = 'Signals suggest the current dose is working well; may be appropriate to remain on it.';
-  }
-  sentences.push(suggestion);
-
-  const body = sentences.join(' ');
-  const header = 'GLP-1 Summary — ' + fmtDate(startISO) + ' to ' + fmtDate(today) + '\n' +
-    'Current dose: ' + (currentDose ?? '—') + ' mg' + (weeksAtDose != null ? ' (week ' + weeksAtDose + ' at this dose)' : '') + '\n\n';
-  return header + body;
+  return header + lines.join(' ');
 }
 
 function renderDoctorSummary(){
@@ -1266,20 +1317,29 @@ function renderDoctorSummary(){
   el.textContent = buildDoctorSummary();
 }
 
+/* ---------- Weekly log (collapsed to 4) ---------- */
 function renderWeeklyTable(){
   const wrap = document.getElementById('weeklyTableWrap');
   if(weeklyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No weekly check-ins yet.</div>'; return; }
   const reversed = weeklyEntries.slice().reverse();
-  const rows = reversed.map(e =>
-    '<tr><td>' + fmtDate(e.date) + '</td><td class="num">' + (e.dose ?? '—') + '</td><td class="num">' + (e.weight ?? '—') + '</td><td>' + (e.site ?? '—') + '</td><td><span class="del" data-id="' + e.id + '">remove</span></td></tr>'
+  const visible = uiState.weeklyLogExpanded ? reversed : reversed.slice(0, 4);
+
+  const rows = visible.map(e =>
+    '<tr><td>' + fmtDate(e.date) + '</td><td class="num">' + (e.dose ?? '—') + '</td><td class="num">' + (e.weight ?? '—') + '</td><td>' + (e.site ?? '—') + '</td><td>' + (e.newPen ? '★' : '—') + '</td><td><span class="del" data-id="' + e.id + '">remove</span></td></tr>'
   ).join('');
-  const withObs = reversed.filter(e => e.observations && String(e.observations).trim());
+
+  const withObs = visible.filter(e => e.observations && String(e.observations).trim());
   const obsBlock = withObs.length
     ? '<div class="obs-list"><h3>Observations</h3>' + withObs.map(e =>
         '<div class="obs-item"><div class="obs-date">' + fmtDate(e.date) + '</div><div class="obs-text">' + escapeHtml_(e.observations) + '</div></div>'
       ).join('') + '</div>'
     : '';
-  wrap.innerHTML = '<table><tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th></th></tr>' + rows + '</table>' + obsBlock;
+
+  wrap.innerHTML = '<table><tr><th>Date</th><th>mg</th><th>Weight</th><th>Site</th><th>Pen</th><th></th></tr>' + rows + '</table>' + obsBlock +
+    (reversed.length > 4
+      ? '<button class="expand-btn" id="weeklyLogExpandBtn">' + (uiState.weeklyLogExpanded ? 'Show fewer' : 'Show all (' + reversed.length + ')') + '</button>'
+      : '');
+
   wrap.querySelectorAll('.del').forEach(el=>{
     el.onclick = async ()=>{
       const id = el.dataset.id;
@@ -1294,19 +1354,23 @@ function renderWeeklyTable(){
       }
     };
   });
+  const btn = document.getElementById('weeklyLogExpandBtn');
+  if(btn) btn.onclick = ()=>{ uiState.weeklyLogExpanded = !uiState.weeklyLogExpanded; renderWeeklyTable(); };
 }
 
+/* ---------- Daily log (collapsed to 7) ---------- */
 function renderDailyTable(){
   const wrap = document.getElementById('dailyTableWrap');
   if(dailyEntries.length === 0){ wrap.innerHTML = '<div class="empty">No daily check-ins yet.</div>'; return; }
   const reversed = dailyEntries.slice().reverse();
-  const rows = reversed.map(e=>{
+  const visible = uiState.dailyLogExpanded ? reversed : reversed.slice(0, 7);
+
+  const rows = visible.map(e=>{
     const topSym = Object.entries(e.symptoms||{}).filter(([k,v]) => v > 0 && SYMPTOMS.includes(k)).sort((a,b)=>b[1]-a[1])[0];
     const proteinTxt = e.protein != null ? Math.round(e.protein) + ' g' : '—';
     return '<tr>' +
       '<td>' + fmtDate(e.date) + '</td>' +
       '<td class="num">' + (e.energy ?? '—') + '</td>' +
-      '<td class="num">' + (e.mood ?? '—') + '</td>' +
       '<td class="num">' + (e.appetite ?? '—') + '</td>' +
       '<td class="num">' + (e.foodNoise ?? '—') + '</td>' +
       '<td class="num">' + proteinTxt + '</td>' +
@@ -1318,18 +1382,27 @@ function renderDailyTable(){
     '</tr>';
   }).join('');
 
+  /* Notes + NSVs — collapsed to 7 as well */
   const withDetail = reversed.filter(e => (e.notes && String(e.notes).trim()) || (e.nsv && String(e.nsv).trim()));
-  const notesBlock = withDetail.length
-    ? '<div class="obs-list"><h3>Daily notes &amp; NSVs</h3>' + withDetail.map(e =>
+  const visibleDetail = uiState.dailyNotesExpanded ? withDetail : withDetail.slice(0, 7);
+  const notesBlock = visibleDetail.length
+    ? '<div class="obs-list"><h3>Daily notes &amp; NSVs</h3>' + visibleDetail.map(e =>
         '<div class="obs-item">' +
           '<div class="obs-date">' + fmtDate(e.date) + '</div>' +
           (e.nsv ? '<div class="obs-text"><span class="nsv-star">★</span>' + escapeHtml_(e.nsv) + '</div>' : '') +
           (e.notes ? '<div class="obs-text"' + (e.nsv ? ' style="margin-top:6px;"' : '') + '>' + escapeHtml_(e.notes) + '</div>' : '') +
         '</div>'
-      ).join('') + '</div>'
+      ).join('') + '</div>' +
+      (withDetail.length > 7
+        ? '<button class="expand-btn" id="dailyNotesExpandBtn">' + (uiState.dailyNotesExpanded ? 'Show fewer' : 'Show all (' + withDetail.length + ')') + '</button>'
+        : '')
     : '';
 
-  wrap.innerHTML = '<table><tr><th>Date</th><th>Energy</th><th>Mood</th><th>Appetite</th><th>Food noise</th><th>Protein</th><th>Period</th><th>Movement</th><th>Strength</th><th>Top symptom</th><th></th></tr>' + rows + '</table>' + notesBlock;
+  wrap.innerHTML = '<table><tr><th>Date</th><th>Energy</th><th>Appetite</th><th>Food noise</th><th>Protein</th><th>Period</th><th>Movement</th><th>Strength</th><th>Top symptom</th><th></th></tr>' + rows + '</table>' + notesBlock +
+    (reversed.length > 7
+      ? '<button class="expand-btn" id="dailyLogExpandBtn">' + (uiState.dailyLogExpanded ? 'Show fewer' : 'Show all (' + reversed.length + ')') + '</button>'
+      : '');
+
   wrap.querySelectorAll('.del').forEach(el=>{
     el.onclick = async ()=>{
       const id = el.dataset.id;
@@ -1344,12 +1417,16 @@ function renderDailyTable(){
       }
     };
   });
+  const btnLog = document.getElementById('dailyLogExpandBtn');
+  if(btnLog) btnLog.onclick = ()=>{ uiState.dailyLogExpanded = !uiState.dailyLogExpanded; renderDailyTable(); };
+  const btnNotes = document.getElementById('dailyNotesExpandBtn');
+  if(btnNotes) btnNotes.onclick = ()=>{ uiState.dailyNotesExpanded = !uiState.dailyNotesExpanded; renderDailyTable(); };
 }
 
+/* ---------- Save handlers ---------- */
 document.getElementById('saveDailyBtn').onclick = async ()=>{
   const date      = document.getElementById('d-date').value;
   const energy    = parseInt(document.getElementById('d-energy').value, 10);
-  const mood      = parseInt(document.getElementById('d-mood').value, 10);
   const appetite  = parseInt(document.getElementById('d-appetite').value, 10);
   const foodNoise = parseInt(document.getElementById('d-foodnoise').value, 10);
   const protein   = parseInt(document.getElementById('d-protein').value, 10);
@@ -1370,7 +1447,6 @@ document.getElementById('saveDailyBtn').onclick = async ()=>{
     id: 'd' + Date.now().toString(),
     date: date,
     energy:    isNaN(energy)    ? null : energy,
-    mood:      isNaN(mood)      ? null : mood,
     appetite:  isNaN(appetite)  ? null : appetite,
     foodNoise: isNaN(foodNoise) ? null : foodNoise,
     protein:   isNaN(protein)   ? null : protein,
@@ -1389,7 +1465,7 @@ document.getElementById('saveDailyBtn').onclick = async ()=>{
     renderAll();
     msg.textContent = 'Saved to your sheet.';
     msg.className = 'msg ok';
-    ['d-energy','d-mood','d-appetite','d-foodnoise','d-protein','d-notes','d-nsv'].forEach(id => document.getElementById(id).value = '');
+    ['d-energy','d-appetite','d-foodnoise','d-protein','d-notes','d-nsv'].forEach(id => document.getElementById(id).value = '');
     ['d-period','d-movement','d-strength'].forEach(id => document.getElementById(id).checked = false);
     buildSymList();
   }catch(e){
@@ -1406,6 +1482,7 @@ document.getElementById('saveWeeklyBtn').onclick = async ()=>{
   const weight = parseFloat(document.getElementById('w-weight').value);
   const site = document.getElementById('w-site').value;
   const observations = document.getElementById('w-observations').value.trim();
+  const newPen = document.getElementById('w-newpen').checked;
   const msg = document.getElementById('weeklyMsg');
   const btn = document.getElementById('saveWeeklyBtn');
 
@@ -1420,7 +1497,8 @@ document.getElementById('saveWeeklyBtn').onclick = async ()=>{
     dose: isNaN(dose) ? null : dose,
     weight: weight,
     site: site || null,
-    observations: observations || null
+    observations: observations || null,
+    newPen: newPen
   };
   btn.disabled = true;
   msg.textContent = 'Saving…';
@@ -1436,6 +1514,7 @@ document.getElementById('saveWeeklyBtn').onclick = async ()=>{
     document.getElementById('w-weight').value = '';
     document.getElementById('w-site').value = '';
     document.getElementById('w-observations').value = '';
+    document.getElementById('w-newpen').checked = false;
   }catch(e){
     msg.textContent = 'Could not save: ' + e.message;
     msg.className = 'msg err';
@@ -1458,6 +1537,7 @@ document.getElementById('copySummaryBtn').onclick = async ()=>{
   }
 };
 
+/* ---------- CSV import ---------- */
 function parseCSV(text){
   const lines = text.replace(/\r/g,'').split('\n').filter(l=>l.trim().length>0);
   if(lines.length < 2) return [];
@@ -1511,7 +1591,6 @@ document.getElementById('importDailyFile').addEventListener('change', async (ev)
         id: 'd' + Date.now().toString() + Math.random().toString(36).slice(2,7),
         date: row.date,
         energy:    toNumOrNull(row.energy),
-        mood:      toNumOrNull(row.mood),
         appetite:  toNumOrNull(row.appetite),
         foodNoise: fnKey ? toNumOrNull(row[fnKey]) : null,
         protein:   toNumOrNull(row.protein),
@@ -1558,7 +1637,8 @@ document.getElementById('importWeeklyFile').addEventListener('change', async (ev
         dose: toNumOrNull(row.dose),
         weight: parseFloat(row.weight),
         site: row.site || null,
-        observations: row.observations || null
+        observations: row.observations || null,
+        newPen: toYesBool(row.newpen || row['new pen'] || '')
       });
     });
     if(entries.length === 0){
@@ -1578,6 +1658,7 @@ document.getElementById('importWeeklyFile').addEventListener('change', async (ev
   ev.target.value = '';
 });
 
+/* ---------- Boot ---------- */
 document.getElementById('d-date').value = todayISO();
 document.getElementById('w-date').value = todayISO();
 
