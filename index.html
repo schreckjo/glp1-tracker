@@ -1382,20 +1382,16 @@ function renderDailyTable(){
     '</tr>';
   }).join('');
 
-  /* Notes + NSVs — collapsed to 7 as well */
-  const withDetail = reversed.filter(e => (e.notes && String(e.notes).trim()) || (e.nsv && String(e.nsv).trim()));
-  const visibleDetail = uiState.dailyNotesExpanded ? withDetail : withDetail.slice(0, 7);
-  const notesBlock = visibleDetail.length
-    ? '<div class="obs-list"><h3>Daily notes &amp; NSVs</h3>' + visibleDetail.map(e =>
+  /* Notes + NSVs — same visible window as the table, one toggle for both */
+  const withDetail = visible.filter(e => (e.notes && String(e.notes).trim()) || (e.nsv && String(e.nsv).trim()));
+  const notesBlock = withDetail.length
+    ? '<div class="obs-list"><h3>Daily notes &amp; NSVs</h3>' + withDetail.map(e =>
         '<div class="obs-item">' +
           '<div class="obs-date">' + fmtDate(e.date) + '</div>' +
           (e.nsv ? '<div class="obs-text"><span class="nsv-star">★</span>' + escapeHtml_(e.nsv) + '</div>' : '') +
           (e.notes ? '<div class="obs-text"' + (e.nsv ? ' style="margin-top:6px;"' : '') + '>' + escapeHtml_(e.notes) + '</div>' : '') +
         '</div>'
-      ).join('') + '</div>' +
-      (withDetail.length > 7
-        ? '<button class="expand-btn" id="dailyNotesExpandBtn">' + (uiState.dailyNotesExpanded ? 'Show fewer' : 'Show all (' + withDetail.length + ')') + '</button>'
-        : '')
+      ).join('') + '</div>'
     : '';
 
   wrap.innerHTML = '<table><tr><th>Date</th><th>Energy</th><th>Appetite</th><th>Food noise</th><th>Protein</th><th>Period</th><th>Movement</th><th>Strength</th><th>Top symptom</th><th></th></tr>' + rows + '</table>' + notesBlock +
@@ -1419,10 +1415,7 @@ function renderDailyTable(){
   });
   const btnLog = document.getElementById('dailyLogExpandBtn');
   if(btnLog) btnLog.onclick = ()=>{ uiState.dailyLogExpanded = !uiState.dailyLogExpanded; renderDailyTable(); };
-  const btnNotes = document.getElementById('dailyNotesExpandBtn');
-  if(btnNotes) btnNotes.onclick = ()=>{ uiState.dailyNotesExpanded = !uiState.dailyNotesExpanded; renderDailyTable(); };
 }
-
 /* ---------- Save handlers ---------- */
 document.getElementById('saveDailyBtn').onclick = async ()=>{
   const date      = document.getElementById('d-date').value;
